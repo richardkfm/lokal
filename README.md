@@ -91,6 +91,49 @@ pnpm test        # unit and golden-fixture tests
 pnpm build       # production build
 ```
 
+## Docker
+
+Requires Docker and Docker Compose.
+
+```bash
+docker compose up --build
+```
+
+Then open <http://localhost:3000>.
+
+This runs two containers:
+
+- `migrate` — a one-off step that applies pending Prisma migrations to the
+  SQLite file on the shared `data` volume, then exits.
+- `app` — the Next.js server, started only after `migrate` finishes
+  successfully. It runs from a minimal image built with Next's
+  `output: "standalone"`, as a non-root user.
+
+The SQLite database persists in the named `data` volume across restarts. To
+run migrations by hand (for example after pulling a new image with schema
+changes) without starting the app:
+
+```bash
+docker compose run --rm migrate
+```
+
+To build the runtime image directly, without Compose:
+
+```bash
+docker build -t lokal .
+docker run -p 3000:3000 -e DATABASE_URL="file:/data/lokal.db" -v lokal-data:/data lokal
+```
+
+The database file must already have its schema migrated (via `docker compose
+run --rm migrate`, or `pnpm db:deploy` against the same file) before the app
+can read or write assessments — the image intentionally doesn't bundle the
+Prisma CLI, to keep the runtime image small.
+
+Environment variables (see `.env.example`): `DATABASE_URL` (defaults to
+`file:/data/lokal.db` in `docker-compose.yml`), `NEXT_PUBLIC_BASE_URL`. No
+API keys or third-party services are required — the container never phones
+home.
+
 ## Architecture
 
 ```

@@ -94,8 +94,13 @@ Accounts and authentication, billing, saved profiles and revisions, assessment
 comparison, external integrations or discovery, live migration tooling, procurement
 workflow, vector database or RAG, agent frameworks, model hosting, chatbot UI,
 multi-tenancy, compliance automation, server-side PDF, charting libraries,
-PostgreSQL deployment, Docker image, public sample gallery, euro-denominated cost
-calculators, and any LLM call in the planning path.
+PostgreSQL deployment, public sample gallery, euro-denominated cost calculators,
+and any LLM call in the planning path.
+
+Docker image was on this list and was pulled forward on explicit request: a
+self-hostable planning tool needs a self-hosting path simpler than "clone and
+run pnpm build" for the municipalities and SMEs it targets. See `Dockerfile`,
+`docker-compose.yml` and the README's "Docker" section.
 
 ## Definition of done for v0.1.0
 
