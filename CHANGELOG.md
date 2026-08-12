@@ -26,3 +26,5 @@ Dates are ISO 8601.
 - Application shell: header with locale switch, footer, skip link.
 - Message catalogs with a test that fails on structural drift, extra keys or empty
   values between locales.
+- GitHub Actions workflow running format, lint, typecheck, tests and build on every
+  pull request.
