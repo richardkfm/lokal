@@ -21,3 +21,8 @@ Dates are ISO 8601.
   domain notes under `docs/`, phase plans under `plans/`, and the first two
   architecture decision records.
 - AGPL-3.0-only license.
+- German/English routing via next-intl under `/[locale]`, with German as the
+  default and source language. `/` redirects to `/de`; unknown locales return 404.
+- Application shell: header with locale switch, footer, skip link.
+- Message catalogs with a test that fails on structural drift, extra keys or empty
+  values between locales.
