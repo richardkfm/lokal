@@ -38,6 +38,23 @@ const eslintConfig = defineConfig([
   ...nextTs,
 
   {
+    name: "lokal/unused-vars",
+    rules: {
+      // An underscore prefix marks a binding that exists only to be discarded,
+      // most often when destructuring a field out of an object on purpose.
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
+
+  {
     name: "lokal/pure-domain-layers",
     files: ["src/engine/**/*.ts", "src/rulepack/**/*.ts", "src/report/**/*.ts"],
     rules: {
