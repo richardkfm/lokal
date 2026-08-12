@@ -91,6 +91,21 @@ export const blockerRules: BlockerRule[] = [
       entry.seats >= 50,
   },
   {
+    // Replacing a cloud office suite with a locally installed one removes
+    // real-time co-editing. That is a legitimate choice — lower cost, far less
+    // to operate — but it is a capability people use daily, and discovering it
+    // after the rollout is how a migration acquires a bad name.
+    id: "loses-realtime-collaboration",
+    message: "caution.loses_realtime_collaboration",
+    severity: "caution",
+    when: ({ entry, target }) =>
+      entry.category === "office_docs" &&
+      target.hostingModes.length === 1 &&
+      target.hostingModes[0] === "local_device" &&
+      entry.currentTool.kind === "known" &&
+      ["microsoft-365-apps", "google-workspace-docs"].includes(entry.currentTool.id),
+  },
+  {
     id: "restricted-license-in-public-sector",
     message: "caution.license_carries_use_restrictions",
     severity: "caution",
