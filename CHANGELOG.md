@@ -70,3 +70,12 @@ Dates are ISO 8601.
   real-time co-editing; it now raises a caution.
 - AI readiness no longer lets organizational maturity mask the absence of any
   suitable hardware.
+
+### Added (Docker)
+
+- Docker support: a multi-stage `Dockerfile` producing a minimal, non-root
+  runtime image via Next's `output: "standalone"`, plus `docker-compose.yml`
+  running Prisma migrations as a one-off step against a persistent named
+  volume before the app starts. Documented under "Docker" in `README.md`.
+  Pulled forward from the roadmap's deferred list on explicit request — see
+  `plans/roadmap.md`.
