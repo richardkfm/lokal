@@ -60,8 +60,20 @@ const sources = z
   .array(z.url())
   .min(1, "Every rulepack entry needs at least one source a reviewer can check.");
 
+/**
+ * Whether a human has verified this entry against its sources.
+ *
+ * `draft` entries were authored from general knowledge and cite official
+ * documentation a reviewer can follow, but nobody has yet confirmed the ratings
+ * against the current release. The report states this prominently. A planning tool
+ * that quietly presents unverified ratings as researched fact is exactly the
+ * failure mode lokal exists to avoid.
+ */
+const reviewStatus = z.enum(["draft", "verified"]);
+
 const provenance = {
   lastReviewed: isoDate,
+  reviewStatus,
   sources,
 };
 

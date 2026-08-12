@@ -124,12 +124,17 @@ export function findIntegrityProblems(pack: Rulepack): IntegrityProblem[] {
   // --- Plausibility ---------------------------------------------------------
 
   for (const [index, tool] of pack.targetTools.entries()) {
-    // A tool nobody can self-host cannot claim full sovereignty; that reads as an
-    // overstated promise to precisely the readers who care most about it.
-    if (tool.sovereignty === 5 && !tool.hostingModes.includes("self_hosted")) {
+    // Full sovereignty requires that the data can stay under the organization's
+    // own control — either on its own servers or on its own devices. A tool
+    // available only as a hosted service cannot claim it, and saying otherwise
+    // reads as an overstated promise to precisely the readers who check.
+    const staysUnderOwnControl =
+      tool.hostingModes.includes("self_hosted") ||
+      tool.hostingModes.includes("local_device");
+    if (tool.sovereignty === 5 && !staysUnderOwnControl) {
       add(
         `targetTools[${index}].sovereignty`,
-        `"${tool.id}" claims top sovereignty but cannot be self-hosted.`,
+        `"${tool.id}" claims top sovereignty but can only run as a hosted service.`,
       );
     }
     if (tool.supportModel === "community" && tool.publicSectorFit === 5) {
@@ -150,6 +155,27 @@ export function findIntegrityProblems(pack: Rulepack): IntegrityProblem[] {
   }
 
   return problems;
+}
+
+/**
+ * How much of a pack has been through human verification. The report shows this
+ * so a reader can weigh the recommendations accordingly.
+ */
+export function reviewCoverage(pack: Rulepack): {
+  total: number;
+  verified: number;
+  allVerified: boolean;
+} {
+  const entries = [
+    ...pack.sourceTools,
+    ...pack.targetTools,
+    ...pack.migrationEdges,
+    ...pack.aiUseCases,
+    ...pack.aiDeployments,
+  ];
+  const verified = entries.filter((e) => e.reviewStatus === "verified").length;
+
+  return { total: entries.length, verified, allVerified: verified === entries.length };
 }
 
 /**
