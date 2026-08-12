@@ -27,6 +27,12 @@ jobs:
         env:
           DATABASE_URL: "file:./ci.db"
 
+      # The persistence tests round-trip a real assessment through SQLite, so
+      # the schema has to exist before they run.
+      - run: pnpm run db:deploy
+        env:
+          DATABASE_URL: "file:./ci.db"
+
       # Format, lint, typecheck and tests. The lint step carries the
       # architectural boundaries (pure engine, no currency in output), so a
       # violation fails the build rather than sliding through review.
