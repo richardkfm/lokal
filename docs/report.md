@@ -1,10 +1,8 @@
 # Report and export
 
-The report is the product's main artifact. It has to survive being forwarded to an
-IT lead, a department head, a procurement officer or a mayor, and still read as a
-planning brief rather than a tool dump.
-
-> Concrete component APIs are filled in as phase 4 lands.
+The report is the product's main artifact. It has to survive being forwarded to
+an IT lead, a department head, a procurement officer or a mayor, and still read
+as a planning brief rather than a tool dump.
 
 ## Information architecture
 
@@ -14,64 +12,84 @@ planning brief rather than a tool dump.
 | At a glance              | Six cards: readiness, migration posture, savings outlook, AI readiness, seats affected, phase count    |
 | 1 Executive summary      | Context, current state, target state, migration posture, AI posture                                    |
 | 2 Key advantages         | Lock-in, sovereignty, hosting control, data location, open standards, flexibility                      |
-| 3 Savings outlook        | Band, drivers, offsets, temporary-cost window, and the model's own limits                              |
+| 3 Savings outlook        | Band, drivers, offsets, and the model's own limits                                                     |
 | 4 Target stack           | Per category: current → recommended → backups, rationale, scalability, plus "considered and ruled out" |
-| 5 Migration roadmap      | Phases 0–4: goals, systems, seats, blockers, staffing, training, coexistence, rollback caution         |
-| 6 Capacity and readiness | Readiness bands, gaps, external support, pilot recommendations                                         |
+| 5 Migration roadmap      | Phases 0–4: goals, systems, seats, effort, blockers, pilots, gotchas                                   |
+| 6 Capacity and readiness | Readiness bands, effort against available time, gaps                                                   |
 | 7 Local-AI lane          | Per use case: now/pilot/later, deployment posture, risks, governance                                   |
-| 8 Scalability outlook    | Current size, growth, more departments, stricter governance, broader AI, more self-hosting maturity    |
-| 9 Next steps             | Immediate actions, 30 days, pilot suggestions, caution flags                                           |
-| Method and limits        | Inputs used, what the engine does not model, rulepack review date                                      |
+| 8 Scalability outlook    | Current size, growth, more departments, stricter governance, broader AI, more self-hosting             |
+| 9 Next steps             | Immediate actions, 30 days, pilots, caution flags                                                      |
+| Method and limits        | Inputs used, what the engine does not model, rulepack version                                          |
 
-"At a glance" is the page that actually gets read by leadership. It is designed to
-stand alone on one screen and one printed page.
+"At a glance" is the page leadership actually reads. It stands alone on one
+screen and one printed page.
 
 ## Component structure
 
-One component per section. Each receives exactly its typed slice of
-`PlanningReport` — never the whole document, never the raw assessment. That keeps
-sections independently testable and stops report logic from leaking into the UI.
+`ReportView` composes one block per section, each reading its own slice of
+`PlanningReport` — never the whole document, never the raw assessment, never the
+engine. Shared primitives live in `src/components/report/indicators.tsx`:
 
-Shared primitives live in `src/components/indicators`:
+`Meter`, `Badge`, `ComplexityDots`, `KpiCard`, `SeatImpactBar`, `Section`.
 
-`Meter`, `BandBadge`, `ComplexityDots`, `KpiCard`, `SeatImpactBar`, `PhaseCard`,
-`RationaleList`, `ConsideredRuledOut`.
+All of them are pure CSS. No charting library: canvas does not print reliably,
+and six bar meters do not justify the weight. Every indicator also carries a text
+label, so meaning survives greyscale printing and never depends on colour alone.
 
-All of them are pure CSS. No charting library: canvas does not print reliably, and
-six bar meters do not justify the weight. See
-[ADR-0002](adr/0002-print-first-pdf.md).
+## Rendering rationale codes
 
-## Styling for screen and print
+The engine emits codes with parameters; the report translates them. Two things
+about that are worth knowing before touching the catalogs:
 
-- Design tokens are CSS custom properties in `src/app/globals.css`. Print styles
-  override **token values** — an ink-safe palette, no large filled surfaces —
-  rather than restyling components. One set of components, two renderings.
-- `@page { size: A4; margin: 18mm 16mm; }` with a running header carrying
-  organization type and date, and a running footer with page numbers and version.
-- `break-inside: avoid` on cards and phase blocks; `break-before: page` before
-  sections 4, 5 and 7.
-- The print route is a separate server component tree: cover page, table of
-  contents, linear layout, no navigation, no interactive elements.
+- **next-intl resolves dotted keys as nested paths.** A flat `"advantage.x"` key
+  in the catalog is never found at runtime. `messages/*.json` nests
+  `rationale` accordingly.
+- **A code's parameters must be supplied as `params`, not only as `evidence`.**
+  Evidence is for traceability; params are what fill the placeholders. Supplying
+  one without the other leaves `{rulepackVersion}` unresolved and prints the raw
+  key into a document meant for management.
+
+`tests/report/to-markdown.test.ts` uses a deliberately strict translator that
+throws on a missing message and on an unresolved placeholder, across every
+persona in both languages. That is the guard against both mistakes.
+
+## Print
+
+- Print styles live in `src/styles/print.css` and override token **values** — an
+  ink-safe palette, no large filled surfaces — rather than restyling components.
+  One set of components, two renderings.
+- `@page { size: A4; margin: 18mm 16mm; }`.
+- `break-inside: avoid` on cards; `break-before: page` before sections 4, 5 and 7.
+- The "considered and ruled out" disclosure is forced open in print. Paper has no
+  `<details>`, and silently omitting the alternatives that were examined would
+  defeat the purpose of keeping them.
+- Link targets are printed after their text, so a paper copy stays checkable.
+
+**The print route has zero client components in its content tree.** That is the
+constraint from [ADR-0002](adr/0002-print-first-pdf.md) and the only thing needed
+today to make server-side PDF a later addition rather than a second
+implementation. Do not add interactivity there.
 
 ## Markdown export
 
-`toMarkdown(report, messages)` is pure — no DOM — and snapshot-tested per persona.
-GitHub-flavoured, tables for the target stack, headings mirroring the sections
-above. Served from `GET /api/report/[id]/markdown` as an attachment.
+`toMarkdown(report, { t })` is pure — no DOM, no framework, no clock. It takes
+its translator as an argument, which is what lets the tests substitute a strict
+one. GitHub-flavoured, tables for the target stack, headings mirroring the
+sections above, served from `GET /api/report/[id]/markdown` as an attachment.
 
-It is meant to be pasted into a wiki, Confluence or an email without cleanup.
+The export locale comes from the stored assessment rather than the request, so a
+report always exports in the language it was created in.
 
 ## Why the report is rendered from structured data
 
-Every section reads from `PlanningReport`, which the engine produces from rules and
-inputs. Nothing in the report is written prose held in a template. That is what
-makes the Markdown export, the screen view and the print view agree with each
-other, and what makes server-side PDF a later addition rather than a second
-implementation.
+Every section reads from `PlanningReport`, which the engine produces from rules
+and inputs. Nothing in the report is prose held in a template. That is what makes
+the Markdown export, the screen view and the print view agree with each other,
+and what makes server-side PDF a later addition rather than a rewrite.
 
 ## Maintainability
 
 When a new finding type is added, the order of work is: extend the report schema,
-extend the composer, add the message keys, then render it. A section component that
-needs data the schema does not carry is a signal that the engine — not the
-component — is missing a stage.
+extend the composer, add the message keys in both catalogs, then render it. A
+section component that needs data the schema does not carry is a signal that the
+engine — not the component — is missing a stage.
