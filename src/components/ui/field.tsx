@@ -30,7 +30,7 @@ export function Fieldset({
       {hint ? <p className="text-muted mb-3 text-sm leading-relaxed">{hint}</p> : null}
       {children}
       {error ? (
-        <p role="alert" className="text-[var(--color-risk)] mt-2 text-sm">
+        <p role="alert" className="mt-2 text-sm text-[var(--color-risk)]">
           {error}
         </p>
       ) : null}
@@ -62,7 +62,11 @@ export function RadioCards({
 }) {
   const groupId = useId();
   const columnClass =
-    columns === 1 ? "sm:grid-cols-1" : columns === 2 ? "sm:grid-cols-2" : "sm:grid-cols-3";
+    columns === 1
+      ? "sm:grid-cols-1"
+      : columns === 2
+        ? "sm:grid-cols-2"
+        : "sm:grid-cols-3";
 
   return (
     <div className={`grid grid-cols-1 gap-2 ${columnClass}`}>

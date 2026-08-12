@@ -19,5 +19,385 @@
     "subheading": "lokal nimmt die tatsächliche Ausgangslage Ihrer Organisation auf und erzeugt daraus einen nachvollziehbaren Plan: Zielarchitektur, Reihenfolge, Aufwand, Kapazitätsbedarf und eine realistische Einschätzung zur KI-Nutzung.",
     "ctaPrimary": "Erhebung starten",
     "placeholder": "Die Inhalte dieser Seite entstehen in Phase 5."
+  },
+  "wizard": {
+    "title": "Erhebung",
+    "subtitle": "Sechs Schritte, etwa fünfzehn Minuten. Ihre Angaben bleiben im Browser, bis Sie am Ende absenden.",
+    "loading": "Entwurf wird geladen …",
+    "back": "Zurück",
+    "next": "Weiter",
+    "submit": "Plan erstellen",
+    "submitting": "Wird erstellt …",
+    "submitFailed": "Der Plan konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
+    "completeStep": "Bitte füllen Sie diesen Schritt aus.",
+    "startOver": "Von vorn beginnen",
+    "steps": {
+      "organization": "Organisation",
+      "operating": "Betrieb",
+      "stack": "Systeme",
+      "detail": "Details",
+      "ai": "KI",
+      "review": "Prüfen"
+    },
+    "headings": {
+      "organization": "Ihre Organisation",
+      "operating": "Betrieb und Kapazitäten",
+      "stack": "Welche Bereiche betrachten wir?",
+      "detail": "Angaben je Bereich",
+      "ai": "Haltung zu KI",
+      "review": "Angaben prüfen"
+    },
+    "descriptions": {
+      "organization": "Art und Größe bestimmen, welche Empfehlungen überhaupt tragfähig sind.",
+      "operating": "Diese Angaben entscheiden darüber, was Sie selbst betreiben können und wo externe Unterstützung nötig wird.",
+      "stack": "Wählen Sie die Bereiche, die Sie tatsächlich betrachten möchten. Nicht ausgewählte Bereiche werden im Bericht als nicht erhoben ausgewiesen.",
+      "detail": "Diese Angaben bestimmen Reihenfolge, Aufwand und Risiko. Sie sind der eigentliche Kern der Planung.",
+      "ai": "Hieraus ergibt sich, welche KI-Anwendungsfälle heute tragfähig sind und welche warten sollten.",
+      "review": "Prüfen Sie Ihre Angaben. Sie können jeden Schritt noch ändern."
+    },
+    "organization": {
+      "typeLegend": "Art der Organisation",
+      "typeHint": "Bestimmt, welche Anforderungen an Nachweise, Beschaffung und Sprache gelten.",
+      "sizeLegend": "Größe",
+      "sizeHint": "Die Größenklasse wird aus der Zahl der Arbeitsplätze abgeleitet.",
+      "seatsLabel": "Arbeitsplätze insgesamt",
+      "seatsHint": "Personen mit eigenem Zugang, nicht gleichzeitige Nutzung.",
+      "derivedBucket": "Größenklasse: {bucket}",
+      "contextLegend": "Rahmenbedingungen",
+      "contextHint": "Diese Angaben beeinflussen Schulungsaufwand und Auswahl.",
+      "departmentsLabel": "Betroffene Bereiche",
+      "departmentsHint": "Durch Komma getrennt. Je mehr Bereiche, desto höher der Abstimmungsaufwand.",
+      "departmentsPlaceholder": "Bauamt, Bürgerbüro, Kämmerei",
+      "publicSectorLabel": "Öffentlicher Auftrag",
+      "publicSectorHint": "Beschaffungsregeln, Nachweispflichten, politische Aufsicht.",
+      "germanLabel": "Deutschsprachige Oberfläche erforderlich",
+      "germanHint": "Schließt Produkte ohne belastbare deutsche Fassung aus.",
+      "regionLabel": "Bundesland (optional)",
+      "regionNone": "Keine Angabe"
+    },
+    "operating": {
+      "hostingLegend": "Bevorzugter Betrieb",
+      "hostingHint": "Wo sollen die Systeme künftig laufen?",
+      "linuxLegend": "Linux- und Betriebskenntnisse",
+      "linuxHint": "Entscheidet darüber, ob Selbstbetrieb realistisch ist.",
+      "capacityLegend": "Kapazitäten",
+      "capacityHint": "Ehrliche Einschätzung hilft mehr als eine optimistische.",
+      "adminCapacityLabel": "Verfügbare Administrationszeit",
+      "adminCapacityHint": "Zeit, die zusätzlich zum laufenden Betrieb für Migrationen zur Verfügung steht.",
+      "itMaturityLabel": "IT-Reife",
+      "itMaturityHint": "Wie geordnet laufen Dokumentation, Änderungen und Sicherungen heute?",
+      "identityMaturityLabel": "Benutzerverwaltung",
+      "identityMaturityHint": "Gibt es ein zentrales Verzeichnis für Konten und Gruppen?",
+      "supportLegend": "Erwartung an Unterstützung",
+      "supportHint": "Reicht eine aktive Community, oder braucht es einen Vertragspartner?"
+    },
+    "stack": {
+      "legend": "Bereiche in Betrachtung",
+      "hint": "Wählen Sie mindestens einen Bereich.",
+      "notAssessedNote": "Nicht ausgewählte Bereiche erscheinen im Bericht ausdrücklich als nicht erhoben — nicht als unproblematisch."
+    },
+    "detail": {
+      "intro": "Diese Angaben bestimmen die Reihenfolge im Plan. Schätzungen genügen; Genauigkeit hilft, Präzision ist nicht nötig.",
+      "nothingSelected": "Es wurde noch kein Bereich ausgewählt.",
+      "currentToolLabel": "Derzeit eingesetzt",
+      "currentToolHint": "Frei eintragen. Leer lassen, wenn bislang nichts im Einsatz ist.",
+      "currentToolPlaceholder": "z. B. SharePoint",
+      "seatsLabel": "Betroffene Arbeitsplätze",
+      "seatsHint": "Kann von der Gesamtzahl abweichen — ein Ticketsystem betrifft oft nur wenige Personen.",
+      "criticalityLabel": "Betriebskritikalität",
+      "criticalityHint": "Was passiert, wenn dieses System einen Tag ausfällt?",
+      "painLabel": "Leidensdruck",
+      "painHint": "Wie sehr stört die heutige Lösung im Alltag?",
+      "lockInConcernLabel": "Sorge vor Abhängigkeit",
+      "lockInConcernHint": "Wie schwer wäre ein Wechsel weg vom heutigen Anbieter?",
+      "trainingSensitivityLabel": "Schulungsempfindlichkeit",
+      "trainingSensitivityHint": "Wie schwer fällt den Beschäftigten eine Umstellung?",
+      "urgencyLabel": "Dringlichkeit",
+      "urgencyHint": "Wann soll sich etwas ändern?"
+    },
+    "ai": {
+      "interestLegend": "Interesse an KI",
+      "interestHint": "Ehrlichkeit hier verhindert Empfehlungen, die niemand umsetzt.",
+      "sensitivityLegend": "Vertraulichkeit der Inhalte",
+      "sensitivityHint": "Wie sensibel sind die Daten, die verarbeitet würden?",
+      "hardwareLegend": "Verfügbare Hardware",
+      "hardwareHint": "Der harte Faktor: ohne passende Hardware ist lokale KI keine Option.",
+      "deploymentLegend": "Bevorzugter Betrieb der KI",
+      "deploymentHint": "Wo soll ein Modell laufen?",
+      "useCasesLegend": "Gewünschte Anwendungsfälle",
+      "useCasesHint": "Wählen Sie, was Sie tatsächlich vorhaben."
+    },
+    "review": {
+      "intro": "Kurze Zusammenfassung Ihrer Angaben. Der Plan wird ausschließlich hieraus berechnet.",
+      "edit": "Ändern",
+      "orgType": "Art",
+      "seats": "Arbeitsplätze",
+      "departments": "Bereiche",
+      "hosting": "Betrieb",
+      "categories": "Bereiche in Betrachtung",
+      "aiInterest": "KI",
+      "warningsTitle": "Hinweise zu Ihren Angaben",
+      "warningsNote": "Diese Hinweise verhindern das Absenden nicht. Sie erscheinen auch im Bericht.",
+      "warnSeatsExceedOrg": "Ein Bereich weist mehr Arbeitsplätze aus als die Organisation insgesamt.",
+      "warnNoDepartments": "Es wurden keine Bereiche benannt, obwohl die Organisation größer ist.",
+      "warnNoAiUseCases": "Es wurde Interesse an KI angegeben, aber kein Anwendungsfall gewählt."
+    }
+  },
+  "vocabulary": {
+    "orgType": {
+      "sme": {
+        "label": "Unternehmen (KMU)"
+      },
+      "municipality": {
+        "label": "Kommune"
+      },
+      "district_office": {
+        "label": "Landkreis"
+      },
+      "school": {
+        "label": "Schule"
+      },
+      "utility": {
+        "label": "Stadtwerk / Versorger"
+      },
+      "association": {
+        "label": "Verein / Verband"
+      }
+    },
+    "hostingPreference": {
+      "self_hosted": {
+        "label": "Selbst betrieben",
+        "hint": "Auf eigener Hardware oder eigenem Server."
+      },
+      "eu_hosted": {
+        "label": "Bei einem EU-Anbieter",
+        "hint": "Betrieb durch Dritte, Daten in der EU."
+      },
+      "undecided": {
+        "label": "Noch offen",
+        "hint": "Beides denkbar."
+      }
+    },
+    "linuxCapability": {
+      "none": {
+        "label": "Keine",
+        "hint": "Niemand betreut Server."
+      },
+      "basic": {
+        "label": "Grundkenntnisse",
+        "hint": "Einzelne Personen können Systeme betreuen."
+      },
+      "strong": {
+        "label": "Belastbar",
+        "hint": "Eigenes Team mit Betriebserfahrung."
+      }
+    },
+    "supportExpectation": {
+      "community_tolerant": {
+        "label": "Community genügt",
+        "hint": "Selbst recherchieren ist vertretbar."
+      },
+      "vendor_support_needed": {
+        "label": "Vertragspartner nötig",
+        "hint": "Es braucht jemanden mit Zusagen."
+      }
+    },
+    "adminCapacity": {
+      "low": {
+        "label": "Gering"
+      },
+      "medium": {
+        "label": "Mittel"
+      },
+      "high": {
+        "label": "Hoch"
+      }
+    },
+    "itMaturity": {
+      "low": {
+        "label": "Gering"
+      },
+      "medium": {
+        "label": "Mittel"
+      },
+      "high": {
+        "label": "Hoch"
+      }
+    },
+    "identityMaturity": {
+      "low": {
+        "label": "Gering",
+        "hint": "Konten je System."
+      },
+      "medium": {
+        "label": "Teilweise"
+      },
+      "high": {
+        "label": "Zentral",
+        "hint": "Ein Verzeichnis für alles."
+      }
+    },
+    "criticality": {
+      "low": {
+        "label": "Gering"
+      },
+      "medium": {
+        "label": "Mittel"
+      },
+      "high": {
+        "label": "Hoch"
+      }
+    },
+    "pain": {
+      "low": {
+        "label": "Gering"
+      },
+      "medium": {
+        "label": "Spürbar"
+      },
+      "high": {
+        "label": "Hoch"
+      }
+    },
+    "lockInConcern": {
+      "low": {
+        "label": "Gering"
+      },
+      "medium": {
+        "label": "Mittel"
+      },
+      "high": {
+        "label": "Hoch"
+      }
+    },
+    "trainingSensitivity": {
+      "low": {
+        "label": "Gering"
+      },
+      "medium": {
+        "label": "Mittel"
+      },
+      "high": {
+        "label": "Hoch"
+      }
+    },
+    "dataSensitivity": {
+      "low": {
+        "label": "Gering"
+      },
+      "medium": {
+        "label": "Mittel"
+      },
+      "high": {
+        "label": "Hoch"
+      }
+    },
+    "urgency": {
+      "now": {
+        "label": "Jetzt"
+      },
+      "this_year": {
+        "label": "Dieses Jahr"
+      },
+      "later": {
+        "label": "Später"
+      }
+    },
+    "aiInterest": {
+      "none": {
+        "label": "Kein Interesse"
+      },
+      "cautious": {
+        "label": "Zurückhaltend",
+        "hint": "Grundsätzlich offen, aber vorsichtig."
+      },
+      "active": {
+        "label": "Aktiv",
+        "hint": "Konkrete Vorhaben."
+      }
+    },
+    "hardwareProfile": {
+      "none": {
+        "label": "Keine",
+        "hint": "Keine geeignete Hardware vorhanden."
+      },
+      "office_pcs": {
+        "label": "Arbeitsplatzrechner",
+        "hint": "Übliche Bürorechner."
+      },
+      "server": {
+        "label": "Eigener Server",
+        "hint": "Serverhardware im Haus."
+      },
+      "gpu_capable": {
+        "label": "Server mit Grafikkarte",
+        "hint": "Für größere Modelle geeignet."
+      }
+    },
+    "aiDeployment": {
+      "local_device": {
+        "label": "Auf dem Arbeitsplatz"
+      },
+      "on_prem": {
+        "label": "Auf eigenem Server"
+      },
+      "eu_hosted": {
+        "label": "Bei EU-Anbieter"
+      },
+      "undecided": {
+        "label": "Noch offen"
+      }
+    },
+    "aiUseCase": {
+      "summarization": {
+        "label": "Zusammenfassungen",
+        "hint": "Lange Texte kürzen."
+      },
+      "document_qa": {
+        "label": "Fragen an eigene Dokumente",
+        "hint": "Setzt einen erschlossenen Bestand voraus."
+      },
+      "drafting": {
+        "label": "Entwurfshilfe",
+        "hint": "Erste Fassungen von Schreiben."
+      },
+      "ticket_triage": {
+        "label": "Vorsortierung von Anfragen",
+        "hint": "Zuordnung nach Thema und Dringlichkeit."
+      },
+      "knowledge_assistant": {
+        "label": "Interner Wissensassistent",
+        "hint": "Anspruchsvollster Fall."
+      }
+    },
+    "category": {
+      "office_docs": {
+        "label": "Office und Dokumente"
+      },
+      "file_sharing": {
+        "label": "Dateiablage"
+      },
+      "chat_video": {
+        "label": "Chat und Video"
+      },
+      "intranet_wiki": {
+        "label": "Intranet und Wissen"
+      },
+      "project_management": {
+        "label": "Projekte und Aufgaben"
+      },
+      "helpdesk": {
+        "label": "Helpdesk"
+      },
+      "forms_surveys": {
+        "label": "Formulare und Umfragen"
+      },
+      "crm": {
+        "label": "Kontaktverwaltung"
+      },
+      "dms_archive": {
+        "label": "Dokumentenmanagement"
+      }
+    }
   }
 }
