@@ -42,3 +42,31 @@ Dates are ISO 8601.
   same research depth as the core seven.
 - Every rule entry ships as `draft` until a human has verified it against its
   sources; the report will state this.
+
+### Added (phases 2–5)
+
+- Nine-stage planning engine: normalization, readiness bands with cross-checks,
+  candidate filtering that retains elimination reasons, fit scoring with a bounded
+  ecosystem-coherence pass, migration difficulty, phase sequencing under
+  dependency and change-capacity constraints, capacity confrontation, qualitative
+  savings outlook and the local-AI lane. Pure and deterministic throughout.
+- `PlanningReport`: a versioned, validated JSON document that is the only contract
+  between the engine and every renderer.
+- Assessment persistence in SQLite, with reports recomputed on every render rather
+  than stored.
+- Six-step intake wizard with localStorage autosave, per-step validation and a
+  review step that raises data-quality warnings without blocking submission.
+- Report view with an at-a-glance summary and nine sections, rendered fully
+  server-side with CSS-only indicators.
+- Markdown export and a print-optimized route with A4 print styles.
+- Landing page stating plainly what lokal is and what it is not.
+- Five persona fixtures spanning association, school, municipality, utility and SME.
+
+### Fixed
+
+- Sequencing scheduled a migration before the one providing its prerequisite, so a
+  plan could switch on chat before the platform it runs on existed.
+- Replacing a cloud office suite with a locally installed one silently dropped
+  real-time co-editing; it now raises a caution.
+- AI readiness no longer lets organizational maturity mask the absence of any
+  suitable hardware.

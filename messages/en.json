@@ -16,9 +16,29 @@
   },
   "landing": {
     "heading": "From your current situation to a plan you can defend",
-    "subheading": "lokal takes your organization's actual starting position and turns it into a traceable plan: target stack, sequence, effort, capacity needs and a realistic view of where AI fits today.",
+    "subheading": "lokal takes your organization’s actual starting position and turns it into a traceable plan: target stack, sequence, effort, capacity needs and a realistic view of where AI fits today.",
     "ctaPrimary": "Start assessment",
-    "placeholder": "The content of this page is written in phase 5."
+    "ctaNote": "Six steps, about fifteen minutes. No account needed.",
+    "answersTitle": "Questions this plan answers",
+    "answers": {
+      "first": "What should we replace first — and what stays as it is for now?",
+      "fit": "Which target stack fits this organization, and why?",
+      "seats": "How many seats does each individual change affect?",
+      "gaps": "Where are we underprepared, and where will we need outside support?",
+      "ai": "Which AI use cases are viable today, and which should wait?",
+      "risks": "Which risks, dependencies and training needs are coming our way?"
+    },
+    "notTitle": "What lokal is not",
+    "not": {
+      "directory": "Not a directory of alternatives. Any chat can suggest replacement products. lokal starts where that stops: sequence, capacity, risk and rollout.",
+      "wrapper": "Not an AI tool. No language model is involved in producing the plan. Recommendations come from a rulepack you can read — the same answers produce the same result.",
+      "calculator": "Not a cost calculator. Savings are reported as a band with named drivers, not as invented amounts.",
+      "compliance": "Not legal advice. Where retention or archival duties apply, lokal flags them and points to qualified advisors."
+    },
+    "audienceTitle": "Who it is for",
+    "audience": "Municipalities, district offices, schools, utilities, associations and small to mid-sized companies — Germany first.",
+    "outputTitle": "What you end up with",
+    "output": "A report you can pass on: a one-page summary, a recommended target stack per area with its rationale and the alternatives ruled out, a phased roadmap with effort and seats affected, a capacity check, an AI assessment — as a web page, as Markdown, and in a print-ready form for PDF."
   },
   "wizard": {
     "title": "Assessment",
@@ -399,5 +419,370 @@
         "label": "Document management"
       }
     }
+  },
+  "rationale": {
+    "advantage": {
+      "aligns_with_public_sector_expectations": "Aligns with public-sector expectations: traceable procurement, open formats, auditable processes.",
+      "data_stays_under_own_control": "Data stays under your own control ({count} recommended systems with strong data sovereignty).",
+      "hosting_location_is_a_choice": "Where the systems run becomes your decision rather than the vendor's.",
+      "open_formats_and_exit_options": "Open formats keep a later change of course possible.",
+      "ready_for_local_ai": "The target stack can be combined with self-hosted AI.",
+      "reduced_lock_in": "Reduced lock-in in {count} areas you explicitly named as a concern."
+    },
+    "ai": {
+      "address_prerequisites_first": "All {count} desired use cases require groundwork first.",
+      "fits_today": "Technically and organizationally viable today.",
+      "hardware_below_requirement": "Available hardware ({available}) is not sufficient for this use case; at least {required} is required.",
+      "needs_a_document_store_first": "Without an indexed document base there is nothing for questions to refer to. The repository comes first, then this use case.",
+      "no_interest_declared": "No interest in AI was indicated.",
+      "no_posture_carries_this_data": "No viable deployment posture carries content at this confidentiality level ({sensitivity}).",
+      "review_optional": "Human review is advisable but not mandatory.",
+      "review_recommended": "Results should be checked on a sample basis.",
+      "review_required": "Results must be reviewed before use.",
+      "review_process_needed_before_scale": "A defined review process is needed before a broad rollout.",
+      "sensitive_content_leaves_the_building": "Confidential content would leave the building. Contractual commitments on processing are decisive here.",
+      "start_with_a_pilot": "Begin with a limited pilot (AI readiness: {readiness})."
+    },
+    "blocker": {
+      "beyond_comfortable_seat_range": "{tool} is not designed for this number of seats.",
+      "community_support_but_vendor_expected": "{tool} is community-supported only; you stated a contracted partner is required.",
+      "insufficient_german_interface": "{tool} does not offer a dependable German-language interface.",
+      "self_host_without_linux_capability": "{tool} is only available self-hosted and demands operational skills not currently available."
+    },
+    "capacity": {
+      "budget_for_external_support": "A budget for external support should be planned.",
+      "external_support_likely": "External support is likely required for {category} ({tool}).",
+      "pilot_before_rollout": "{category}: pilot first rather than rolling out to all {seats} seats.",
+      "plan_exceeds_annual_capacity": "The plan requires at least {minDays} administrator-days; roughly {availableDays} are available per year. Either extend the timeline or plan for support.",
+      "plan_may_exceed_annual_capacity": "In the worst case ({maxDays} days) the plan exceeds the {availableDays} days available per year.",
+      "significant_training_load": "{count} migrations together affect {seats} seats with high training sensitivity."
+    },
+    "caution": {
+      "approaching_seat_ceiling": "{tool} approaches its usual limit at this size.",
+      "critical_system_cannot_run_in_parallel": "{tool} can barely run alongside the incumbent — an elevated risk for a business-critical system.",
+      "few_public_sector_references": "There are few German public-sector references for {tool}.",
+      "license_carries_use_restrictions": "The licence of {tool} carries use restrictions and therefore does not meet the classic open-source definition. Public bodies should check this before adopting.",
+      "limited_track_record_for_critical_system": "{tool} is comparatively young, which matters for a business-critical system.",
+      "loses_realtime_collaboration": "{tool} removes real-time co-editing. That lowers operating effort and cost, but it is a capability people use daily.",
+      "ops_load_exceeds_admin_capacity": "{tool} demands more ongoing attention than currently appears available.",
+      "thin_german_service_market": "There are few service providers for {tool} in Germany.",
+      "training_load_meets_sensitivity": "{tool} requires noticeable retraining in a workforce sensitive to change."
+    },
+    "difficulty": {
+      "base_complexity": "Base complexity of the target",
+      "business_critical": "Business-critical system",
+      "capable_team_reduces_effort": "Existing operational capability reduces the effort",
+      "identity_gap": "No central user directory in place",
+      "no_viable_target": "No viable target under the stated constraints",
+      "origin_makes_it_easier": "The path from the current system is well trodden",
+      "origin_makes_it_harder": "The path from the current system is particularly demanding",
+      "seat_count": "Number of seats affected",
+      "training_sensitivity": "Elevated training requirement",
+      "unknown_current_tool": "The current system is not covered by the rulepack"
+    },
+    "driver": {
+      "admin_capacity": "Available administration time",
+      "ai_interest": "Interest in AI",
+      "data_sensitivity": "Confidentiality of content",
+      "department_spread": "Number of areas affected",
+      "hardware_profile": "Available hardware",
+      "identity_maturity": "Maturity of user management",
+      "it_maturity": "IT maturity",
+      "linux_capability": "Linux and operations skills",
+      "organization_size": "Size of the organization",
+      "support_expectation": "Support expectation"
+    },
+    "fit": {
+      "can_run_alongside_current": "Can run alongside the current system",
+      "fits_chosen_ecosystem": "Fits the ecosystem already chosen ({ecosystem})",
+      "german_interface": "Dependable German-language interface",
+      "german_service_market": "Service providers available in Germany",
+      "low_operating_effort": "Low ongoing operating effort",
+      "low_training_effort": "Low training effort",
+      "public_sector_references": "References in the German public sector",
+      "strong_sovereignty": "Strong data sovereignty and exit options",
+      "vendor_backed_support": "Vendor-backed support available"
+    },
+    "gap": {
+      "ai_ambition_without_hardware": "AI is explicitly wanted but no suitable hardware exists. Without procurement, local AI stays an intention.",
+      "identity_foundation_missing_at_scale": "At {totalSeats} seats without a central directory, every rollout creates its own account list.",
+      "many_migrations_with_low_admin_capacity": "{categories} areas are due for migration with little administration time available.",
+      "self_hosting_without_linux_capability": "Self-hosting is preferred but the operational skills are missing. Either build that capability or start with managed hosting.",
+      "sensitive_data_with_external_inference": "Highly confidential content is to be processed by an external provider, which conflicts with the stated protection requirement.",
+      "several_urgent_critical_migrations_at_once": "{count} business-critical projects are meant to start at once and immediately. That exceeds what the organization can absorb."
+    },
+    "gotcha": {
+      "attachment_links": "Links to attachments break and need reworking.",
+      "automations_need_rebuilding": "Automations accumulated over years must be rebuilt.",
+      "chat_history_not_portable": "Conversation history cannot be meaningfully carried over. The usual approach is a cutover date with read access to the old system.",
+      "content_needs_rewriting": "Content must be reviewed and largely rewritten.",
+      "deep_folder_nesting": "Deeply nested folders cause problems during the move.",
+      "email_routing_changes": "Email routing has to be changed.",
+      "external_share_links_break": "External share links become invalid and must be re-communicated.",
+      "informal_channels_persist": "Informal channels do not disappear on their own; a binding rule is needed.",
+      "integrations_need_rebuilding": "Connected systems must be reconnected.",
+      "linked_workbooks": "Linked workbooks break and must be checked individually.",
+      "links_from_other_systems": "Links from other applications point nowhere.",
+      "long_file_paths": "Very long file paths cause transfer errors.",
+      "macro_heavy_spreadsheets": "Macro-heavy spreadsheets do not run without rework. They should be sought out in advance.",
+      "meeting_links_in_calendar_invites": "Meeting links in existing invitations keep pointing at the old system.",
+      "no_clear_owner": "Without named ownership the content goes stale quickly.",
+      "orphaned_permissions": "Orphaned permissions must be cleaned up.",
+      "permissions_inherited_deeply": "Nested permissions cannot be transferred one to one.",
+      "process_must_be_defined_first": "Responsibilities and handling paths must be settled before rollout.",
+      "reporting_definitions_differ": "Reports do not match and must be redefined.",
+      "retention_rules_unclear": "Retention duties must be settled in advance with qualified advice.",
+      "scanning_capacity_underestimated": "The effort to capture the existing stock is regularly underestimated.",
+      "teams_is_also_file_storage": "Teams doubles as file storage and meeting tool. Those parts need planning separately.",
+      "template_formatting_drift": "Elaborately designed templates shift in layout.",
+      "tool_cannot_create_process": "A tool does not replace a missing way of working.",
+      "wiki_macros_do_not_transfer": "Macros and embedded elements do not transfer."
+    },
+    "keep": {
+      "effort_outweighs_current_benefit": "{category}: the effort ({difficulty}) currently outweighs the benefit. Not a pressing project.",
+      "no_suitable_target_yet": "{category}: under the stated constraints there is currently no viable alternative."
+    },
+    "method": {
+      "not_modelled": {
+        "existing_contracts": "Existing contracts and their terms",
+        "integrations_with_specialist_software": "Integrations with specialist software",
+        "legal_retention_duties": "Legal retention and archival duties",
+        "licence_prices": "Licence prices and concrete costs",
+        "network_topology": "Network topology and site connectivity",
+        "staff_skills_in_detail": "The skills of individual staff"
+      }
+    },
+    "next": {
+      "address_prerequisite": "Establish the prerequisite: {prerequisite}",
+      "pilot_ai_use_case": "Set up a pilot for the AI use case {useCase}.",
+      "plan_first_phase": "Plan the first phase with {count} projects in concrete terms.",
+      "run_pilot": "Set up a pilot for {category}.",
+      "verify_recommendations_against_current_releases": "Check the recommendations against the current state of the products (rulepack {rulepackVersion})."
+    },
+    "note": {
+      "categories_not_assessed": "{count} areas were not assessed and are not evaluated in this plan.",
+      "category_seats_exceed_organization": "{category} reports {seats} seats while the organization has {totalSeats} in total. Please check.",
+      "no_candidate_survived_constraints": "For {category}, none of the {considered} options examined survived the stated constraints.",
+      "no_departments_named": "No areas were named for {totalSeats} seats, which makes coordination effort harder to judge.",
+      "public_sector_implied_by_org_type": "As a {orgType}, public-sector expectations apply regardless of what was ticked."
+    },
+    "phase": {
+      "complex_or_cannot_run_in_parallel": "High effort ({difficulty}) or no parallel operation possible.",
+      "deferred_to_spread_critical_change": "Deferred to keep at most {limit} business-critical change(s) running at once.",
+      "moderate_effort_or_business_critical": "Moderate effort or business-critical.",
+      "optimization_and_local_ai": "Optimization and local AI once the foundation is in place.",
+      "prerequisites_before_anything_else": "{count} prerequisites must be in place before any migration.",
+      "quick_win": "Low effort with noticeable benefit.",
+      "waits_for_dependency": "Waits for {dependsOn}, which this system builds on."
+    },
+    "revisit": {
+      "at_contract_renewal": "Re-examine at the next contract renewal.",
+      "when_constraints_change": "Re-examine once the constraints change."
+    },
+    "savings": {
+      "excludes_internal_time_costs": "Internal staff time is not valued in this assessment.",
+      "exit_options_improve": "{category}: improved exit options.",
+      "external_support_cost": "External support should be planned for {count} projects.",
+      "hosting_under_own_control": "Operating costs become something you shape rather than something set by a vendor.",
+      "migration_effort_upfront": "The migration effort of {minDays} to {maxDays} administrator-days comes first.",
+      "model_is_qualitative": "This outlook is qualitative. lokal has no pricing model and therefore deliberately states no amounts.",
+      "parallel_running_costs": "Across {phases} phases, old and new systems run alongside each other for a time.",
+      "procurement_flexibility": "More room to manoeuvre in procurement.",
+      "recurring_licence_exposure_reduced": "Recurring licence exposure for {tool} across {seats} seats falls away.",
+      "support_contracts_still_needed": "Support contracts remain necessary and offset part of the saving.",
+      "training_cost": "Training effort for {seats} seats."
+    },
+    "scale": {
+      "additional_departments_manageable": "Additional areas can be taken on without rebuilding.",
+      "ai_needs_foundations_first": "The foundations for broader AI use are not yet in place.",
+      "can_take_more_in_house_over_time": "More can be taken in-house over time.",
+      "close_to_current_limit": "At {seats} seats the target stack sits close to its usual limit ({tool}).",
+      "comfortable_at_current_size": "The target stack is comfortably sized for {seats} seats.",
+      "identity_needed_before_more_departments": "User management needs sorting before taking on further areas.",
+      "review_before_significant_growth": "Before significant growth, re-assess {tool} (comfortable to roughly {comfortableUpTo}).",
+      "room_for_growth": "There is room for growth ({tool} carries to roughly {comfortableUpTo}).",
+      "self_hosting_supports_stricter_rules": "Self-hosting supports stricter requirements later without changing the stack.",
+      "stack_supports_broader_ai_later": "The stack supports broadening AI use later.",
+      "start_managed_move_in_house_later": "Start with managed hosting and bring it in-house as capability grows."
+    }
+  },
+  "report": {
+    "documentKind": "Internal planning document",
+    "title": "Migration plan",
+    "coverLine": "{orgType} · {seats} seats · created {date}",
+    "draftRulepackNotice": "Note: the underlying rulepack ({version}) has not yet been checked against current product releases by a qualified reviewer. The ratings are careful but unconfirmed. Verify independently before any procurement decision.",
+    "glance": {
+      "title": "At a glance",
+      "readiness": "Readiness",
+      "readinessDetail": "{score} of 100",
+      "posture": "Approach",
+      "savings": "Savings outlook",
+      "savingsDetail": "qualitative, no amounts",
+      "ai": "AI",
+      "aiDetail": "Recommended stance",
+      "seats": "Seats affected",
+      "seatsDetail": "of {total} in total",
+      "phases": "Phases",
+      "phasesDetail": "carrying work"
+    },
+    "readinessLabel": {
+      "weak": "Weak",
+      "developing": "Developing",
+      "solid": "Solid",
+      "strong": "Strong"
+    },
+    "readinessBand": {
+      "opsCapability": "Operations capability",
+      "changeCapacity": "Change capacity",
+      "identityReadiness": "User management",
+      "aiReadiness": "AI readiness"
+    },
+    "posture": {
+      "prepare_first": "Prepare first",
+      "start_selectively": "Start selectively",
+      "proceed": "Proceed"
+    },
+    "postureDetail": {
+      "prepare_first": "Foundations still missing",
+      "start_selectively": "Begin with individual projects",
+      "proceed": "Preconditions are met"
+    },
+    "postureNarrative": {
+      "prepare_first": "The target stack is sound; the organization is not yet, in ways that matter. Establish the named prerequisites before the first substantial project, or the effort simply moves later and costs more.",
+      "start_selectively": "Some projects can start now; others need groundwork first. The sequence in section 5 reflects that.",
+      "proceed": "The preconditions are broadly met. The plan can be approached in the order proposed."
+    },
+    "aiNarrative": {
+      "not_now": "The foundations for AI are not in place yet. That is a question of sequence, not a failing.",
+      "start_small": "AI is feasible, but as a limited pilot with human review first.",
+      "proceed": "Some AI use cases are viable today; the detail is in section 7."
+    },
+    "aiPosture": {
+      "not_now": "Not yet",
+      "start_small": "Start small",
+      "proceed": "Feasible"
+    },
+    "aiTiming": {
+      "now": "Now",
+      "pilot": "Pilot",
+      "later": "Later"
+    },
+    "outlook": {
+      "low": "Low",
+      "moderate": "Moderate",
+      "strong": "Strong"
+    },
+    "difficulty": {
+      "low": "low",
+      "moderate": "moderate",
+      "high": "high",
+      "very_high": "very high"
+    },
+    "summary": {
+      "title": "Executive summary",
+      "context": "The assessment covers a {orgType} with {seats} seats (size band {bucket}). {categories} areas were assessed.",
+      "target": "The plan proposes {planned} migrations. {keep} areas should stay as they are for now."
+    },
+    "advantages": {
+      "title": "Key advantages"
+    },
+    "savings": {
+      "title": "Savings outlook",
+      "drivers": "Where cost falls away",
+      "offsets": "What works against it"
+    },
+    "stack": {
+      "title": "Recommended target stack",
+      "lead": "One recommendation per area with its rationale, backup options, and the alternatives that were examined and ruled out.",
+      "current": "Today",
+      "seats": "{seats} seats",
+      "backups": "Backup options",
+      "nothingInUse": "nothing in use",
+      "noViableTarget": "no viable alternative",
+      "ruledOut": "{count} examined and ruled out",
+      "focusedCoverage": "narrower coverage"
+    },
+    "roadmap": {
+      "title": "Migration roadmap",
+      "lead": "Sequence, effort and seats affected per phase. Effort figures are planning estimates in administrator-days.",
+      "effort": "{min}–{max} days",
+      "seatsAffected": "Seats affected",
+      "pilot": "pilot recommended",
+      "externalSupport": "external support likely",
+      "watchOutFor": "Watch out for:",
+      "keepForNow": "Keep as they are for now",
+      "keepForNowLead": "These areas should not be touched right now. That is a deliberate recommendation, not a gap in the plan."
+    },
+    "phase": {
+      "0": {
+        "title": "Phase 0 — Prerequisites",
+        "goal": "Establish the foundations every later step builds on."
+      },
+      "1": {
+        "title": "Phase 1 — Quick wins",
+        "goal": "Projects with noticeable benefit at manageable effort."
+      },
+      "2": {
+        "title": "Phase 2 — Moderate projects",
+        "goal": "Changes with higher coordination and training needs."
+      },
+      "3": {
+        "title": "Phase 3 — Demanding projects",
+        "goal": "Complex or business-critical changes needing their own project structure."
+      },
+      "4": {
+        "title": "Phase 4 — Optimization and local AI",
+        "goal": "Consolidation and the first AI use cases."
+      }
+    },
+    "capacity": {
+      "title": "Readiness and capacity",
+      "lead": "How much the organization can carry, in the places that matter.",
+      "budget": "Effort against available time",
+      "budgetLine": "The plan requires roughly {min}–{max} administrator-days. An estimated {availableMin}–{availableMax} days are available per year.",
+      "estimateNote": "A planning estimate in ranges — not a quote and not a commitment.",
+      "gaps": "Where it gets difficult"
+    },
+    "ai": {
+      "title": "Local AI",
+      "lead": "Which use cases are viable today, which deserve a pilot, and which should wait."
+    },
+    "scalability": {
+      "title": "Scalability and outlook",
+      "lead": "Whether the recommended stack still holds as the organization changes.",
+      "currentSize": "Current size",
+      "growth": "Growth",
+      "moreDepartments": "More areas",
+      "stricterGovernance": "Stricter requirements",
+      "broaderAi": "Broader AI use",
+      "selfHostingMaturity": "More self-hosting"
+    },
+    "next": {
+      "title": "Next steps",
+      "immediate": "Immediately",
+      "within30Days": "Within 30 days",
+      "pilots": "Pilots",
+      "cautionFlags": "Caution flags"
+    },
+    "method": {
+      "title": "Method and limits",
+      "lead": "This plan was calculated from the answers given and a fixed rulepack. No language model was involved; the same answers produce the same result.",
+      "notModelled": "Not modelled",
+      "notAssessed": "Areas not assessed",
+      "dataQuality": "Notes on the answers",
+      "footer": "Calculated with lokal (engine {engineVersion}, rulepack {rulepackVersion}).",
+      "linkNotice": "The link to this report is unguessable but not protected. Treat it as an internal document."
+    },
+    "actions": {
+      "markdown": "Download Markdown",
+      "print": "Print or save as PDF",
+      "backToReport": "Back to the report"
+    },
+    "notFound": {
+      "title": "Report not found",
+      "body": "There is no report at this link. It may have been removed, or the link may be incomplete.",
+      "cta": "Start a new assessment"
+    },
+    "rulesChanged": "Note: this report was recalculated with a newer rulepack because the version originally used ({version}) is no longer available. Individual recommendations may differ from the original."
   }
 }
