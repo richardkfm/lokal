@@ -165,6 +165,29 @@ describe("sequencing", () => {
     }
   });
 
+  it("never schedules a migration before the one it depends on", () => {
+    // Nextcloud Talk runs on a file platform. A plan that switches on chat in
+    // phase 1 while the platform it needs arrives in phase 3 is internally
+    // consistent on paper and impossible in practice.
+    const p = plan({
+      categories: ["file_sharing", "chat_video"],
+      criticality: "high",
+      pain: "high",
+      urgency: "now",
+    });
+
+    const byCategory = new Map(
+      p.phases.flatMap((phase) => phase.migrations).map((m) => [m.category, m]),
+    );
+    const files = byCategory.get("file_sharing");
+    const chat = byCategory.get("chat_video");
+
+    if (files && chat && chat.recommendation.primary?.tool.ecosystem === "nextcloud") {
+      expect(chat.phase).toBeGreaterThan(files.phase);
+      expect(chat.reasons.map((r) => r.code)).toContain("phase.waits_for_dependency");
+    }
+  });
+
   it("says what to keep for now instead of scheduling everything", () => {
     const p = plan({
       categories: ["file_sharing", "dms_archive"],
