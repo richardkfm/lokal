@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "title": "lokal",
+    "description": "Planning tool for the move to open-source workplace tools, sovereign hosting and local AI."
+  },
+  "nav": {
+    "skipToContent": "Skip to content",
+    "start": "Start",
+    "assessment": "Assessment",
+    "language": "Language"
+  },
+  "shell": {
+    "tagline": "Migration planning for open source, sovereign hosting and local AI",
+    "footerNote": "lokal produces planning input, not legal or procurement advice.",
+    "sourceLink": "Source code"
+  },
+  "landing": {
+    "heading": "From your current situation to a plan you can defend",
+    "subheading": "lokal takes your organization's actual starting position and turns it into a traceable plan: target stack, sequence, effort, capacity needs and a realistic view of where AI fits today.",
+    "ctaPrimary": "Start assessment",
+    "placeholder": "The content of this page is written in phase 5."
+  }
+}

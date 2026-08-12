@@ -22,7 +22,7 @@ Each chunk is one reviewable commit, roughly 30 minutes of work.
 | --- | -------------------------------------------------------------------- | ---------------------------------------------- | ------ |
 | 0.1 | Next.js 16, strict TypeScript, Tailwind v4, ESLint, Prettier, Vitest | `pnpm check` and `pnpm build` clean            | done   |
 | 0.2 | README, CHANGELOG, CLAUDE.md, docs and plans skeleton, ADRs, license | Docs read coherently; no broken internal links | done   |
-| 0.3 | Design tokens, app shell, next-intl bootstrap with `[locale]`        | `/de` and `/en` both render the shell          |        |
+| 0.3 | Design tokens, app shell, next-intl bootstrap with `[locale]`        | `/de` and `/en` both render the shell          | done   |
 
 ### Phase 1 — Domain and rulepack
 
