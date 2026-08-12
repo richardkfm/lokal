@@ -1,0 +1,23 @@
+{
+  "meta": {
+    "title": "lokal",
+    "description": "Planungswerkzeug für den Umstieg auf Open-Source-Arbeitswerkzeuge, souveränes Hosting und lokale KI."
+  },
+  "nav": {
+    "skipToContent": "Zum Inhalt springen",
+    "start": "Start",
+    "assessment": "Erhebung",
+    "language": "Sprache"
+  },
+  "shell": {
+    "tagline": "Migrationsplanung für Open Source, souveränes Hosting und lokale KI",
+    "footerNote": "lokal erstellt Planungsgrundlagen, keine Rechts- oder Beschaffungsberatung.",
+    "sourceLink": "Quellcode"
+  },
+  "landing": {
+    "heading": "Vom Ist-Zustand zum belastbaren Migrationsplan",
+    "subheading": "lokal nimmt die tatsächliche Ausgangslage Ihrer Organisation auf und erzeugt daraus einen nachvollziehbaren Plan: Zielarchitektur, Reihenfolge, Aufwand, Kapazitätsbedarf und eine realistische Einschätzung zur KI-Nutzung.",
+    "ctaPrimary": "Erhebung starten",
+    "placeholder": "Die Inhalte dieser Seite entstehen in Phase 5."
+  }
+}
