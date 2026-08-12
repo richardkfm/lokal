@@ -1,0 +1,96 @@
+/*
+ * Print styles for the report.
+ *
+ * These override token *values* rather than restyling components, so one set of
+ * components serves both screen and paper. That is also why server-side PDF
+ * generation later needs no second implementation — it renders this same route.
+ */
+
+@media print {
+  :root {
+    /* Ink-safe palette. Large filled surfaces waste toner and read poorly. */
+    --color-paper: #ffffff;
+    --color-surface: #ffffff;
+    --color-sunken: #f2f2f2;
+    --color-ink: #111111;
+    --color-muted: #3a3a3a;
+    --color-faint: #5a5a5a;
+    --color-line: #c8c8c8;
+    --color-line-strong: #9a9a9a;
+    --color-brand: #1f3a5f;
+    --color-brand-soft: #eef2f7;
+  }
+
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
+
+  body {
+    background: #ffffff;
+    font-size: 10pt;
+    line-height: 1.45;
+  }
+
+  /* Site chrome has no place in a document someone files. */
+  header[class*="border-b"]:has(nav),
+  footer,
+  nav[aria-label] {
+    display: none !important;
+  }
+
+  .report-print h1 {
+    font-size: 20pt;
+  }
+
+  .report-print h2 {
+    font-size: 13pt;
+    break-after: avoid;
+  }
+
+  .report-print h3,
+  .report-print h4 {
+    font-size: 11pt;
+    break-after: avoid;
+  }
+
+  /* Never strand a heading or split a card across a page boundary. */
+  .report-print section,
+  .report-print .break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  .report-print details {
+    /* Ruled-out candidates are part of the record; paper has no disclosure. */
+    display: block;
+  }
+
+  .report-print details > summary {
+    list-style: none;
+    font-weight: 500;
+  }
+
+  .report-print details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .report-print details[open] > summary,
+  .report-print details > summary {
+    color: var(--color-faint);
+  }
+
+  /* Show link targets so a printed copy remains checkable. */
+  .report-print a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    color: var(--color-faint);
+    word-break: break-all;
+  }
+}
+
+/* Force the disclosure open when printing, so nothing is silently omitted. */
+@media print {
+  .report-print details:not([open]) > *:not(summary) {
+    display: revert !important;
+  }
+}

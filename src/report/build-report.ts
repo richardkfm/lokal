@@ -304,6 +304,7 @@ function nextSteps(result: EngineResult): PlanningReport["nextSteps"] {
     rationale({
       code: "next.verify_recommendations_against_current_releases",
       severity: "note",
+      params: { rulepackVersion: result.rulepackVersion },
       evidence: [{ field: "rulepackVersion", value: result.rulepackVersion }],
     }),
   );
