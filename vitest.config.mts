@@ -13,5 +13,7 @@ export default defineConfig({
     environment: "node",
     include: ["tests/**/*.test.ts", "src/**/*.test.ts"],
     globals: false,
+    // Database-backed tests share one SQLite file, so they must not race.
+    fileParallelism: false,
   },
 });

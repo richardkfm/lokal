@@ -22,13 +22,19 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      # The Prisma client is generated, not committed; postinstall creates it.
       - run: pnpm install --frozen-lockfile
+        env:
+          DATABASE_URL: "file:./ci.db"
 
       # Format, lint, typecheck and tests. The lint step carries the
       # architectural boundaries (pure engine, no currency in output), so a
       # violation fails the build rather than sliding through review.
       - run: pnpm run check
+        env:
+          DATABASE_URL: "file:./ci.db"
 
       - run: pnpm run build
         env:
+          DATABASE_URL: "file:./ci.db"
           NEXT_TELEMETRY_DISABLED: 1
