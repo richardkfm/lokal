@@ -11,6 +11,46 @@ import { CATEGORY_IDS } from "@/domain/enums";
 
 const pack = currentRulepack();
 
+const baseInput = {
+  schemaVersion: 1 as const,
+  locale: "de" as const,
+  org: {
+    orgType: "municipality" as const,
+    country: "DE" as const,
+    totalSeats: 180,
+    departments: [],
+    publicSector: true,
+    germanLanguageRequired: true,
+  },
+  operating: {
+    hostingPreference: "self_hosted" as const,
+    itMaturity: "medium" as const,
+    adminCapacity: "medium" as const,
+    identityMaturity: "low" as const,
+    linuxCapability: "basic" as const,
+    supportExpectation: "vendor_support_needed" as const,
+  },
+  stack: [
+    {
+      category: "forms_surveys" as const,
+      currentTool: { kind: "known" as const, id: "microsoft-forms" },
+      seats: 180,
+      criticality: "medium" as const,
+      pain: "medium" as const,
+      urgency: "this_year" as const,
+      lockInConcern: "medium" as const,
+      trainingSensitivity: "medium" as const,
+    },
+  ],
+  ai: {
+    interest: "cautious" as const,
+    dataSensitivity: "medium" as const,
+    deploymentPreference: "undecided" as const,
+    hardwareProfile: "office_pcs" as const,
+    useCases: [],
+  },
+};
+
 describe("shipped rulepack", () => {
   it("passes schema and integrity checks", () => {
     expect(findIntegrityProblems(pack)).toEqual([]);
@@ -110,46 +150,6 @@ describe("shipped rulepack", () => {
 });
 
 describe("blocker rules", () => {
-  const baseInput = {
-    schemaVersion: 1 as const,
-    locale: "de" as const,
-    org: {
-      orgType: "municipality" as const,
-      country: "DE" as const,
-      totalSeats: 180,
-      departments: [],
-      publicSector: true,
-      germanLanguageRequired: true,
-    },
-    operating: {
-      hostingPreference: "self_hosted" as const,
-      itMaturity: "medium" as const,
-      adminCapacity: "medium" as const,
-      identityMaturity: "low" as const,
-      linuxCapability: "basic" as const,
-      supportExpectation: "vendor_support_needed" as const,
-    },
-    stack: [
-      {
-        category: "forms_surveys" as const,
-        currentTool: { kind: "known" as const, id: "microsoft-forms" },
-        seats: 180,
-        criticality: "medium" as const,
-        pain: "medium" as const,
-        urgency: "this_year" as const,
-        lockInConcern: "medium" as const,
-        trainingSensitivity: "medium" as const,
-      },
-    ],
-    ai: {
-      interest: "cautious" as const,
-      dataSensitivity: "medium" as const,
-      deploymentPreference: "undecided" as const,
-      hardwareProfile: "office_pcs" as const,
-      useCases: [],
-    },
-  };
-
   function firedRules(targetId: string) {
     const target = pack.targetTools.find((t) => t.id === targetId);
     if (!target) throw new Error(`No such target: ${targetId}`);
@@ -176,5 +176,27 @@ describe("blocker rules", () => {
 
   it("leaves a well-matched recommendation unblocked", () => {
     expect(firedRules("limesurvey")).toEqual([]);
+  });
+});
+
+describe("capability regressions", () => {
+  it("warns when replacing a cloud office suite loses real-time co-editing", () => {
+    const libreoffice = pack.targetTools.find((t) => t.id === "libreoffice")!;
+    const rule = pack.blockerRules.find(
+      (r) => r.id === "loses-realtime-collaboration",
+    )!;
+
+    const entry = {
+      ...baseInput.stack[0]!,
+      category: "office_docs" as const,
+      currentTool: { kind: "known" as const, id: "microsoft-365-apps" },
+    };
+
+    // Lower operating cost is a legitimate trade, but losing a capability people
+    // use daily has to be said out loud rather than discovered after rollout.
+    expect(rule.when({ input: baseInput, entry, target: libreoffice })).toBe(true);
+
+    const collabora = pack.targetTools.find((t) => t.id === "collabora-online")!;
+    expect(rule.when({ input: baseInput, entry, target: collabora })).toBe(false);
   });
 });

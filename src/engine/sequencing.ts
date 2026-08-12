@@ -211,6 +211,62 @@ export function sequence(
     migration.phase = phase;
   }
 
+  // --- Enforce inter-migration dependencies ---------------------------------
+  // Some prerequisites are satisfied by migrating another category: chat that
+  // runs on a file platform cannot go live before that platform does. Without
+  // this pass a plan can be internally consistent on paper and impossible in
+  // practice, which is precisely the kind of error a planning tool exists to
+  // prevent.
+  const providerPhase = new Map<string, PhaseId>();
+  for (const migration of ordered) {
+    const category = pack.categories.find((c) => c.id === migration.category);
+    for (const provided of category?.provides ?? []) {
+      providerPhase.set(provided, migration.phase);
+    }
+  }
+
+  // Repeat until stable: moving one migration can push another that depends on
+  // it. Bounded by the number of migrations, so it always terminates.
+  for (let pass = 0; pass < ordered.length + 1; pass += 1) {
+    let moved = false;
+
+    for (const migration of ordered) {
+      for (const required of migration.recommendation.primary!.tool.prerequisites) {
+        const suppliedIn = providerPhase.get(required);
+        if (suppliedIn === undefined) continue;
+
+        const supplier = ordered.find((candidate) =>
+          (
+            pack.categories.find((c) => c.id === candidate.category)?.provides ?? []
+          ).includes(required),
+        );
+        if (!supplier || supplier === migration) continue;
+
+        if (migration.phase <= supplier.phase && supplier.phase < 4) {
+          migration.phase = Math.min(supplier.phase + 1, 4) as PhaseId;
+          migration.reasons.push(
+            rationale({
+              code: "phase.waits_for_dependency",
+              severity: "note",
+              params: { dependsOn: supplier.category },
+              evidence: [{ field: "target.prerequisites", value: required }],
+            }),
+          );
+          moved = true;
+        }
+      }
+    }
+
+    // Refresh provider phases after any move, then stop once nothing shifts.
+    if (!moved) break;
+    for (const migration of ordered) {
+      const category = pack.categories.find((c) => c.id === migration.category);
+      for (const provided of category?.provides ?? []) {
+        providerPhase.set(provided, migration.phase);
+      }
+    }
+  }
+
   // --- Phase 0: prerequisites ----------------------------------------------
   // Gathered from everything scheduled later, which is why phase 0 is never
   // empty in a real plan.

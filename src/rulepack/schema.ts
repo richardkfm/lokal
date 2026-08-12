@@ -86,6 +86,14 @@ export const categorySchema = z.object({
    * states this rather than implying equal depth across all nine categories.
    */
   coverageDepth: z.enum(COVERAGE_DEPTHS),
+  /**
+   * Prerequisites that migrating this category satisfies.
+   *
+   * Without this, a plan can schedule Nextcloud Talk in phase 1 while the
+   * Nextcloud it runs on arrives in phase 3 — internally consistent on paper
+   * and impossible in practice.
+   */
+  provides: z.array(identifier).default([]),
   /** Ordering hint for the report's target-stack section. */
   displayOrder: z.number().int().min(0),
 });
