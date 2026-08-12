@@ -19,5 +19,385 @@
     "subheading": "lokal takes your organization's actual starting position and turns it into a traceable plan: target stack, sequence, effort, capacity needs and a realistic view of where AI fits today.",
     "ctaPrimary": "Start assessment",
     "placeholder": "The content of this page is written in phase 5."
+  },
+  "wizard": {
+    "title": "Assessment",
+    "subtitle": "Six steps, about fifteen minutes. Your answers stay in your browser until you submit at the end.",
+    "loading": "Loading your draft …",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Create plan",
+    "submitting": "Creating …",
+    "submitFailed": "The plan could not be created. Please try again.",
+    "completeStep": "Please complete this step.",
+    "startOver": "Start over",
+    "steps": {
+      "organization": "Organization",
+      "operating": "Operations",
+      "stack": "Systems",
+      "detail": "Details",
+      "ai": "AI",
+      "review": "Review"
+    },
+    "headings": {
+      "organization": "Your organization",
+      "operating": "Operations and capacity",
+      "stack": "Which areas are in scope?",
+      "detail": "Details per area",
+      "ai": "Your position on AI",
+      "review": "Review your answers"
+    },
+    "descriptions": {
+      "organization": "Type and size determine which recommendations are viable at all.",
+      "operating": "These answers decide what you can run yourself and where external support becomes necessary.",
+      "stack": "Choose the areas you actually want to look at. Unselected areas are reported as not assessed.",
+      "detail": "These answers determine sequence, effort and risk. This is the heart of the planning.",
+      "ai": "This determines which AI use cases are viable today and which should wait.",
+      "review": "Check your answers. You can still change any step."
+    },
+    "organization": {
+      "typeLegend": "Type of organization",
+      "typeHint": "Determines which procurement, accountability and language requirements apply.",
+      "sizeLegend": "Size",
+      "sizeHint": "The size band is derived from the number of seats.",
+      "seatsLabel": "Total seats",
+      "seatsHint": "People with their own access, not concurrent use.",
+      "derivedBucket": "Size band: {bucket}",
+      "contextLegend": "Context",
+      "contextHint": "These answers affect training effort and selection.",
+      "departmentsLabel": "Areas affected",
+      "departmentsHint": "Comma separated. More areas means more coordination.",
+      "departmentsPlaceholder": "Planning, Citizen services, Finance",
+      "publicSectorLabel": "Public mandate",
+      "publicSectorHint": "Procurement rules, accountability duties, political oversight.",
+      "germanLabel": "German interface required",
+      "germanHint": "Rules out products without a dependable German version.",
+      "regionLabel": "State (optional)",
+      "regionNone": "Not specified"
+    },
+    "operating": {
+      "hostingLegend": "Preferred hosting",
+      "hostingHint": "Where should the systems run in future?",
+      "linuxLegend": "Linux and operations skills",
+      "linuxHint": "Decides whether self-hosting is realistic.",
+      "capacityLegend": "Capacity",
+      "capacityHint": "An honest estimate helps more than an optimistic one.",
+      "adminCapacityLabel": "Available administration time",
+      "adminCapacityHint": "Time available for migrations on top of running what you already have.",
+      "itMaturityLabel": "IT maturity",
+      "itMaturityHint": "How orderly are documentation, changes and backups today?",
+      "identityMaturityLabel": "User management",
+      "identityMaturityHint": "Is there a central directory for accounts and groups?",
+      "supportLegend": "Support expectation",
+      "supportHint": "Is an active community enough, or do you need a contracted partner?"
+    },
+    "stack": {
+      "legend": "Areas in scope",
+      "hint": "Choose at least one area.",
+      "notAssessedNote": "Unselected areas appear in the report explicitly as not assessed — not as unproblematic."
+    },
+    "detail": {
+      "intro": "These answers determine the sequence. Estimates are fine; accuracy helps, precision is not needed.",
+      "nothingSelected": "No area has been selected yet.",
+      "currentToolLabel": "Currently in use",
+      "currentToolHint": "Free text. Leave empty if nothing is in use yet.",
+      "currentToolPlaceholder": "e.g. SharePoint",
+      "seatsLabel": "Seats affected",
+      "seatsHint": "May differ from the total — a ticket system often serves only a few people.",
+      "criticalityLabel": "Business criticality",
+      "criticalityHint": "What happens if this system is down for a day?",
+      "painLabel": "Level of pain",
+      "painHint": "How much does the current solution get in the way?",
+      "lockInConcernLabel": "Concern about lock-in",
+      "lockInConcernHint": "How hard would it be to leave the current vendor?",
+      "trainingSensitivityLabel": "Training sensitivity",
+      "trainingSensitivityHint": "How hard would staff find a change?",
+      "urgencyLabel": "Urgency",
+      "urgencyHint": "When should something change?"
+    },
+    "ai": {
+      "interestLegend": "Interest in AI",
+      "interestHint": "Honesty here prevents recommendations nobody will act on.",
+      "sensitivityLegend": "Confidentiality of content",
+      "sensitivityHint": "How sensitive is the data that would be processed?",
+      "hardwareLegend": "Available hardware",
+      "hardwareHint": "The hard constraint: without suitable hardware, local AI is not an option.",
+      "deploymentLegend": "Preferred AI hosting",
+      "deploymentHint": "Where should a model run?",
+      "useCasesLegend": "Desired use cases",
+      "useCasesHint": "Choose what you actually intend to do."
+    },
+    "review": {
+      "intro": "A short summary of your answers. The plan is calculated from these alone.",
+      "edit": "Change",
+      "orgType": "Type",
+      "seats": "Seats",
+      "departments": "Areas",
+      "hosting": "Hosting",
+      "categories": "Areas in scope",
+      "aiInterest": "AI",
+      "warningsTitle": "Notes on your answers",
+      "warningsNote": "These notes do not prevent submission. They also appear in the report.",
+      "warnSeatsExceedOrg": "One area reports more seats than the organization has in total.",
+      "warnNoDepartments": "No areas were named, although the organization is larger.",
+      "warnNoAiUseCases": "Interest in AI was indicated, but no use case was chosen."
+    }
+  },
+  "vocabulary": {
+    "orgType": {
+      "sme": {
+        "label": "Company (SME)"
+      },
+      "municipality": {
+        "label": "Municipality"
+      },
+      "district_office": {
+        "label": "District office"
+      },
+      "school": {
+        "label": "School"
+      },
+      "utility": {
+        "label": "Utility"
+      },
+      "association": {
+        "label": "Association"
+      }
+    },
+    "hostingPreference": {
+      "self_hosted": {
+        "label": "Self-hosted",
+        "hint": "On your own hardware or server."
+      },
+      "eu_hosted": {
+        "label": "With an EU provider",
+        "hint": "Operated by others, data in the EU."
+      },
+      "undecided": {
+        "label": "Undecided",
+        "hint": "Either could work."
+      }
+    },
+    "linuxCapability": {
+      "none": {
+        "label": "None",
+        "hint": "Nobody maintains servers."
+      },
+      "basic": {
+        "label": "Basic",
+        "hint": "A few people can maintain systems."
+      },
+      "strong": {
+        "label": "Strong",
+        "hint": "A team with operational experience."
+      }
+    },
+    "supportExpectation": {
+      "community_tolerant": {
+        "label": "Community is enough",
+        "hint": "Researching things yourself is acceptable."
+      },
+      "vendor_support_needed": {
+        "label": "Contracted partner needed",
+        "hint": "You need someone with commitments."
+      }
+    },
+    "adminCapacity": {
+      "low": {
+        "label": "Low"
+      },
+      "medium": {
+        "label": "Medium"
+      },
+      "high": {
+        "label": "High"
+      }
+    },
+    "itMaturity": {
+      "low": {
+        "label": "Low"
+      },
+      "medium": {
+        "label": "Medium"
+      },
+      "high": {
+        "label": "High"
+      }
+    },
+    "identityMaturity": {
+      "low": {
+        "label": "Low",
+        "hint": "Accounts per system."
+      },
+      "medium": {
+        "label": "Partial"
+      },
+      "high": {
+        "label": "Central",
+        "hint": "One directory for everything."
+      }
+    },
+    "criticality": {
+      "low": {
+        "label": "Low"
+      },
+      "medium": {
+        "label": "Medium"
+      },
+      "high": {
+        "label": "High"
+      }
+    },
+    "pain": {
+      "low": {
+        "label": "Low"
+      },
+      "medium": {
+        "label": "Noticeable"
+      },
+      "high": {
+        "label": "High"
+      }
+    },
+    "lockInConcern": {
+      "low": {
+        "label": "Low"
+      },
+      "medium": {
+        "label": "Medium"
+      },
+      "high": {
+        "label": "High"
+      }
+    },
+    "trainingSensitivity": {
+      "low": {
+        "label": "Low"
+      },
+      "medium": {
+        "label": "Medium"
+      },
+      "high": {
+        "label": "High"
+      }
+    },
+    "dataSensitivity": {
+      "low": {
+        "label": "Low"
+      },
+      "medium": {
+        "label": "Medium"
+      },
+      "high": {
+        "label": "High"
+      }
+    },
+    "urgency": {
+      "now": {
+        "label": "Now"
+      },
+      "this_year": {
+        "label": "This year"
+      },
+      "later": {
+        "label": "Later"
+      }
+    },
+    "aiInterest": {
+      "none": {
+        "label": "Not interested"
+      },
+      "cautious": {
+        "label": "Cautious",
+        "hint": "Open in principle, but careful."
+      },
+      "active": {
+        "label": "Active",
+        "hint": "Concrete plans."
+      }
+    },
+    "hardwareProfile": {
+      "none": {
+        "label": "None",
+        "hint": "No suitable hardware available."
+      },
+      "office_pcs": {
+        "label": "Office computers",
+        "hint": "Ordinary workstations."
+      },
+      "server": {
+        "label": "Own server",
+        "hint": "Server hardware on site."
+      },
+      "gpu_capable": {
+        "label": "Server with a GPU",
+        "hint": "Suitable for larger models."
+      }
+    },
+    "aiDeployment": {
+      "local_device": {
+        "label": "On the workstation"
+      },
+      "on_prem": {
+        "label": "On your own server"
+      },
+      "eu_hosted": {
+        "label": "With an EU provider"
+      },
+      "undecided": {
+        "label": "Undecided"
+      }
+    },
+    "aiUseCase": {
+      "summarization": {
+        "label": "Summarization",
+        "hint": "Condensing long texts."
+      },
+      "document_qa": {
+        "label": "Questions about your documents",
+        "hint": "Requires an indexed document base."
+      },
+      "drafting": {
+        "label": "Drafting assistance",
+        "hint": "First versions of correspondence."
+      },
+      "ticket_triage": {
+        "label": "Request triage",
+        "hint": "Routing by topic and urgency."
+      },
+      "knowledge_assistant": {
+        "label": "Internal knowledge assistant",
+        "hint": "The most demanding case."
+      }
+    },
+    "category": {
+      "office_docs": {
+        "label": "Office and documents"
+      },
+      "file_sharing": {
+        "label": "File storage"
+      },
+      "chat_video": {
+        "label": "Chat and video"
+      },
+      "intranet_wiki": {
+        "label": "Intranet and knowledge"
+      },
+      "project_management": {
+        "label": "Projects and tasks"
+      },
+      "helpdesk": {
+        "label": "Helpdesk"
+      },
+      "forms_surveys": {
+        "label": "Forms and surveys"
+      },
+      "crm": {
+        "label": "Contact management"
+      },
+      "dms_archive": {
+        "label": "Document management"
+      }
+    }
   }
 }

@@ -1,0 +1,48 @@
+// lokal keeps exactly one table.
+//
+// Only what the user answered is stored. The report is never persisted: it is
+// recomputed from the assessment and the rulepack on every render. Storing
+// derived data is how a planning tool starts contradicting itself — a report
+// regenerated next month would silently disagree with the printed copy in
+// someone's folder, with no way to tell why.
+//
+// SQLite in development and for small self-hosted installs. Moving to
+// PostgreSQL is a provider swap plus Json -> Jsonb; there is no query surface
+// to port.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// The connection URL lives in prisma.config.ts (Prisma 7); the application
+// connects through a driver adapter in src/lib/db.ts.
+datasource db {
+  provider = "sqlite"
+}
+
+model Assessment {
+  /// nanoid(21). Unguessable, but not a secret: the report page says so.
+  id        String   @id
+  createdAt DateTime @default(now())
+
+  /// The language the assessment was taken in. The report always renders in it.
+  locale String
+
+  /// Which rules produced the plan. If this version is gone, the report says so.
+  rulepackVersion String
+
+  /// Intake schema version, so an old payload fails loudly rather than
+  /// half-populating a report.
+  schemaVersion Int
+
+  /// The validated AssessmentInput, exactly as submitted.
+  payload Json
+
+  /// Denormalized for anonymous aggregate insight later. No analytics tooling,
+  /// no third-party services.
+  orgTypeHint String?
+  seatsHint   Int?
+
+  @@index([createdAt])
+}
