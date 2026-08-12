@@ -6,6 +6,7 @@ import type { Rulepack } from "@/rulepack/schema";
 
 const PROVENANCE = {
   lastReviewed: "2026-08-12",
+  reviewStatus: "draft",
   sources: ["https://example.org/docs"],
 };
 
@@ -230,7 +231,9 @@ describe("rulepack integrity", () => {
     });
 
     const problems = findIntegrityProblems(rulepackSchema.parse(pack));
-    expect(problems.map((p) => p.message).join(" ")).toMatch(/cannot be self-hosted/);
+    expect(problems.map((p) => p.message).join(" ")).toMatch(
+      /only run as a hosted service/,
+    );
   });
 
   it("flags top public-sector fit with community-only support", () => {

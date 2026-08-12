@@ -28,3 +28,17 @@ Dates are ISO 8601.
   values between locales.
 - GitHub Actions workflow running format, lint, typecheck, tests and build on every
   pull request.
+
+### Added (phase 1)
+
+- Domain vocabulary, intake schemas and the rationale model, with types inferred
+  from Zod schemas so validation and types cannot drift.
+- Rulepack schema requiring a checkable source and review date on every entry
+  that makes a claim about a real product, plus a referential-integrity validator
+  that fails the build on broken cross-references or overstated ratings.
+- Rulepack `v2026-08`: nine categories, 29 source tools, 24 target tools,
+  migration edges, prerequisites, blocker rules and the local-AI catalog.
+  CRM and DMS/archive are marked as narrower coverage rather than implying the
+  same research depth as the core seven.
+- Every rule entry ships as `draft` until a human has verified it against its
+  sources; the report will state this.
