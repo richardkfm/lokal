@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+/*
+ * lokal design tokens
+ *
+ * Deliberately a light, document-like palette. lokal produces planning briefs
+ * that get printed, forwarded and pinned into wikis; a single calm light theme
+ * keeps screen and paper consistent. Print overrides token *values* rather than
+ * restyling components (see src/styles/print.css from phase 5).
+ */
+@theme {
+  /* Surfaces */
+  --color-paper: oklch(99% 0.003 100);
+  --color-surface: oklch(100% 0 0);
+  --color-sunken: oklch(97% 0.004 100);
+
+  /* Text */
+  --color-ink: oklch(23% 0.012 260);
+  --color-muted: oklch(48% 0.012 260);
+  --color-faint: oklch(62% 0.01 260);
+
+  /* Lines */
+  --color-line: oklch(91% 0.006 260);
+  --color-line-strong: oklch(84% 0.008 260);
+
+  /* Brand: a restrained slate-blue. Institutional, not promotional. */
+  --color-brand: oklch(45% 0.09 245);
+  --color-brand-strong: oklch(36% 0.1 245);
+  --color-brand-soft: oklch(95% 0.02 245);
+
+  /* Semantic indicators, used by readiness / complexity / savings meters */
+  --color-good: oklch(52% 0.11 155);
+  --color-good-soft: oklch(95% 0.03 155);
+  --color-caution: oklch(62% 0.13 75);
+  --color-caution-soft: oklch(96% 0.04 75);
+  --color-risk: oklch(52% 0.16 25);
+  --color-risk-soft: oklch(95% 0.03 25);
+  --color-neutral: oklch(60% 0.01 260);
+  --color-neutral-soft: oklch(95% 0.004 260);
+
+  /* Typography: system stacks only. No build-time font fetching, so offline
+   * and air-gapped builds work — a realistic constraint for this audience. */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Tabular figures wherever numbers are compared: seat counts, phase tables,
+ * effort ranges. Proportional digits make columns wobble. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
