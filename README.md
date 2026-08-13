@@ -93,46 +93,133 @@ pnpm build       # production build
 
 ## Docker
 
-Requires Docker and Docker Compose.
+### Prerequisites
+
+- Docker Engine.
+- The `docker compose` plugin (Docker Compose v2 — bundled with current
+  Docker Desktop and Docker Engine installs). The legacy standalone
+  `docker-compose` v1 binary does not support the startup ordering
+  (`depends_on: ... condition: service_completed_successfully`) that
+  `docker-compose.yml` uses to run migrations before the app starts; if
+  `docker compose version` fails, update Docker rather than falling back to
+  `docker-compose`.
+
+No API keys or third-party services are required — the container never
+phones home.
+
+### Quick start
 
 ```bash
+git clone https://github.com/richardkfm/lokal.git
+cd lokal
 docker compose up --build
 ```
 
-Then open <http://localhost:3000>.
+Then open <http://localhost:3000>. First build takes a few minutes;
+subsequent runs reuse Docker's layer cache.
 
-This runs two containers:
+`docker compose up --build` runs two containers, in order:
 
-- `migrate` — a one-off step that applies pending Prisma migrations to the
-  SQLite file on the shared `data` volume, then exits.
-- `app` — the Next.js server, started only after `migrate` finishes
-  successfully. It runs from a minimal image built with Next's
-  `output: "standalone"`, as a non-root user.
+1. `migrate` — a one-off step that applies pending Prisma migrations to the
+   SQLite file on the shared `data` volume, then exits successfully.
+2. `app` — the Next.js server, started only once `migrate` has exited `0`.
+   It runs from a minimal runtime image built with Next's
+   `output: "standalone"`, as a non-root user, and does **not** bundle the
+   Prisma CLI — that's why `migrate` is a separate service built from an
+   earlier, heavier build stage (see `Dockerfile`).
 
-The SQLite database persists in the named `data` volume across restarts. To
-run migrations by hand (for example after pulling a new image with schema
-changes) without starting the app:
+Run it in the background instead with `docker compose up --build -d`, and
+follow logs with `docker compose logs -f app`.
+
+### Configuration
+
+Environment variables are set in `docker-compose.yml` (see `.env.example`
+for the same variables in local, non-Docker development):
+
+| Variable               | Default (in `docker-compose.yml`) | Notes                                                                                                                                                                |
+| ---------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`         | `file:/data/lokal.db`             | Path inside the container, on the `data` volume. Change together in both the `migrate` and `app` services if you change it.                                          |
+| `NEXT_PUBLIC_BASE_URL` | `http://localhost:3000`           | Used for absolute links in shared reports. Set this to your real domain (e.g. `https://lokal.example.org`) before handing out report links from a deployed instance. |
+
+To override a value, edit `docker-compose.yml` directly, or add a
+`docker-compose.override.yml` alongside it (Compose merges it automatically)
+so your changes don't conflict with future `git pull`s of this repo.
+
+### Updating
+
+After pulling new code (including a new database migration):
+
+```bash
+git pull
+docker compose up --build
+```
+
+This rebuilds both images and reruns `migrate` — which only applies
+migrations it hasn't applied yet — before restarting `app`. There's nothing
+extra to run by hand.
+
+To apply migrations without also starting the app (for example to check a
+schema change ahead of time):
 
 ```bash
 docker compose run --rm migrate
 ```
 
-To build the runtime image directly, without Compose:
+### Backups
+
+The SQLite database persists in the named `data` volume across container
+restarts and rebuilds. To back it up:
 
 ```bash
+docker compose stop app
+docker run --rm -v lokal_data:/data -v "$PWD":/backup debian:bookworm-slim \
+  cp /data/lokal.db /backup/lokal-backup.db
+docker compose start app
+```
+
+(`lokal_data` is the default project-prefixed volume name; run `docker
+volume ls` to confirm it if you renamed the project or the `data` volume.)
+
+To restore, stop `app`, copy the backup file back into the volume the same
+way, and start `app` again.
+
+### Stopping and removing
+
+```bash
+docker compose down        # stops and removes containers; the data volume is kept
+docker compose down -v     # also deletes the data volume — this destroys the database
+```
+
+### Building and running without Compose
+
+```bash
+docker build -t lokal-migrate --target builder .
+docker run --rm -e DATABASE_URL="file:/data/lokal.db" -v lokal-data:/data \
+  lokal-migrate pnpm exec prisma migrate deploy
+
 docker build -t lokal .
 docker run -p 3000:3000 -e DATABASE_URL="file:/data/lokal.db" -v lokal-data:/data lokal
 ```
 
-The database file must already have its schema migrated (via `docker compose
-run --rm migrate`, or `pnpm db:deploy` against the same file) before the app
-can read or write assessments — the image intentionally doesn't bundle the
-Prisma CLI, to keep the runtime image small.
+The database file must have its schema migrated before the app can read or
+write assessments. Plain `docker build -t lokal .` builds only the final
+`runner` stage, which has no Prisma CLI (that's the whole point of the
+`migrate`/`app` split above) — so migrations have to run against a
+`--target builder` image, as shown, or via `pnpm db:deploy` from a local
+checkout pointed at the same `DATABASE_URL`.
 
-Environment variables (see `.env.example`): `DATABASE_URL` (defaults to
-`file:/data/lokal.db` in `docker-compose.yml`), `NEXT_PUBLIC_BASE_URL`. No
-API keys or third-party services are required — the container never phones
-home.
+### Troubleshooting
+
+- **"relation/table does not exist" or similar errors when submitting an
+  assessment** — migrations haven't been applied to the volume the `app`
+  container is using. Run `docker compose run --rm migrate` and restart
+  `app`.
+- **Port 3000 already in use** — change the host side of the port mapping in
+  `docker-compose.yml`, e.g. `"8080:3000"`, and open that port instead.
+- **`docker compose up` exits immediately with the `app` service never
+  starting** — check `docker compose logs migrate`; if the migration step
+  failed, `app` is correctly refusing to start against an unmigrated
+  database.
 
 ## Architecture
 
