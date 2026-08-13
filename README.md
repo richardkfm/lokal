@@ -1,7 +1,7 @@
 # lokal
 
 **Planungswerkzeug für den Umstieg auf Open-Source-Arbeitswerkzeuge, souveränes
-Hosting und lokale KI — zuerst für Deutschland.**
+Hosting und lokale KI.**
 
 lokal nimmt die tatsächliche Ausgangslage einer Organisation auf und erzeugt daraus
 einen nachvollziehbaren Migrationsplan: Zielarchitektur, Reihenfolge, Aufwand,
