@@ -74,6 +74,23 @@ const STEP_SCHEMAS: Record<StepId, z.ZodType | null> = {
 
 export type StepIssues = Record<string, string>;
 
+/**
+ * The stack entries a draft describes.
+ *
+ * `currentTool` defaults to "nothing in use". The detail step invites leaving
+ * that field empty — "leer lassen, wenn bislang nichts im Einsatz ist" — and an
+ * untouched field has to mean the same thing as one that was typed into and
+ * cleared. Without the default the step silently refuses to advance: the entry
+ * fails validation on a field that has nowhere to show an error.
+ */
+function stackEntries(draft: Draft) {
+  return draft.selectedCategories.map((category) => ({
+    currentTool: { kind: "none" as const },
+    ...draft.stack[category],
+    category,
+  }));
+}
+
 /** Assembles the parts of the draft a given step is responsible for. */
 function subjectFor(step: StepId, draft: Draft): unknown {
   switch (step) {
@@ -84,10 +101,7 @@ function subjectFor(step: StepId, draft: Draft): unknown {
     case "stack":
       return draft.selectedCategories;
     case "detail":
-      return draft.selectedCategories.map((category) => ({
-        ...draft.stack[category],
-        category,
-      }));
+      return stackEntries(draft);
     case "ai":
       return draft.ai;
     case "review":
@@ -120,10 +134,7 @@ export function toAssessment(
     locale,
     org: draft.org,
     operating: draft.operating,
-    stack: draft.selectedCategories.map((category) => ({
-      ...draft.stack[category],
-      category,
-    })),
+    stack: stackEntries(draft),
     ai: draft.ai,
   });
 
