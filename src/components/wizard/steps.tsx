@@ -21,6 +21,7 @@ import {
   Fieldset,
   NumberField,
   RadioCards,
+  RadioGroup,
   TagField,
   TextField,
   Toggle,
@@ -213,23 +214,16 @@ export function OperatingStep({ draft, update, issues }: StepProps) {
               ["identityMaturity", issues.identityMaturity],
             ] as const
           ).map(([field, error]) => (
-            <div key={field}>
-              <p className="text-ink mb-1.5 text-sm font-medium">
-                {t(`${field}Label`)}
-              </p>
-              <p className="text-muted mb-2 text-xs">{t(`${field}Hint`)}</p>
-              <RadioCards
-                name={field}
-                value={draft.operating[field]}
-                choices={choices(field, LEVELS)}
-                onChange={(value) => set({ [field]: value as Level })}
-              />
-              {error ? (
-                <p role="alert" className="mt-1 text-sm text-[var(--color-risk)]">
-                  {error}
-                </p>
-              ) : null}
-            </div>
+            <RadioGroup
+              key={field}
+              legend={t(`${field}Label`)}
+              hint={t(`${field}Hint`)}
+              error={error}
+              name={field}
+              value={draft.operating[field]}
+              choices={choices(field, LEVELS)}
+              onChange={(value) => set({ [field]: value as Level })}
+            />
           ))}
         </div>
       </Fieldset>
@@ -307,9 +301,13 @@ export function DetailStep({ draft, update, issues }: StepProps) {
         return (
           <section
             key={category}
+            // Named so the category blocks become navigable landmarks: with
+            // nine categories in scope this step is the longest page in the
+            // wizard, and jumping between them beats scrolling past every field.
+            aria-labelledby={`detail-${category}`}
             className="border-line bg-surface rounded-lg border p-5"
           >
-            <h3 className="text-ink text-base font-semibold">
+            <h3 id={`detail-${category}`} className="text-ink text-base font-semibold">
               {vocabulary(`category.${category}.label`)}
             </h3>
 
@@ -346,40 +344,27 @@ export function DetailStep({ draft, update, issues }: StepProps) {
                   ["trainingSensitivity", LEVELS],
                 ] as const
               ).map(([field, values]) => (
-                <div key={field}>
-                  <p className="text-ink mb-1 text-sm font-medium">
-                    {t(`${field}Label`)}
-                  </p>
-                  <p className="text-muted mb-2 text-xs">{t(`${field}Hint`)}</p>
-                  <RadioCards
-                    name={`${category}-${field}`}
-                    value={entry[field]}
-                    choices={choices(field, values)}
-                    onChange={(value) => setEntry(category, { [field]: value })}
-                  />
-                  {issueFor(field) ? (
-                    <p role="alert" className="mt-1 text-sm text-[var(--color-risk)]">
-                      {issueFor(field)}
-                    </p>
-                  ) : null}
-                </div>
+                <RadioGroup
+                  key={field}
+                  legend={t(`${field}Label`)}
+                  hint={t(`${field}Hint`)}
+                  error={issueFor(field)}
+                  name={`${category}-${field}`}
+                  value={entry[field]}
+                  choices={choices(field, values)}
+                  onChange={(value) => setEntry(category, { [field]: value })}
+                />
               ))}
 
-              <div>
-                <p className="text-ink mb-1 text-sm font-medium">{t("urgencyLabel")}</p>
-                <p className="text-muted mb-2 text-xs">{t("urgencyHint")}</p>
-                <RadioCards
-                  name={`${category}-urgency`}
-                  value={entry.urgency}
-                  choices={choices("urgency", URGENCIES)}
-                  onChange={(value) => setEntry(category, { urgency: value })}
-                />
-                {issueFor("urgency") ? (
-                  <p role="alert" className="mt-1 text-sm text-[var(--color-risk)]">
-                    {issueFor("urgency")}
-                  </p>
-                ) : null}
-              </div>
+              <RadioGroup
+                legend={t("urgencyLabel")}
+                hint={t("urgencyHint")}
+                error={issueFor("urgency")}
+                name={`${category}-urgency`}
+                value={entry.urgency}
+                choices={choices("urgency", URGENCIES)}
+                onChange={(value) => setEntry(category, { urgency: value })}
+              />
             </div>
           </section>
         );

@@ -13,3 +13,7 @@ tests
 *.db-journal
 .DS_Store
 coverage
+test-results
+playwright-report
+blob-report
+playwright.config.ts
