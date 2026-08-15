@@ -14,10 +14,15 @@
   --color-surface: oklch(100% 0 0);
   --color-sunken: oklch(97% 0.004 100);
 
-  /* Text */
+  /* Text
+   *
+   * All three tiers clear 4.5:1 against every surface they are used on. The
+   * quietest tier carries small print — captions, source dates, seat counts —
+   * so it is held to the same bar as body text rather than to the large-text
+   * exemption: none of it is large. */
   --color-ink: oklch(23% 0.012 260);
   --color-muted: oklch(48% 0.012 260);
-  --color-faint: oklch(62% 0.01 260);
+  --color-faint: oklch(54% 0.01 260);
 
   /* Lines */
   --color-line: oklch(91% 0.006 260);
@@ -28,10 +33,15 @@
   --color-brand-strong: oklch(36% 0.1 245);
   --color-brand-soft: oklch(95% 0.02 245);
 
-  /* Semantic indicators, used by readiness / complexity / savings meters */
+  /* Semantic indicators, used by readiness / complexity / savings meters.
+   *
+   * Good, caution and risk sit at the same lightness so they read as one family
+   * and none of them is the odd one out. Amber is the reason that lightness is
+   * 54% rather than something brighter: at its natural brightness it cannot
+   * carry text on its own tinted panel, and these colours are used for both. */
   --color-good: oklch(52% 0.11 155);
   --color-good-soft: oklch(95% 0.03 155);
-  --color-caution: oklch(62% 0.13 75);
+  --color-caution: oklch(54% 0.13 75);
   --color-caution-soft: oklch(96% 0.04 75);
   --color-risk: oklch(52% 0.16 25);
   --color-risk-soft: oklch(95% 0.03 25);

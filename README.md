@@ -88,8 +88,16 @@ Useful scripts:
 ```bash
 pnpm check       # format check, lint, typecheck, tests
 pnpm test        # unit and golden-fixture tests
+pnpm test:e2e    # browser suite: wizard → report → Markdown → print, plus axe
 pnpm build       # production build
 ```
+
+`pnpm check` is the fast inner loop and needs no browser. `pnpm test:e2e` builds
+the app, serves it on port 3100 against its own `e2e.db`, and drives it in
+Chromium; the first run downloads the browser with
+`pnpm exec playwright install chromium`. Both run on every pull request. See
+[docs/testing.md](docs/testing.md) for what each layer covers and where the
+accessibility bar is set.
 
 ## Docker
 
