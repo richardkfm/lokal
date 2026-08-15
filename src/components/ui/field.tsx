@@ -40,6 +40,14 @@ export function Fieldset({
 
 export type Choice = { value: string; label: string; hint?: string };
 
+export type RadioCardsProps = {
+  name: string;
+  value: string | undefined;
+  choices: Choice[];
+  onChange: (value: string) => void;
+  columns?: 1 | 2 | 3;
+};
+
 /**
  * Radio group rendered as cards.
  *
@@ -53,13 +61,7 @@ export function RadioCards({
   choices,
   onChange,
   columns = 3,
-}: {
-  name: string;
-  value: string | undefined;
-  choices: Choice[];
-  onChange: (value: string) => void;
-  columns?: 1 | 2 | 3;
-}) {
+}: RadioCardsProps) {
   const groupId = useId();
   const columnClass =
     columns === 1
@@ -105,6 +107,37 @@ export function RadioCards({
         );
       })}
     </div>
+  );
+}
+
+/**
+ * A radio group that carries its own label.
+ *
+ * `RadioCards` on its own has no programmatic label — a heading rendered above
+ * it is a visual association only, so a screen reader reaches "niedrig / mittel
+ * / hoch" without ever hearing which question they answer. Steps two and four
+ * ask that same three-point question up to five times on one page, which makes
+ * the unlabelled version genuinely unusable rather than merely imperfect.
+ *
+ * A nested fieldset is the fix: it names the group without changing the layout.
+ */
+export function RadioGroup({
+  legend,
+  hint,
+  error,
+  ...cards
+}: { legend: string; hint?: string; error?: string | undefined } & RadioCardsProps) {
+  return (
+    <fieldset>
+      <legend className="text-ink mb-1 text-sm font-medium">{legend}</legend>
+      {hint ? <p className="text-muted mb-2 text-xs">{hint}</p> : null}
+      <RadioCards {...cards} />
+      {error ? (
+        <p role="alert" className="mt-1 text-sm text-[var(--color-risk)]">
+          {error}
+        </p>
+      ) : null}
+    </fieldset>
   );
 }
 

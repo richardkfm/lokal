@@ -81,3 +81,33 @@ Dates are ISO 8601.
   removing, running without Compose, and troubleshooting. Pulled forward
   from the roadmap's deferred list on explicit request — see
   `plans/roadmap.md`.
+
+### Added (phase 5.4)
+
+- Playwright end-to-end suite, run with `pnpm test:e2e` as its own CI job. One
+  smoke path — landing, six-step wizard, submit, report, Markdown export, print
+  route — plus assertions that the mandated planning outputs ("considered and
+  ruled out", "keep for now") reach the page, that data-quality warnings warn
+  without blocking, and that no euro amount appears in any rendered output.
+- The print route is exercised with JavaScript disabled, which is what now
+  enforces the ADR-0002 constraint that its tree carries no client components.
+- Accessibility pass with axe-core over the landing page, wizard, report and
+  print route against WCAG 2.1 A and AA. Serious and critical findings fail the
+  build; lesser ones are attached to the run. Keyboard operability and group
+  labelling are asserted separately, since automated rules cannot see them.
+- `docs/testing.md` describing the three test layers, where the accessibility bar
+  sits and why, and the two sources of flake handled explicitly.
+
+### Fixed (phase 5.4)
+
+- The per-category detail step could not be completed if the "currently in use"
+  field was left empty, which its own hint invites: the entry failed validation
+  on a field with nowhere to show an error, so the step refused to advance with
+  no explanation. An untouched field now means "nothing in use", the same as one
+  typed into and cleared.
+- The repeated three-point questions in the operating and detail steps had a
+  visual heading but no programmatic label, leaving a screen reader with bare
+  "niedrig / mittel / hoch" options. They are labelled groups now, and each
+  category block in the detail step is a named landmark.
+- `--color-faint` and `--color-caution` did not meet the 4.5:1 contrast minimum
+  for the small text they carry. Both moved to 54% lightness.

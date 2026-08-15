@@ -44,3 +44,41 @@ jobs:
         env:
           DATABASE_URL: "file:./ci.db"
           NEXT_TELEMETRY_DISABLED: 1
+
+  # The end-to-end suite runs on its own so a browser download never slows down
+  # the fast feedback the `check` job gives. It builds and serves the app itself
+  # (see playwright.config.ts) and covers wizard → report → Markdown → print,
+  # plus an axe pass over each of those four surfaces.
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+        env:
+          DATABASE_URL: "file:./e2e.db"
+
+      # Chromium only. A browser matrix would triple this job to re-prove the
+      # same wiring; nothing on these four pages is engine-specific.
+      - run: pnpm exec playwright install --with-deps chromium
+
+      - run: pnpm run test:e2e
+        env:
+          DATABASE_URL: "file:./e2e.db"
+          NEXT_TELEMETRY_DISABLED: 1
+
+      # Traces and axe attachments for whatever failed, so a red run is
+      # diagnosable without reproducing it locally.
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
