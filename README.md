@@ -263,6 +263,19 @@ See [`docs/architecture.md`](docs/architecture.md) for the full picture, and
 - Print-optimized report route
 - German content complete, English wired
 
+All of the above is implemented and running on `main`; what remains before the
+`v0.1.0` tag is copy review and a docs pass (see [`plans/roadmap.md`](plans/roadmap.md)).
+
+### Screenshots
+
+Current development build, German locale, from the `municipality-180` reference
+persona in [`tests/fixtures/personas.ts`](tests/fixtures/personas.ts).
+
+| Landing page                                                                  | Intake wizard                                                                  | Report                                                                                                     |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| [![Landing page](docs/screenshots/landing.png)](docs/screenshots/landing.png) | [![Intake wizard](docs/screenshots/wizard.png)](docs/screenshots/wizard.png)   | [![Report view](docs/screenshots/report.png)](docs/screenshots/report.png)                                 |
+| States the problem, who it's for, and what lokal explicitly is not.           | Step 1 of 6: organization type and size drive every recommendation downstream. | At-a-glance summary — readiness, savings band, affected seats, phases — above the full nine-section brief. |
+
 ## Roadmap
 
 | Version | Focus                                                                  |
