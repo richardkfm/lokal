@@ -28,8 +28,20 @@ async function violations(page: Page): Promise<Violation[]> {
   // samples whatever colour it finds at that instant — mid-transition that is a
   // value no user ever sees, and the contrast check fails on it at random.
   // Snapping animations to their end state makes the measurement deterministic.
+  //
+  // The hero's ambient background loops forever, and an animation with no end
+  // has no end state to snap to: `finish()` throws InvalidStateError on one.
+  // Pausing it at a fixed time gives the same guarantee this helper exists for
+  // — every run samples the identical frame.
   await page.evaluate(() => {
-    for (const animation of document.getAnimations()) animation.finish();
+    for (const animation of document.getAnimations()) {
+      if (animation.effect?.getComputedTiming().iterations === Infinity) {
+        animation.pause();
+        animation.currentTime = 0;
+      } else {
+        animation.finish();
+      }
+    }
   });
 
   const results = await new AxeBuilder({ page }).withTags(TAGS).analyze();

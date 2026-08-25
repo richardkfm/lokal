@@ -112,6 +112,14 @@ deliberately, and the closing call to action reads "Zur Erhebung" so it cannot
 collide with `getByRole("link", { name: "Erhebung starten" })` under Playwright's
 substring matching.
 
+A fourth came out of the follow-up request for hero motion: **the axe helper
+could not survive a looping animation.** It snapped every animation with
+`Animation.finish()`, which throws `InvalidStateError` on one with no end — so
+the first ambient background added to any page in this project would have failed
+the accessibility run rather than the page. Infinite animations are now paused at
+a fixed time instead, which is the same determinism the helper existed to
+provide. Verified by confirming the old helper does throw on the new hero.
+
 The print check was worth running by hand. Under print media both chrome
 elements resolve to `display: none` with zero height, and no navigation text
 reaches the rendered page — which is exactly the regression the `data-site-chrome`

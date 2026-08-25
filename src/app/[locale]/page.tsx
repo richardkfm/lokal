@@ -49,8 +49,15 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
   return (
     <>
       {/* Hero */}
-      <section className="from-brand-soft/60 border-line/60 border-b bg-gradient-to-b to-[var(--color-paper)]">
-        <div className="mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28 sm:pb-20">
+      <section className="from-brand-soft/60 border-line/60 relative isolate overflow-hidden border-b bg-gradient-to-b to-[var(--color-paper)]">
+        {/* Decorative only — see `.hero-field` in globals.css. Four layers on
+            non-harmonic periods, so the motion never visibly repeats. */}
+        <div className="hero-field" aria-hidden="true">
+          <span className="hero-glow hero-glow-a" />
+          <span className="hero-glow hero-glow-b" />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28 sm:pb-20">
           <div className="max-w-3xl">
             <h1 className="text-ink display text-4xl font-semibold sm:text-5xl lg:text-6xl">
               {t("heading")}
