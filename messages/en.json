@@ -43,7 +43,88 @@
     "audienceTitle": "Who it is for",
     "audience": "Municipalities, district offices, schools, utilities, associations and small to mid-sized companies — Germany first.",
     "outputTitle": "What you end up with",
-    "output": "A report you can pass on: a one-page summary, a recommended target stack per area with its rationale and the alternatives ruled out, a phased roadmap with effort and seats affected, a capacity check, an AI assessment — as a web page, as Markdown, and in a print-ready form for PDF."
+    "ctaSecondary": "How the plan is built",
+    "trust": {
+      "account": "No account",
+      "noLlm": "No language model",
+      "license": "AGPL-3.0",
+      "selfHost": "Self-hostable"
+    },
+    "preview": {
+      "title": "What a plan looks like",
+      "lead": "Not a list of alternatives, but an order with reasons: what goes first, what waits, what stays as it is for now — and what was ruled out.",
+      "badge": "Example excerpt",
+      "docTitle": "Migration plan",
+      "docSubtitle": "Municipality · 180 seats",
+      "readinessLabel": "Readiness",
+      "readinessValue": "Solid",
+      "readinessCaption": "solid",
+      "postureLabel": "Approach",
+      "postureValue": "Step by step",
+      "postureDetail": "In phases, not all at once",
+      "aiLabel": "Local AI",
+      "aiValue": "Pilot viable",
+      "aiDetail": "Two use cases, one department",
+      "roadmapTitle": "Roadmap",
+      "phase1Label": "Phase 1",
+      "phase1Title": "File shares → Nextcloud",
+      "phase1Detail": "160 seats · medium effort",
+      "phase2Label": "Phase 2",
+      "phase2Title": "Intranet → BookStack",
+      "phase2Detail": "40 seats · low effort",
+      "keepTitle": "Keep for now",
+      "keepItem": "Line-of-business software",
+      "keepReason": "No viable open replacement. Revisit at the end of the contract term.",
+      "ruledOutTitle": "Considered and ruled out",
+      "ruledOutItem": "A US vendor's cloud suite",
+      "ruledOutReason": "Conflicts with the hosting requirement you stated.",
+      "footnote": "An illustration with invented figures. Not a generated report."
+    },
+    "how": {
+      "title": "How the plan is built",
+      "lead": "Three steps, none of them opaque.",
+      "step1Title": "Assess",
+      "step1Body": "Six steps: organization, operations and capacity, current position per area, stance on AI. Only things already known inside your organization.",
+      "step2Title": "Apply the rulepack",
+      "step2Body": "A rulepack you can read scores fit, dependencies, effort and sequence. The same answers produce the same result — next week too.",
+      "step3Title": "Get the plan",
+      "step3Body": "Target stack with rationale, a phased roadmap, a capacity check and an AI assessment. Immediately, without an account or a queue.",
+      "proof": "No language model takes part in any of these steps. That is why every recommendation can be traced back to the rule that produced it."
+    },
+    "formats": {
+      "lead": "A report you can pass on — in whichever form the situation calls for.",
+      "webTitle": "As a web page",
+      "webBody": "To walk through together, with the rationale attached to every single recommendation.",
+      "markdownTitle": "As Markdown",
+      "markdownBody": "Pastes cleanly into a wiki — Confluence, BookStack, Nextcloud Collectives.",
+      "printTitle": "As a print version",
+      "printBody": "A4 with clean page breaks. Ready to put in front of a council, a board or procurement."
+    },
+    "audienceChips": {
+      "municipality": "Municipalities",
+      "district": "District offices",
+      "school": "Schools",
+      "utility": "Utilities",
+      "association": "Associations",
+      "sme": "SMEs"
+    },
+    "sovereignty": {
+      "title": "Sovereign in the tool itself",
+      "lead": "A tool that argues for independence should not create a new dependency of its own.",
+      "terminalLabel": "bash",
+      "selfHostTitle": "On your own infrastructure",
+      "selfHostBody": "One container, one file as the database. No API keys, no external services, no phoning home.",
+      "rulepackTitle": "A readable rulepack",
+      "rulepackBody": "Every recommendation comes from versioned rules with sources and a review date. You can read them — and disagree with them.",
+      "licenseTitle": "AGPL-3.0",
+      "licenseBody": "Audit it, fork it, adapt it. What you build on it stays open too."
+    },
+    "closing": {
+      "title": "Start with what you already know",
+      "body": "The assessment asks for nothing you would have to go and research. A quarter of an hour later you have something you can put in front of people.",
+      "cta": "Go to the assessment",
+      "note": "No account, no email address, no sign-up."
+    }
   },
   "wizard": {
     "title": "Assessment",
