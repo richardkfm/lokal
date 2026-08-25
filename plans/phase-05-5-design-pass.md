@@ -86,4 +86,33 @@ report someone forwards to their management. Chrome now marks itself explicitly.
 
 ## Outcome
 
-Recorded on completion.
+All ten e2e tests green, including the axe pass over all four surfaces and the
+JavaScript-disabled print render. `pnpm check` and `pnpm build` clean.
+
+Three things came out differently from the plan.
+
+1. **`latin-ext` was dropped.** The plan called it required for German. It is
+   not: `äöüßÄÖÜ` all sit in `U+0000-00FF`, inside the `latin` subset.
+   Including it would have added 100 KB for Central and Eastern European glyphs
+   that appear only in a user-typed foreign name, where falling back to the
+   system stack for one glyph is a rare cosmetic difference. 88 KB total instead
+   of 189 KB.
+2. **Terminal lines carry real newlines**, not just `display: block`. Rendering
+   the landing page with the stylesheet missing showed the three commands
+   concatenated into one line — `lokal.gitcd lokaldocker`. Inside a `<pre>` a
+   literal newline survives with no CSS at all, and it also means a copied
+   selection keeps its line breaks.
+3. **The mobile header wrapped to two rows**, stranding the locale switch on a
+   line of its own. Navigation and the switch now travel as one block, and the
+   source link drops out below `sm` — it is in the footer too, and at 390px it
+   is the difference between one row and two.
+
+No e2e test needed changing: the German strings the smoke test pins were kept
+deliberately, and the closing call to action reads "Zur Erhebung" so it cannot
+collide with `getByRole("link", { name: "Erhebung starten" })` under Playwright's
+substring matching.
+
+The print check was worth running by hand. Under print media both chrome
+elements resolve to `display: none` with zero height, and no navigation text
+reaches the rendered page — which is exactly the regression the `data-site-chrome`
+change exists to prevent, and which nothing else would have caught.

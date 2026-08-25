@@ -83,7 +83,7 @@ Each chunk is one reviewable commit, roughly 30 minutes of work.
 | 5.2 | Print route, print CSS, cover page, page breaks | Manual print preview: clean A4, no cut cards                    | done |
 | 5.3 | Landing page content                            | Reads calm and operational                                      | done |
 | 5.4 | Playwright smoke test and accessibility pass    | One spec green; no critical axe issues                          | done |
-| 5.5 | Visual identity, landing page, design tokens    | Landing sells the concept; axe clean; print chrome still hidden |
+| 5.5 | Visual identity, landing page, design tokens    | Landing sells the concept; axe clean; print chrome still hidden | done |
 | 5.6 | German copy review, English stubs complete      | No missing keys in either locale                                |
 | 5.7 | Docs pass, `v0.1.0` tag                         | `git describe` shows the tag                                    |
 

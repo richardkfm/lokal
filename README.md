@@ -68,8 +68,10 @@ This section is deliberately near the top.
 | Charts      | none — indicators are CSS-only, so they print reliably  |
 
 No external services are required to run lokal. No API keys, no model providers,
-no third-party analytics. Builds work offline: fonts are system stacks, and rules
-ship as source.
+no third-party analytics. Builds work offline: fonts are committed to the
+repository and loaded locally, and rules ship as source. Nothing is fetched at
+build time, which matters for the networks a good part of this audience builds
+inside — see [`src/app/fonts/README.md`](src/app/fonts/README.md).
 
 ## Local setup
 
@@ -274,7 +276,7 @@ persona in [`tests/fixtures/personas.ts`](tests/fixtures/personas.ts).
 | Landing page                                                                  | Intake wizard                                                                  | Report                                                                                                     |
 | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
 | [![Landing page](docs/screenshots/landing.png)](docs/screenshots/landing.png) | [![Intake wizard](docs/screenshots/wizard.png)](docs/screenshots/wizard.png)   | [![Report view](docs/screenshots/report.png)](docs/screenshots/report.png)                                 |
-| States the problem, who it's for, and what lokal explicitly is not.           | Step 1 of 6: organization type and size drive every recommendation downstream. | At-a-glance summary — readiness, savings band, affected seats, phases — above the full nine-section brief. |
+| Shows what a plan actually looks like, then what lokal explicitly is not.     | Step 1 of 6: organization type and size drive every recommendation downstream. | At-a-glance summary — readiness, savings band, affected seats, phases — above the full nine-section brief. |
 
 ## Roadmap
 
