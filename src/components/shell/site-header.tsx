@@ -29,22 +29,29 @@ export async function SiteHeader() {
         <Wordmark className="text-lg" />
         <span className="text-faint hidden text-xs lg:inline">{t("tagline")}</span>
 
-        <nav aria-label={nav("primary")} className="ml-auto flex items-center gap-1">
-          <Link
-            href="/assessment"
-            className="text-muted hover:text-ink hover:bg-sunken rounded-md px-2.5 py-1.5 text-sm transition-colors"
-          >
-            {nav("assessment")}
-          </Link>
-          <a
-            href="https://github.com/richardkfm/lokal"
-            className="text-muted hover:text-ink hover:bg-sunken rounded-md px-2.5 py-1.5 text-sm transition-colors"
-          >
-            {t("sourceLink")}
-          </a>
-        </nav>
+        {/* Navigation and the locale switch travel together, so a narrow
+            viewport wraps them as one block instead of stranding the switch on
+            a row of its own. The source link drops out below `sm` — it is in
+            the footer too, and at 390px it is the difference between one row
+            and two. */}
+        <div className="ml-auto flex items-center gap-1">
+          <nav aria-label={nav("primary")} className="flex items-center gap-1">
+            <Link
+              href="/assessment"
+              className="text-muted hover:text-ink hover:bg-sunken rounded-md px-2.5 py-1.5 text-sm transition-colors"
+            >
+              {nav("assessment")}
+            </Link>
+            <a
+              href="https://github.com/richardkfm/lokal"
+              className="text-muted hover:text-ink hover:bg-sunken hidden rounded-md px-2.5 py-1.5 text-sm transition-colors sm:inline-block"
+            >
+              {t("sourceLink")}
+            </a>
+          </nav>
 
-        <LocaleSwitch />
+          <LocaleSwitch />
+        </div>
       </div>
     </header>
   );
