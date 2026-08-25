@@ -96,6 +96,13 @@ Dates are ISO 8601.
   screen reader nor carried into the clipboard with a copied command.
 - A real site header and footer: sticky navigation, and a footer that names the
   licence, the source and the rulepack version behind the recommendations.
+- An ambient hero background: a blueprint grid and two soft washes on four
+  deliberately non-harmonic periods (37s, 53s, 61s, 79s), so the composite has
+  no common cycle and never visibly repeats. Only compositor-friendly properties
+  are animated — no `filter: blur()`, which would repaint a large area every
+  frame on hardware a good part of this audience is still running. Worst-case
+  text contrast across the whole cycle is 6.51:1 against a 4.5:1 requirement,
+  and `prefers-reduced-motion` removes the animations entirely.
 
 ### Fixed (phase 5.5)
 
@@ -106,6 +113,11 @@ Dates are ISO 8601.
   neutralised for paper.
 - Terminal blocks invert to the ink-safe palette when printed, rather than
   putting a full-bleed black rectangle on the page.
+- The accessibility suite snapped animations with `Animation.finish()` before
+  sampling colours, which throws `InvalidStateError` on an animation that never
+  ends — so the first looping background on any page would have failed the axe
+  run rather than the page. Infinite animations are now paused at a fixed time,
+  which is the same determinism guarantee the helper existed for.
 
 ### Added (Docker)
 
