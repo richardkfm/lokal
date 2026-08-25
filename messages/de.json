@@ -7,12 +7,17 @@
     "skipToContent": "Zum Inhalt springen",
     "start": "Start",
     "assessment": "Erhebung",
-    "language": "Sprache"
+    "language": "Sprache",
+    "primary": "Hauptnavigation"
   },
   "shell": {
     "tagline": "Migrationsplanung für Open Source, souveränes Hosting und lokale KI",
     "footerNote": "lokal erstellt Planungsgrundlagen, keine Rechts- oder Beschaffungsberatung.",
-    "sourceLink": "Quellcode"
+    "sourceLink": "Quellcode",
+    "footerProductTitle": "Produkt",
+    "footerProjectTitle": "Projekt",
+    "footerLicense": "Lizenz (AGPL-3.0)",
+    "footerRulepack": "Regelwerk {version}"
   },
   "landing": {
     "heading": "Vom Ist-Zustand zum belastbaren Migrationsplan",
