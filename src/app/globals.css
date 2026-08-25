@@ -48,15 +48,61 @@
   --color-neutral: oklch(60% 0.01 260);
   --color-neutral-soft: oklch(95% 0.004 260);
 
-  /* Typography: system stacks only. No build-time font fetching, so offline
-   * and air-gapped builds work — a realistic constraint for this audience. */
+  /* Terminal surface.
+   *
+   * The one place this palette goes dark. Commands are shown in a terminal
+   * block rather than a light code box because the `>` in the wordmark and the
+   * `>` at the prompt are the same mark — using one everywhere is what makes
+   * the identity read as deliberate. Real tokens rather than inline hex so that
+   * print can neutralise the whole surface in a single rule.
+   *
+   * Near-black, not #000: pure black on a bright page is harsher than it needs
+   * to be, and picks up colour fringing on subpixel-rendered text. Both text
+   * tiers clear 4.5:1 against the surface — the muted tier lands near 6:1. */
+  --color-terminal: oklch(21% 0.015 260);
+  --color-terminal-raised: oklch(26% 0.015 260);
+  --color-terminal-ink: oklch(95% 0.005 260);
+  --color-terminal-muted: oklch(72% 0.012 260);
+  --color-terminal-prompt: oklch(78% 0.12 215);
+
+  /* Focus.
+   *
+   * One ring, defined once. Focus styling was previously repeated ad hoc across
+   * the form primitives, which is how a control eventually ships without any. */
+  --color-focus: oklch(52% 0.15 245);
+
+  /* Elevation.
+   *
+   * Two layers each — a tight contact shadow plus a wider ambient one. A single
+   * blurred shadow reads as a smudge at these sizes. Cool-tinted rather than
+   * neutral black so shadows sit in the same hue family as the lines. */
+  --shadow-card:
+    0 1px 2px oklch(23% 0.012 260 / 0.04), 0 1px 3px oklch(23% 0.012 260 / 0.06);
+  --shadow-raised:
+    0 2px 4px oklch(23% 0.012 260 / 0.04), 0 6px 16px oklch(23% 0.012 260 / 0.08);
+  --shadow-hero:
+    0 4px 8px oklch(23% 0.012 260 / 0.04), 0 16px 40px oklch(23% 0.012 260 / 0.1);
+
+  /* Radii */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 1rem;
+
+  /* Typography.
+   *
+   * Self-hosted woff2 files loaded through next/font/local (src/app/fonts), not
+   * next/font/google: this project promises builds that work offline and
+   * air-gapped, and a build-time fetch from fonts.googleapis.com would break
+   * that. The system stacks stay on as the fallback, so a build missing the
+   * font files still renders correctly — it just renders plainer. */
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono:
-    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
-    monospace;
+    var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, "SF Mono", Menlo,
+    Consolas, "Liberation Mono", monospace;
 }
 
 html {
@@ -71,8 +117,38 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* One visible focus treatment for everything that takes focus.
+ *
+ * :focus-visible rather than :focus, so a mouse click on a card does not light
+ * up a ring the keyboard user actually needs to see. */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
 /* Tabular figures wherever numbers are compared: seat counts, phase tables,
  * effort ranges. Proportional digits make columns wobble. */
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Headings set tighter than body text. At display sizes the default tracking
+ * looks loose; this is the single biggest difference between "styled" and
+ * "designed" on a landing page. */
+.display {
+  letter-spacing: -0.028em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SiteFooter } from "@/components/shell/site-footer";
 import { SiteHeader } from "@/components/shell/site-header";
+import { mono, sans } from "@/app/fonts";
 import { isLocale, routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -33,7 +34,7 @@ export default async function LocaleLayout(props: LayoutProps<"/[locale]">) {
   const t = await getTranslations({ locale, namespace: "nav" });
 
   return (
-    <html lang={locale} className="h-full">
+    <html lang={locale} className={`h-full ${sans.variable} ${mono.variable}`}>
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
           <a
