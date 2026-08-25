@@ -7,12 +7,17 @@
     "skipToContent": "Skip to content",
     "start": "Start",
     "assessment": "Assessment",
-    "language": "Language"
+    "language": "Language",
+    "primary": "Main navigation"
   },
   "shell": {
     "tagline": "Migration planning for open source, sovereign hosting and local AI",
     "footerNote": "lokal produces planning input, not legal or procurement advice.",
-    "sourceLink": "Source code"
+    "sourceLink": "Source code",
+    "footerProductTitle": "Product",
+    "footerProjectTitle": "Project",
+    "footerLicense": "License (AGPL-3.0)",
+    "footerRulepack": "Rulepack {version}"
   },
   "landing": {
     "heading": "From your current situation to a plan you can defend",
