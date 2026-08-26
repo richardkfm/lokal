@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  copyEntryValues,
   emptyDraft,
+  selectCategories,
   toAssessment,
   validateStep,
   type Draft,
@@ -87,5 +89,90 @@ describe("draft assembly", () => {
 
   it("returns null while the draft is incomplete", () => {
     expect(toAssessment(emptyDraft(), "de")).toBeNull();
+  });
+
+  it("falls back to the org's total seats when a category has none of its own", () => {
+    const draft = municipalityDraft();
+    delete draft.stack.office_docs?.seats;
+
+    expect(validateStep("detail", draft)).toEqual({});
+    expect(toAssessment(draft, "de")?.stack[0]?.seats).toBe(180);
+  });
+
+  it("maps validation issues to translation keys, not raw Zod messages", () => {
+    const draft = municipalityDraft();
+    delete draft.stack.office_docs?.urgency;
+
+    // No translator: falls back to the raw key, never Zod's English text.
+    expect(validateStep("detail", draft)["0.urgency"]).toBe("selectOption");
+
+    // A translator is applied when supplied.
+    const shout = (key: string) => key.toUpperCase();
+    expect(validateStep("detail", draft, shout)["0.urgency"]).toBe("SELECTOPTION");
+  });
+});
+
+describe("selectCategories", () => {
+  it("seeds neutral starting values for a newly added category", () => {
+    const draft = emptyDraft();
+    const next = selectCategories(draft, ["office_docs"]);
+
+    expect(next.stack.office_docs).toEqual({
+      criticality: "medium",
+      pain: "medium",
+      urgency: "later",
+    });
+  });
+
+  it("never overwrites an already-answered category, even if re-selected", () => {
+    const draft: Draft = {
+      ...emptyDraft(),
+      selectedCategories: ["office_docs"],
+      stack: { office_docs: { seats: 42, criticality: "high" } },
+    };
+
+    // Toggled off, then back on: the answers already given must survive.
+    const toggledOff = selectCategories(draft, []);
+    const toggledOn = selectCategories(toggledOff, ["office_docs"]);
+
+    expect(toggledOn.stack.office_docs).toEqual({ seats: 42, criticality: "high" });
+  });
+
+  it("orders selected categories by vocabulary order, not click order", () => {
+    const draft = emptyDraft();
+    const next = selectCategories(draft, ["dms_archive", "office_docs"]);
+
+    expect(next.selectedCategories.indexOf("office_docs")).toBeLessThan(
+      next.selectedCategories.indexOf("dms_archive"),
+    );
+  });
+});
+
+describe("copyEntryValues", () => {
+  it("copies the rated fields but not the tool-specific ones", () => {
+    const patch = copyEntryValues({
+      seats: 50,
+      criticality: "high",
+      pain: "low",
+      urgency: "now",
+      lockInConcern: "medium",
+      trainingSensitivity: "high",
+      currentTool: { kind: "other", label: "SharePoint" },
+      notes: "irrelevant here",
+    });
+
+    expect(patch).toEqual({
+      seats: 50,
+      criticality: "high",
+      pain: "low",
+      urgency: "now",
+      lockInConcern: "medium",
+      trainingSensitivity: "high",
+    });
+  });
+
+  it("returns an empty patch for an undefined or empty source", () => {
+    expect(copyEntryValues(undefined)).toEqual({});
+    expect(copyEntryValues({})).toEqual({});
   });
 });

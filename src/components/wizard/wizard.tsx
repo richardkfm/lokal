@@ -289,7 +289,6 @@ function WizardForm() {
           <button
             type="button"
             onClick={wizard.next}
-            disabled={!wizard.canAdvance}
             className="bg-brand hover:bg-brand-strong rounded-md px-5 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
             {t("next")}
