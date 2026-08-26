@@ -96,7 +96,18 @@ test("the landing page leads into the wizard", async ({ page }) => {
 
   // The promise this tool is built on. If the landing page starts selling an
   // alternatives directory instead, that is a product regression, not a typo.
-  await expect(page.getByText("Kein Verzeichnis von Alternativen.")).toBeVisible();
+  //
+  // This used to assert one sentence of "what lokal is not" copy. That section
+  // is gone, but the guarantee is not — it is now checked against what the page
+  // actually shows, which is the stronger test: a plan excerpt carrying a
+  // sequence, a verdict to leave something alone, and a candidate struck out.
+  // A directory of alternatives cannot produce any of the three.
+  const excerpt = page.getByRole("region", { name: "Beispielausschnitt" });
+  await expect(excerpt.getByText("Phase 1")).toBeVisible();
+  await expect(excerpt.getByText("Vorerst unverändert lassen")).toBeVisible();
+  await expect(excerpt.getByText("Ausgeschieden")).toBeVisible();
+  // Savings stay a band with no figure attached, as the report states them.
+  await expect(excerpt.getByText("qualitativ, ohne Beträge")).toBeVisible();
 
   await page.getByRole("link", { name: "Erhebung starten" }).click();
   await expect(page).toHaveURL(/\/de\/assessment$/);

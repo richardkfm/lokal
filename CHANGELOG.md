@@ -103,6 +103,29 @@ Dates are ISO 8601.
   frame on hardware a good part of this audience is still running. Worst-case
   text contrast across the whole cycle is 6.51:1 against a 4.5:1 requirement,
   and `prefers-reduced-motion` removes the animations entirely.
+- Scroll reveals across the landing sections, driven by `animation-timeline:
+view()` — CSS reading scroll position directly, so no observer, no hook and no
+  client component enters a tree the print route shares. Grid items each carry
+  their own timeline, so rows stagger from the items' real positions rather than
+  from tuned per-child delays.
+
+### Changed (phase 5.5)
+
+- The "what lokal is not" section is gone from the landing page. Four cards of
+  negative framing read as defensive, and three of the four claims were already
+  made positively elsewhere — the plan excerpt opens by saying the output is a
+  sequence rather than a list of alternatives, the trust strip and the "how it
+  works" proof line both carry "no language model", and the footer carries the
+  advice disclaimer. The fourth, savings as a band with no figure attached, now
+  appears in the excerpt as the report itself states it. Showing beats telling,
+  and none of the report-side guarantees in CLAUDE.md are affected.
+- The smoke test used to pin one sentence of that section's copy as the guard
+  against lokal becoming an alternatives directory. It now asserts against what
+  the page shows instead: a phased sequence, a "keep for now" verdict, a
+  candidate struck out, and savings without figures. A directory cannot produce
+  any of the four, so the guarantee is stronger than the sentence it replaces.
+- The plan excerpt is a labelled region, so a screen reader hears where the
+  example starts and stops rather than meeting it as unannounced prose.
 
 ### Fixed (phase 5.5)
 
@@ -113,6 +136,11 @@ Dates are ISO 8601.
   neutralised for paper.
 - Terminal blocks invert to the ink-safe palette when printed, rather than
   putting a full-bleed black rectangle on the page.
+- Printing the landing page produced mostly blank pages once scroll reveals
+  landed: paper has no scroll position, so a `view()` timeline never advances
+  and every revealed block stayed at opacity 0. Reveals are now switched off
+  under `@media print`. The reduced-motion guard does not cover this — a visitor
+  can prefer motion and still hit Print.
 - The accessibility suite snapped animations with `Animation.finish()` before
   sampling colours, which throws `InvalidStateError` on an animation that never
   ends — so the first looping background on any page would have failed the axe

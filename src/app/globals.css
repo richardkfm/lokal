@@ -294,3 +294,67 @@ body {
     transform: translate3d(-1.5rem, -2.5rem, 0) scale(0.93);
   }
 }
+
+/* Scroll reveals.
+ *
+ * Content rises and fades in as it scrolls into view. Driven by
+ * `animation-timeline: view()`, which is CSS reading scroll position directly —
+ * no IntersectionObserver, no hook, no client component. That matters here:
+ * the landing page is fully server-rendered, and the shell it shares with the
+ * print route has to stay that way (ADR-0002). Grid items each get their own
+ * timeline, so a row staggers naturally out of the items' own positions rather
+ * than a hand-tuned delay per child.
+ *
+ * Two guards, both load-bearing:
+ *
+ * 1. `@supports` — without it, a browser that does not implement scroll-driven
+ *    animations applies the `from` state and never advances it, leaving the
+ *    page permanently blank. The effect has to be opt-in on capability, never
+ *    opt-out on failure.
+ * 2. `prefers-reduced-motion: no-preference` — putting the rule behind this,
+ *    rather than cancelling it afterwards, means a reduced-motion visitor never
+ *    gets the hidden start state at all. Overriding `animation` after the fact
+ *    would leave the opacity:0 to be undone, which is one specificity mistake
+ *    away from invisible content.
+ *
+ * The range closes at `entry 55%` rather than at the end of the phase: an
+ * element near the bottom of the document may never scroll far enough to finish
+ * a longer range, and an unfinished reveal is a permanently half-faded section.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+}
+
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Paper has no scroll position, so a view() timeline never advances and every
+ * revealed block would print at opacity 0 — a landing page that comes out of
+ * the printer blank. The same applies to any tool that captures the full page
+ * in one pass rather than scrolling it. This rule lives in globals.css rather
+ * than styles/print.css because that file is imported only by the report's
+ * print route, and this is the landing page's problem.
+ *
+ * Not covered by the reduced-motion guard above: a visitor can prefer motion
+ * and still hit Print. */
+@media print {
+  .reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
