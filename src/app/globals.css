@@ -48,15 +48,61 @@
   --color-neutral: oklch(60% 0.01 260);
   --color-neutral-soft: oklch(95% 0.004 260);
 
-  /* Typography: system stacks only. No build-time font fetching, so offline
-   * and air-gapped builds work — a realistic constraint for this audience. */
+  /* Terminal surface.
+   *
+   * The one place this palette goes dark. Commands are shown in a terminal
+   * block rather than a light code box because the `>` in the wordmark and the
+   * `>` at the prompt are the same mark — using one everywhere is what makes
+   * the identity read as deliberate. Real tokens rather than inline hex so that
+   * print can neutralise the whole surface in a single rule.
+   *
+   * Near-black, not #000: pure black on a bright page is harsher than it needs
+   * to be, and picks up colour fringing on subpixel-rendered text. Both text
+   * tiers clear 4.5:1 against the surface — the muted tier lands near 6:1. */
+  --color-terminal: oklch(21% 0.015 260);
+  --color-terminal-raised: oklch(26% 0.015 260);
+  --color-terminal-ink: oklch(95% 0.005 260);
+  --color-terminal-muted: oklch(72% 0.012 260);
+  --color-terminal-prompt: oklch(78% 0.12 215);
+
+  /* Focus.
+   *
+   * One ring, defined once. Focus styling was previously repeated ad hoc across
+   * the form primitives, which is how a control eventually ships without any. */
+  --color-focus: oklch(52% 0.15 245);
+
+  /* Elevation.
+   *
+   * Two layers each — a tight contact shadow plus a wider ambient one. A single
+   * blurred shadow reads as a smudge at these sizes. Cool-tinted rather than
+   * neutral black so shadows sit in the same hue family as the lines. */
+  --shadow-card:
+    0 1px 2px oklch(23% 0.012 260 / 0.04), 0 1px 3px oklch(23% 0.012 260 / 0.06);
+  --shadow-raised:
+    0 2px 4px oklch(23% 0.012 260 / 0.04), 0 6px 16px oklch(23% 0.012 260 / 0.08);
+  --shadow-hero:
+    0 4px 8px oklch(23% 0.012 260 / 0.04), 0 16px 40px oklch(23% 0.012 260 / 0.1);
+
+  /* Radii */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 1rem;
+
+  /* Typography.
+   *
+   * Self-hosted woff2 files loaded through next/font/local (src/app/fonts), not
+   * next/font/google: this project promises builds that work offline and
+   * air-gapped, and a build-time fetch from fonts.googleapis.com would break
+   * that. The system stacks stay on as the fallback, so a build missing the
+   * font files still renders correctly — it just renders plainer. */
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, sans-serif;
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono:
-    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
-    monospace;
+    var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, "SF Mono", Menlo,
+    Consolas, "Liberation Mono", monospace;
 }
 
 html {
@@ -71,8 +117,244 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* One visible focus treatment for everything that takes focus.
+ *
+ * :focus-visible rather than :focus, so a mouse click on a card does not light
+ * up a ring the keyboard user actually needs to see. */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
 /* Tabular figures wherever numbers are compared: seat counts, phase tables,
  * effort ranges. Proportional digits make columns wobble. */
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Headings set tighter than body text. At display sizes the default tracking
+ * looks loose; this is the single biggest difference between "styled" and
+ * "designed" on a landing page. */
+.display {
+  letter-spacing: -0.028em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Terminal prompt.
+ *
+ * Generated content rather than a DOM node, for two reasons: a screen reader
+ * should not announce "greater-than" before every command, and selecting a
+ * command to paste it into a real shell must not drag the prompt along with it.
+ * `user-select: none` is what guarantees the second one. */
+.terminal-line::before {
+  content: "> ";
+  color: var(--color-terminal-prompt);
+  user-select: none;
+}
+
+/* Hero background field.
+ *
+ * Four layers on deliberately non-harmonic periods (37s, 53s, 61s, 79s), so the
+ * composite has no common cycle and the eye never finds the loop. Each layer is
+ * barely there on its own; together they read as depth rather than as
+ * animation. That restraint is the requirement, not a limitation — this is a
+ * planning tool for public bodies, and a hero that visibly performs would
+ * undercut the argument the page is making.
+ *
+ * Only `transform`, `opacity` and `background-position` are animated, all of
+ * which the compositor can handle without re-laying-out or repainting. No
+ * `filter: blur()`: it is the obvious way to soften these shapes and it forces
+ * a repaint of a very large area every frame, which is exactly the kind of cost
+ * that turns into visible jank on the ageing hardware a lot of this audience
+ * runs. The gradients carry their own falloff instead.
+ *
+ * Entirely decorative: aria-hidden, no pointer events, behind the content. The
+ * prefers-reduced-motion rule above stops all of it.
+ */
+.hero-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Layer 1 — a blueprint grid, dissolved toward the edges so it never shows a
+ * hard boundary. It drifts exactly one cell per cycle, which makes the loop
+ * seamless: the frame at 100% is pixel-identical to the frame at 0%. */
+.hero-field::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  background-image:
+    linear-gradient(to right, var(--color-line-strong) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-line-strong) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(110% 80% at 25% 0%, #000 0%, transparent 72%);
+  mask-image: radial-gradient(110% 80% at 25% 0%, #000 0%, transparent 72%);
+  animation:
+    hero-grid-drift 61s linear infinite,
+    hero-grid-breathe 37s ease-in-out infinite;
+}
+
+@keyframes hero-grid-drift {
+  from {
+    background-position:
+      0 0,
+      0 0;
+  }
+  to {
+    background-position:
+      44px 44px,
+      44px 44px;
+  }
+}
+
+@keyframes hero-grid-breathe {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* Layers 2 and 3 — two soft washes drifting against each other. Kept high in
+ * lightness on purpose: the subheading sits on this in --color-muted, and a
+ * wash dark enough to be obvious is a wash dark enough to fail 4.5:1. */
+.hero-glow {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform;
+}
+
+.hero-glow-a {
+  top: -18rem;
+  left: -14rem;
+  width: 56rem;
+  height: 40rem;
+  background: radial-gradient(
+    closest-side,
+    oklch(93% 0.045 245 / 0.9),
+    oklch(96% 0.02 245 / 0.35),
+    transparent
+  );
+  animation: hero-drift-a 53s ease-in-out infinite;
+}
+
+.hero-glow-b {
+  top: -12rem;
+  right: -16rem;
+  width: 46rem;
+  height: 36rem;
+  background: radial-gradient(
+    closest-side,
+    oklch(94% 0.04 205 / 0.8),
+    oklch(97% 0.02 205 / 0.3),
+    transparent
+  );
+  animation: hero-drift-b 79s ease-in-out infinite;
+}
+
+@keyframes hero-drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(7rem, 2.5rem, 0) scale(1.09);
+  }
+  66% {
+    transform: translate3d(2rem, -3.5rem, 0) scale(0.95);
+  }
+}
+
+@keyframes hero-drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    transform: translate3d(-6rem, 3rem, 0) scale(1.11);
+  }
+  72% {
+    transform: translate3d(-1.5rem, -2.5rem, 0) scale(0.93);
+  }
+}
+
+/* Scroll reveals.
+ *
+ * Content rises and fades in as it scrolls into view. Driven by
+ * `animation-timeline: view()`, which is CSS reading scroll position directly —
+ * no IntersectionObserver, no hook, no client component. That matters here:
+ * the landing page is fully server-rendered, and the shell it shares with the
+ * print route has to stay that way (ADR-0002). Grid items each get their own
+ * timeline, so a row staggers naturally out of the items' own positions rather
+ * than a hand-tuned delay per child.
+ *
+ * Two guards, both load-bearing:
+ *
+ * 1. `@supports` — without it, a browser that does not implement scroll-driven
+ *    animations applies the `from` state and never advances it, leaving the
+ *    page permanently blank. The effect has to be opt-in on capability, never
+ *    opt-out on failure.
+ * 2. `prefers-reduced-motion: no-preference` — putting the rule behind this,
+ *    rather than cancelling it afterwards, means a reduced-motion visitor never
+ *    gets the hidden start state at all. Overriding `animation` after the fact
+ *    would leave the opacity:0 to be undone, which is one specificity mistake
+ *    away from invisible content.
+ *
+ * The range closes at `entry 55%` rather than at the end of the phase: an
+ * element near the bottom of the document may never scroll far enough to finish
+ * a longer range, and an unfinished reveal is a permanently half-faded section.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+}
+
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Paper has no scroll position, so a view() timeline never advances and every
+ * revealed block would print at opacity 0 — a landing page that comes out of
+ * the printer blank. The same applies to any tool that captures the full page
+ * in one pass rather than scrolling it. This rule lives in globals.css rather
+ * than styles/print.css because that file is imported only by the report's
+ * print route, and this is the landing page's problem.
+ *
+ * Not covered by the reduced-motion guard above: a visitor can prefer motion
+ * and still hit Print. */
+@media print {
+  .reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

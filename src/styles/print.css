@@ -32,11 +32,22 @@
     line-height: 1.45;
   }
 
-  /* Site chrome has no place in a document someone files. */
-  header[class*="border-b"]:has(nav),
-  footer,
-  nav[aria-label] {
+  /* Site chrome has no place in a document someone files.
+   *
+   * Keyed off an explicit attribute rather than a Tailwind class. The previous
+   * selector matched `header[class*="border-b"]:has(nav)`, which tied this rule
+   * to the header's styling — restyle the header and site navigation starts
+   * printing onto the report, silently, with no test to catch it. */
+  [data-site-chrome] {
     display: none !important;
+  }
+
+  /* A sticky, blurred header is a screen affordance. Neither survives paper,
+   * and a backdrop filter forces a raster layer in some print pipelines. */
+  [data-site-chrome],
+  .sticky {
+    position: static !important;
+    backdrop-filter: none !important;
   }
 
   .report-print h1 {
@@ -92,5 +103,21 @@
 @media print {
   .report-print details:not([open]) > *:not(summary) {
     display: revert !important;
+  }
+}
+
+/* Terminal blocks are a screen device. On paper they become an ordinary code
+ * box in the ink-safe palette — a full-bleed black rectangle wastes toner and
+ * makes a filed document look like a misprint. */
+@media print {
+  [data-terminal] {
+    background: var(--color-sunken) !important;
+    border: 1px solid var(--color-line-strong) !important;
+    box-shadow: none !important;
+  }
+
+  [data-terminal],
+  [data-terminal] * {
+    color: var(--color-ink) !important;
   }
 }

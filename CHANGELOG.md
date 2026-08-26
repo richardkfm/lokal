@@ -71,6 +71,82 @@ Dates are ISO 8601.
 - AI readiness no longer lets organizational maturity mask the absence of any
   suitable hardware.
 
+### Added (phase 5.5)
+
+- Visual identity. The `>lokal` wordmark sets a shell prompt in JetBrains Mono;
+  the same mark opens every terminal block on the site. It is `aria-hidden`, so
+  the link's accessible name stays "lokal" rather than "greater-than lokal".
+- Self-hosted typefaces: Inter for UI, JetBrains Mono for the wordmark and code,
+  loaded through `next/font/local` from two committed woff2 files (88 KB total,
+  both SIL OFL 1.1). `next/font/google` was rejected because it fetches at build
+  time and would break the offline and air-gapped builds this project promises.
+  The system stacks remain as fallback. Provenance, subsetting and licensing in
+  `src/app/fonts/README.md`.
+- Design tokens for elevation, radii and a terminal surface, plus a single
+  `:focus-visible` ring replacing focus styling that was repeated ad hoc across
+  the form primitives. `prefers-reduced-motion` is now honoured.
+- The landing page rebuilt as a nine-section narrative. The section carrying the
+  argument is a labelled excerpt of a plan — readiness, a phased roadmap, a
+  "keep for now" verdict and a candidate ruled out with its reason — built from
+  the report's own indicators. Showing the sequence is a better argument than
+  asserting that lokal is not an alternatives finder.
+- Terminal code blocks (`src/components/ui/terminal.tsx`). The self-hosting
+  section shows the three commands from the README's quick start, verified to
+  match it. The prompt is CSS generated content, so it is neither announced by a
+  screen reader nor carried into the clipboard with a copied command.
+- A real site header and footer: sticky navigation, and a footer that names the
+  licence, the source and the rulepack version behind the recommendations.
+- An ambient hero background: a blueprint grid and two soft washes on four
+  deliberately non-harmonic periods (37s, 53s, 61s, 79s), so the composite has
+  no common cycle and never visibly repeats. Only compositor-friendly properties
+  are animated — no `filter: blur()`, which would repaint a large area every
+  frame on hardware a good part of this audience is still running. Worst-case
+  text contrast across the whole cycle is 6.51:1 against a 4.5:1 requirement,
+  and `prefers-reduced-motion` removes the animations entirely.
+- Scroll reveals across the landing sections, driven by `animation-timeline:
+view()` — CSS reading scroll position directly, so no observer, no hook and no
+  client component enters a tree the print route shares. Grid items each carry
+  their own timeline, so rows stagger from the items' real positions rather than
+  from tuned per-child delays.
+
+### Changed (phase 5.5)
+
+- The "what lokal is not" section is gone from the landing page. Four cards of
+  negative framing read as defensive, and three of the four claims were already
+  made positively elsewhere — the plan excerpt opens by saying the output is a
+  sequence rather than a list of alternatives, the trust strip and the "how it
+  works" proof line both carry "no language model", and the footer carries the
+  advice disclaimer. The fourth, savings as a band with no figure attached, now
+  appears in the excerpt as the report itself states it. Showing beats telling,
+  and none of the report-side guarantees in CLAUDE.md are affected.
+- The smoke test used to pin one sentence of that section's copy as the guard
+  against lokal becoming an alternatives directory. It now asserts against what
+  the page shows instead: a phased sequence, a "keep for now" verdict, a
+  candidate struck out, and savings without figures. A directory cannot produce
+  any of the four, so the guarantee is stronger than the sentence it replaces.
+- The plan excerpt is a labelled region, so a screen reader hears where the
+  example starts and stops rather than meeting it as unannounced prose.
+
+### Fixed (phase 5.5)
+
+- `print.css` hid site chrome with `header[class*="border-b"]:has(nav)`, keyed to
+  a Tailwind class. Any restyle of the header would have started printing site
+  navigation onto a report — silently, with no test covering it. Chrome now marks
+  itself with `data-site-chrome`, and sticky positioning and backdrop filters are
+  neutralised for paper.
+- Terminal blocks invert to the ink-safe palette when printed, rather than
+  putting a full-bleed black rectangle on the page.
+- Printing the landing page produced mostly blank pages once scroll reveals
+  landed: paper has no scroll position, so a `view()` timeline never advances
+  and every revealed block stayed at opacity 0. Reveals are now switched off
+  under `@media print`. The reduced-motion guard does not cover this — a visitor
+  can prefer motion and still hit Print.
+- The accessibility suite snapped animations with `Animation.finish()` before
+  sampling colours, which throws `InvalidStateError` on an animation that never
+  ends — so the first looping background on any page would have failed the axe
+  run rather than the page. Infinite animations are now paused at a fixed time,
+  which is the same determinism guarantee the helper existed for.
+
 ### Added (Docker)
 
 - Docker support: a multi-stage `Dockerfile` producing a minimal, non-root

@@ -26,6 +26,13 @@ CSS. Server-side PDF generation waits until v0.3.0.
    it on a small VM; a heavy image works against the product's own argument.
 2. **Fonts.** Server-side rendering requires embedding and licensing fonts
    properly. The browser path uses fonts already resolved on the user's machine.
+
+   Phase 5.5 changed this in lokal's favour rather than against it. The site now
+   self-hosts two OFL-1.1 families (`src/app/fonts/`), which browsers embed when
+   printing to PDF — so print fidelity no longer depends on what happens to be
+   installed on the reader's machine, and the licensing question a server-side
+   renderer would raise is already answered.
+
 3. **The work is not throwaway.** Server-side rendering needs the same print CSS.
    Doing print CSS well now is a prerequisite for v0.3.0 either way.
 4. **Scope.** It removes a job runner, a queue and a file-storage decision from the

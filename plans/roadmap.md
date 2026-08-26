@@ -77,14 +77,15 @@ Each chunk is one reviewable commit, roughly 30 minutes of work.
 
 ### Phase 5 — Export, polish, release
 
-| #   | Chunk                                           | Verify                                       |
-| --- | ----------------------------------------------- | -------------------------------------------- |
-| 5.1 | Markdown renderer and download route            | Golden snapshots; pastes cleanly into a wiki | done |
-| 5.2 | Print route, print CSS, cover page, page breaks | Manual print preview: clean A4, no cut cards | done |
-| 5.3 | Landing page content                            | Reads calm and operational                   | done |
-| 5.4 | Playwright smoke test and accessibility pass    | One spec green; no critical axe issues       | done |
-| 5.5 | German copy review, English stubs complete      | No missing keys in either locale             |
-| 5.6 | Docs pass, `v0.1.0` tag                         | `git describe` shows the tag                 |
+| #   | Chunk                                           | Verify                                                          |
+| --- | ----------------------------------------------- | --------------------------------------------------------------- |
+| 5.1 | Markdown renderer and download route            | Golden snapshots; pastes cleanly into a wiki                    | done |
+| 5.2 | Print route, print CSS, cover page, page breaks | Manual print preview: clean A4, no cut cards                    | done |
+| 5.3 | Landing page content                            | Reads calm and operational                                      | done |
+| 5.4 | Playwright smoke test and accessibility pass    | One spec green; no critical axe issues                          | done |
+| 5.5 | Visual identity, landing page, design tokens    | Landing sells the concept; axe clean; print chrome still hidden | done |
+| 5.6 | German copy review, English stubs complete      | No missing keys in either locale                                |
+| 5.7 | Docs pass, `v0.1.0` tag                         | `git describe` shows the tag                                    |
 
 ## Deferred
 
@@ -101,6 +102,15 @@ Docker image was on this list and was pulled forward on explicit request: a
 self-hostable planning tool needs a self-hosting path simpler than "clone and
 run pnpm build" for the municipalities and SMEs it targets. See `Dockerfile`,
 `docker-compose.yml` and the README's "Docker" section.
+
+Phase 5.5 (visual identity and landing page) was added to v0.1.0 rather than
+deferred to v0.2.0, on explicit request. It is new scope and carries no matching
+deletion, so it is recorded here deliberately. The reasoning: the milestone already
+promises a "polished report view", and lokal's whole argument is that open,
+self-hosted software is a credible choice — tagging an MVP that looks unfinished
+and redesigning immediately afterwards would undercut that argument and waste the
+tag. The report and wizard layouts stayed out of scope to keep the phase bounded.
+See `plans/phase-05-5-design-pass.md`.
 
 ## Definition of done for v0.1.0
 

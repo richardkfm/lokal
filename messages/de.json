@@ -7,12 +7,17 @@
     "skipToContent": "Zum Inhalt springen",
     "start": "Start",
     "assessment": "Erhebung",
-    "language": "Sprache"
+    "language": "Sprache",
+    "primary": "Hauptnavigation"
   },
   "shell": {
     "tagline": "Migrationsplanung für Open Source, souveränes Hosting und lokale KI",
     "footerNote": "lokal erstellt Planungsgrundlagen, keine Rechts- oder Beschaffungsberatung.",
-    "sourceLink": "Quellcode"
+    "sourceLink": "Quellcode",
+    "footerProductTitle": "Produkt",
+    "footerProjectTitle": "Projekt",
+    "footerLicense": "Lizenz (AGPL-3.0)",
+    "footerRulepack": "Regelwerk {version}"
   },
   "landing": {
     "heading": "Vom Ist-Zustand zum belastbaren Migrationsplan",
@@ -28,17 +33,94 @@
       "ai": "Welche KI-Anwendungsfälle sind heute tragfähig, welche sollten warten?",
       "risks": "Welche Risiken, Abhängigkeiten und Schulungsbedarfe kommen auf uns zu?"
     },
-    "notTitle": "Was lokal nicht ist",
-    "not": {
-      "directory": "Kein Verzeichnis von Alternativen. Vorschläge für Ersatzprodukte liefert jeder Chat. lokal beginnt dort, wo das aufhört: bei Reihenfolge, Kapazität, Risiko und Einführung.",
-      "wrapper": "Kein KI-Werkzeug. An der Erstellung des Plans ist kein Sprachmodell beteiligt. Die Empfehlungen stammen aus einem offengelegten Regelwerk — gleiche Angaben führen zu gleichen Ergebnissen.",
-      "calculator": "Kein Kostenrechner. Einsparungen werden als Bandbreite mit benannten Treibern ausgewiesen, nicht als erfundene Beträge.",
-      "compliance": "Keine Rechtsberatung. Wo Aufbewahrungs- oder Archivpflichten gelten, weist lokal darauf hin und verweist auf fachkundige Beratung."
-    },
     "audienceTitle": "Für wen",
     "audience": "Kommunen, Landkreise, Schulen, Stadtwerke, Vereine und kleine bis mittlere Unternehmen — zunächst in Deutschland.",
     "outputTitle": "Was am Ende herauskommt",
-    "output": "Ein Bericht, den Sie weitergeben können: Zusammenfassung auf einer Seite, empfohlene Zielarchitektur je Bereich mit Begründung und ausgeschiedenen Alternativen, Fahrplan in Phasen mit Aufwand und betroffenen Arbeitsplätzen, Kapazitätsabgleich, KI-Einschätzung — als Webseite, als Markdown und als druckfertige Fassung für PDF."
+    "ctaSecondary": "So entsteht der Plan",
+    "trust": {
+      "account": "Kein Konto",
+      "noLlm": "Kein Sprachmodell",
+      "license": "AGPL-3.0",
+      "selfHost": "Selbst hostbar"
+    },
+    "preview": {
+      "title": "Wie ein Plan aussieht",
+      "lead": "Keine Liste von Alternativen, sondern eine Reihenfolge mit Begründung: was zuerst, was später, was vorerst bleibt — und was ausgeschieden ist.",
+      "badge": "Beispielausschnitt",
+      "docTitle": "Migrationsplan",
+      "docSubtitle": "Kommune · 180 Arbeitsplätze",
+      "readinessLabel": "Bereitschaft",
+      "readinessValue": "Solide",
+      "readinessCaption": "solide",
+      "postureLabel": "Vorgehen",
+      "postureValue": "Schrittweise",
+      "postureDetail": "In Phasen, nicht auf einmal",
+      "aiLabel": "Lokale KI",
+      "aiValue": "Pilot möglich",
+      "aiDetail": "Zwei Anwendungsfälle, ein Bereich",
+      "roadmapTitle": "Fahrplan",
+      "phase1Label": "Phase 1",
+      "phase1Title": "Dateiablage → Nextcloud",
+      "phase1Detail": "160 Arbeitsplätze · Aufwand mittel",
+      "phase2Label": "Phase 2",
+      "phase2Title": "Intranet → BookStack",
+      "phase2Detail": "40 Arbeitsplätze · Aufwand gering",
+      "keepTitle": "Vorerst unverändert lassen",
+      "keepItem": "Fachverfahren",
+      "keepReason": "Kein tragfähiger offener Ersatz. Ablösung erst zum Vertragsende prüfen.",
+      "ruledOutTitle": "Ausgeschieden",
+      "ruledOutItem": "Cloud-Suite eines US-Anbieters",
+      "ruledOutReason": "Widerspricht der angegebenen Hosting-Vorgabe.",
+      "footnote": "Illustration mit erfundenen Angaben. Kein erzeugter Bericht.",
+      "savingsLabel": "Einsparperspektive",
+      "savingsValue": "Gering",
+      "savingsDetail": "qualitativ, ohne Beträge"
+    },
+    "how": {
+      "title": "So entsteht der Plan",
+      "lead": "Drei Schritte, keiner davon undurchsichtig.",
+      "step1Title": "Erheben",
+      "step1Body": "Sechs Schritte: Organisation, Betrieb und Kapazitäten, aktueller Stand je Bereich, Haltung zu KI. Nur Angaben, die bei Ihnen ohnehin bekannt sind.",
+      "step2Title": "Regelwerk anwenden",
+      "step2Body": "Ein offengelegtes Regelwerk bewertet Eignung, Abhängigkeiten, Aufwand und Reihenfolge. Gleiche Angaben führen zu gleichem Ergebnis — auch nächste Woche.",
+      "step3Title": "Plan erhalten",
+      "step3Body": "Zielaufbau mit Begründung, Fahrplan in Phasen, Kapazitätsabgleich und KI-Einschätzung. Sofort, ohne Konto, ohne Wartezeit.",
+      "proof": "An keinem dieser Schritte ist ein Sprachmodell beteiligt. Das ist der Grund, warum sich jede Empfehlung bis zu der Regel zurückverfolgen lässt, die sie erzeugt hat."
+    },
+    "formats": {
+      "lead": "Ein Bericht, den Sie weitergeben können — in der Form, die zur Situation passt.",
+      "webTitle": "Als Webseite",
+      "webBody": "Zum gemeinsamen Durchgehen, mit der Begründung an jeder einzelnen Empfehlung.",
+      "markdownTitle": "Als Markdown",
+      "markdownBody": "Fügt sich sauber in ein Wiki ein — Confluence, BookStack, Nextcloud Collectives.",
+      "printTitle": "Als Druckfassung",
+      "printBody": "A4 mit sauberen Seitenumbrüchen. Vorlagefähig für Rat, Geschäftsführung oder Beschaffung."
+    },
+    "audienceChips": {
+      "municipality": "Kommunen",
+      "district": "Landkreise",
+      "school": "Schulen",
+      "utility": "Stadtwerke",
+      "association": "Vereine",
+      "sme": "KMU"
+    },
+    "sovereignty": {
+      "title": "Souverän auch im Werkzeug selbst",
+      "lead": "Ein Werkzeug, das für Unabhängigkeit argumentiert, sollte selbst keine neue Abhängigkeit schaffen.",
+      "terminalLabel": "bash",
+      "selfHostTitle": "Auf Ihrer eigenen Infrastruktur",
+      "selfHostBody": "Ein Container, eine Datei als Datenbank. Keine API-Schlüssel, keine externen Dienste, kein Rückkanal.",
+      "rulepackTitle": "Lesbares Regelwerk",
+      "rulepackBody": "Jede Empfehlung stammt aus versionierten Regeln mit Quellen und Prüfdatum. Sie können sie lesen — und ihnen widersprechen.",
+      "licenseTitle": "AGPL-3.0",
+      "licenseBody": "Prüfen, forken, anpassen. Auch Weiterentwicklungen bleiben offen."
+    },
+    "closing": {
+      "title": "Beginnen Sie mit dem, was Sie ohnehin wissen",
+      "body": "Die Erhebung fragt nichts ab, was Sie erst recherchieren müssten. Eine Viertelstunde später liegt etwas vor, das Sie vorlegen können.",
+      "cta": "Zur Erhebung",
+      "note": "Kein Konto, keine E-Mail-Adresse, keine Registrierung."
+    }
   },
   "wizard": {
     "title": "Erhebung",
