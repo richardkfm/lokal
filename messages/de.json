@@ -33,13 +33,6 @@
       "ai": "Welche KI-Anwendungsfälle sind heute tragfähig, welche sollten warten?",
       "risks": "Welche Risiken, Abhängigkeiten und Schulungsbedarfe kommen auf uns zu?"
     },
-    "notTitle": "Was lokal nicht ist",
-    "not": {
-      "directory": "Kein Verzeichnis von Alternativen. Vorschläge für Ersatzprodukte liefert jeder Chat. lokal beginnt dort, wo das aufhört: bei Reihenfolge, Kapazität, Risiko und Einführung.",
-      "wrapper": "Kein KI-Werkzeug. An der Erstellung des Plans ist kein Sprachmodell beteiligt. Die Empfehlungen stammen aus einem offengelegten Regelwerk — gleiche Angaben führen zu gleichen Ergebnissen.",
-      "calculator": "Kein Kostenrechner. Einsparungen werden als Bandbreite mit benannten Treibern ausgewiesen, nicht als erfundene Beträge.",
-      "compliance": "Keine Rechtsberatung. Wo Aufbewahrungs- oder Archivpflichten gelten, weist lokal darauf hin und verweist auf fachkundige Beratung."
-    },
     "audienceTitle": "Für wen",
     "audience": "Kommunen, Landkreise, Schulen, Stadtwerke, Vereine und kleine bis mittlere Unternehmen — zunächst in Deutschland.",
     "outputTitle": "Was am Ende herauskommt",
@@ -78,7 +71,10 @@
       "ruledOutTitle": "Ausgeschieden",
       "ruledOutItem": "Cloud-Suite eines US-Anbieters",
       "ruledOutReason": "Widerspricht der angegebenen Hosting-Vorgabe.",
-      "footnote": "Illustration mit erfundenen Angaben. Kein erzeugter Bericht."
+      "footnote": "Illustration mit erfundenen Angaben. Kein erzeugter Bericht.",
+      "savingsLabel": "Einsparperspektive",
+      "savingsValue": "Gering",
+      "savingsDetail": "qualitativ, ohne Beträge"
     },
     "how": {
       "title": "So entsteht der Plan",

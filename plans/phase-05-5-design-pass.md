@@ -120,6 +120,18 @@ the accessibility run rather than the page. Infinite animations are now paused a
 a fixed time instead, which is the same determinism the helper existed to
 provide. Verified by confirming the old helper does throw on the new hero.
 
+A fifth arrived with the follow-up asking for scroll animation, and it was the
+most expensive one to have missed: **`animation-timeline: view()` breaks
+printing.** Paper has no scroll position, so the timeline never advances and
+every revealed block prints at opacity 0 — the landing page came out of the
+printer almost blank. Reveals are now disabled under `@media print`. Note that
+the reduced-motion guard does not cover this case: a visitor can prefer motion
+and still hit Print. Two other guards on the same feature turned out to be
+load-bearing and were verified rather than assumed — an `@supports` test, without
+which a browser lacking scroll-driven animation applies the hidden start state
+and never advances it, and a range that closes at `entry 55%`, because an element
+near the end of the document may never scroll far enough to finish a longer one.
+
 The print check was worth running by hand. Under print media both chrome
 elements resolve to `display: none` with zero height, and no navigation text
 reaches the rendered page — which is exactly the regression the `data-site-chrome`

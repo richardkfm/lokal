@@ -33,7 +33,6 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
   const t = await getTranslations("landing");
 
   const answers = ["first", "fit", "seats", "gaps", "ai", "risks"] as const;
-  const nots = ["directory", "wrapper", "calculator", "compliance"] as const;
   const trust = ["account", "noLlm", "license", "selfHost"] as const;
   const steps = [1, 2, 3] as const;
   const formats = ["web", "markdown", "print"] as const;
@@ -100,7 +99,7 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
 
       {/* What a plan looks like — the section that does the selling. */}
       <section className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
-        <div className="max-w-2xl">
+        <div className="reveal max-w-2xl">
           <h2 className="text-ink display text-3xl font-semibold">
             {t("preview.title")}
           </h2>
@@ -109,7 +108,13 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
           </p>
         </div>
 
-        <div className="border-line bg-surface shadow-hero mt-10 overflow-hidden rounded-xl border">
+        {/* A labelled region rather than a bare div: it names the example for a
+            screen reader, so the excerpt is clearly demarcated from the real
+            claims around it and cannot be mistaken for generated output. */}
+        <section
+          aria-label={t("preview.badge")}
+          className="reveal border-line bg-surface shadow-hero mt-10 overflow-hidden rounded-xl border"
+        >
           <div className="border-line bg-sunken/50 flex flex-wrap items-center gap-3 border-b px-6 py-4">
             <div>
               <p className="text-ink font-semibold">{t("preview.docTitle")}</p>
@@ -121,7 +126,7 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
           </div>
 
           <div className="space-y-8 p-6 sm:p-8">
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="reveal grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <KpiCard
                 label={t("preview.readinessLabel")}
                 value={t("preview.readinessValue")}
@@ -132,6 +137,15 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
                 label={t("preview.postureLabel")}
                 value={t("preview.postureValue")}
                 detail={t("preview.postureDetail")}
+              />
+              {/* Savings as a band with no figure attached. This is the one
+                  claim the old "what lokal is not" section made that nothing
+                  else on the page covered, and the report states it exactly
+                  this way — so the excerpt shows it rather than asserting it. */}
+              <KpiCard
+                label={t("preview.savingsLabel")}
+                value={t("preview.savingsValue")}
+                detail={t("preview.savingsDetail")}
               />
               <KpiCard
                 label={t("preview.aiLabel")}
@@ -171,7 +185,7 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
               </ol>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="reveal grid gap-4 sm:grid-cols-2">
               <div className="rounded-lg border border-[var(--color-good)]/30 bg-[var(--color-good-soft)] p-4">
                 <h3 className="text-ink text-sm font-semibold">
                   {t("preview.keepTitle")}
@@ -200,13 +214,13 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
           <p className="border-line text-faint border-t px-6 py-3 text-xs">
             {t("preview.footnote")}
           </p>
-        </div>
+        </section>
       </section>
 
       {/* How it works */}
       <section id="how" className="border-line bg-sunken/40 scroll-mt-20 border-y">
         <div className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
-          <div className="max-w-2xl">
+          <div className="reveal max-w-2xl">
             <h2 className="text-ink display text-3xl font-semibold">
               {t("how.title")}
             </h2>
@@ -217,7 +231,7 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
             {steps.map((step) => (
               <li
                 key={step}
-                className="border-line bg-surface shadow-card rounded-xl border p-6"
+                className="reveal border-line bg-surface shadow-card rounded-xl border p-6"
               >
                 <span className="text-brand font-mono text-sm font-medium">
                   {String(step).padStart(2, "0")}
@@ -240,12 +254,12 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
 
       {/* Questions this plan answers */}
       <section className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
-        <h2 className="text-ink display max-w-2xl text-3xl font-semibold">
+        <h2 className="reveal text-ink display max-w-2xl text-3xl font-semibold">
           {t("answersTitle")}
         </h2>
         <ul className="mt-10 grid gap-x-12 gap-y-px sm:grid-cols-2">
           {answers.map((key, index) => (
-            <li key={key} className="border-line flex gap-4 border-t py-5">
+            <li key={key} className="reveal border-line flex gap-4 border-t py-5">
               <span className="text-faint tabular pt-0.5 font-mono text-xs">
                 {String(index + 1).padStart(2, "0")}
               </span>
@@ -255,25 +269,9 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
         </ul>
       </section>
 
-      {/* What lokal is not */}
-      <section className="border-line bg-sunken/40 border-y">
-        <div className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
-          <h2 className="text-ink display max-w-2xl text-3xl font-semibold">
-            {t("notTitle")}
-          </h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {nots.map((key) => (
-              <div key={key} className="border-line bg-surface rounded-xl border p-6">
-                <p className="text-muted text-sm leading-relaxed">{t(`not.${key}`)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* What you end up with */}
       <section className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
-        <div className="max-w-2xl">
+        <div className="reveal max-w-2xl">
           <h2 className="text-ink display text-3xl font-semibold">
             {t("outputTitle")}
           </h2>
@@ -284,7 +282,7 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
           {formats.map((key) => (
             <div
               key={key}
-              className="border-line bg-surface shadow-card rounded-xl border p-6"
+              className="reveal border-line bg-surface shadow-card rounded-xl border p-6"
             >
               <h3 className="text-ink font-semibold">{t(`formats.${key}Title`)}</h3>
               <p className="text-muted mt-2 text-sm leading-relaxed">
@@ -294,9 +292,9 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
           ))}
         </div>
 
-        <div className="border-line mt-16 border-t pt-10">
+        <div className="reveal border-line mt-16 border-t pt-10">
           <h3 className="text-ink text-sm font-semibold">{t("audienceTitle")}</h3>
-          <ul className="mt-4 flex flex-wrap gap-2">
+          <ul className="reveal mt-4 flex flex-wrap gap-2">
             {chips.map((key) => (
               <li
                 key={key}
@@ -338,14 +336,18 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
               </dl>
             </div>
 
-            <Terminal label={t("sovereignty.terminalLabel")} lines={INSTALL} />
+            <Terminal
+              label={t("sovereignty.terminalLabel")}
+              lines={INSTALL}
+              className="reveal"
+            />
           </div>
         </div>
       </section>
 
       {/* Closing */}
       <section className="mx-auto max-w-6xl px-6 py-24">
-        <div className="max-w-2xl">
+        <div className="reveal max-w-2xl">
           <h2 className="text-ink display text-3xl font-semibold">
             {t("closing.title")}
           </h2>

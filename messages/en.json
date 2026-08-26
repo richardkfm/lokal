@@ -33,13 +33,6 @@
       "ai": "Which AI use cases are viable today, and which should wait?",
       "risks": "Which risks, dependencies and training needs are coming our way?"
     },
-    "notTitle": "What lokal is not",
-    "not": {
-      "directory": "Not a directory of alternatives. Any chat can suggest replacement products. lokal starts where that stops: sequence, capacity, risk and rollout.",
-      "wrapper": "Not an AI tool. No language model is involved in producing the plan. Recommendations come from a rulepack you can read — the same answers produce the same result.",
-      "calculator": "Not a cost calculator. Savings are reported as a band with named drivers, not as invented amounts.",
-      "compliance": "Not legal advice. Where retention or archival duties apply, lokal flags them and points to qualified advisors."
-    },
     "audienceTitle": "Who it is for",
     "audience": "Municipalities, district offices, schools, utilities, associations and small to mid-sized companies — Germany first.",
     "outputTitle": "What you end up with",
@@ -78,7 +71,10 @@
       "ruledOutTitle": "Considered and ruled out",
       "ruledOutItem": "A US vendor's cloud suite",
       "ruledOutReason": "Conflicts with the hosting requirement you stated.",
-      "footnote": "An illustration with invented figures. Not a generated report."
+      "footnote": "An illustration with invented figures. Not a generated report.",
+      "savingsLabel": "Savings outlook",
+      "savingsValue": "Low",
+      "savingsDetail": "qualitative, no figures"
     },
     "how": {
       "title": "How the plan is built",
