@@ -3,7 +3,7 @@
 **Planungswerkzeug für den Umstieg auf Open-Source-Arbeitswerkzeuge, souveränes
 Hosting und lokale KI.**
 
-lokal nimmt die tatsächliche Ausgangslage einer Organisation auf und erzeugt daraus
+">lokal" nimmt die tatsächliche Ausgangslage einer Organisation auf und erzeugt daraus
 einen nachvollziehbaren Migrationsplan: Zielarchitektur, Reihenfolge, Aufwand,
 Kapazitätsbedarf, Einsparperspektive und eine realistische Einschätzung, welche
 KI-Anwendungsfälle heute tragfähig sind.
