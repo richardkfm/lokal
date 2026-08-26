@@ -8,6 +8,28 @@ Dates are ISO 8601.
 
 ## [Unreleased]
 
+### Fixed (detail step)
+
+- The detail step ("Angaben je Bereich") no longer shows raw Zod validation
+  text (e.g. `Invalid option: expected one of "low"|"medium"|"high"`).
+  Validation issues are now mapped to localized German/English messages.
+- Validation errors across all wizard steps no longer appear before the user
+  has tried to move on — a freshly shown step, or a freshly added category,
+  stays quiet until "Weiter" is clicked once.
+
+### Added (detail step)
+
+- The "Betroffene Arbeitsplätze" (seats) field now defaults to the
+  organization's total seat count and stays in sync with it until the user
+  types an explicit value for that category.
+- A newly added category starts with neutral criticality/pain/urgency
+  defaults instead of a wall of unset fields.
+- "Werte von … übernehmen" copies one category's ratings into another, and
+  "Werte des ersten Bereichs für alle übernehmen" applies them to every
+  category at once.
+- A "X von Y Bereichen vollständig" progress indicator.
+- Number keys 1-3 select the matching option in any three/four-point rating.
+
 ### Added
 
 - Next.js 16 application scaffold with strict TypeScript, Tailwind CSS v4, ESLint,

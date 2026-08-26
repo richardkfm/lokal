@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import {
   INTAKE_SCHEMA_VERSION,
@@ -11,6 +12,7 @@ import {
   stackEntrySchema,
 } from "@/domain/intake";
 import type { AssessmentInput, StackEntry } from "@/domain/intake";
+import { CATEGORY_IDS } from "@/domain/enums";
 import type { CategoryId } from "@/domain/enums";
 
 /**
@@ -82,13 +84,73 @@ export type StepIssues = Record<string, string>;
  * untouched field has to mean the same thing as one that was typed into and
  * cleared. Without the default the step silently refuses to advance: the entry
  * fails validation on a field that has nowhere to show an error.
+ *
+ * `seats` falls back to the organization's total seat count. Most categories
+ * affect everyone, so retyping the same number per category is pure friction;
+ * the fallback is live (read here, not written into the draft), so it tracks
+ * `org.totalSeats` if that changes later, and typing an explicit value for a
+ * category overrides it from then on.
  */
-function stackEntries(draft: Draft) {
+export function stackEntries(draft: Draft) {
   return draft.selectedCategories.map((category) => ({
     currentTool: { kind: "none" as const },
+    seats: draft.org.totalSeats,
     ...draft.stack[category],
     category,
   }));
+}
+
+/** Fields carried over when one category's ratings are applied to another. */
+const COPYABLE_ENTRY_FIELDS = [
+  "seats",
+  "criticality",
+  "pain",
+  "urgency",
+  "lockInConcern",
+  "trainingSensitivity",
+] as const;
+
+/**
+ * Lifts the rated fields out of one entry so they can be applied to another.
+ *
+ * `currentTool` and `notes` are excluded: those describe the tool itself, not
+ * a judgment call likely to repeat across categories.
+ */
+export function copyEntryValues(
+  source: Partial<StackEntry> | undefined,
+): Partial<StackEntry> {
+  const patch: Partial<StackEntry> = {};
+  for (const field of COPYABLE_ENTRY_FIELDS) {
+    const value = source?.[field];
+    if (value !== undefined) {
+      (patch as Record<string, unknown>)[field] = value;
+    }
+  }
+  return patch;
+}
+
+/**
+ * Applies the categories chosen on the stack step, seeding a neutral
+ * starting point for any category that is newly selected.
+ *
+ * The seed is deliberately unopinionated — a scale midpoint/floor, not a
+ * claim about any organization or product — so it never masquerades as a
+ * sourced recommendation. `lockInConcern` and `trainingSensitivity` are left
+ * unset: those are the judgment calls this tool exists to surface, not to
+ * default away.
+ */
+export function selectCategories(draft: Draft, values: string[]): Draft {
+  const selectedCategories = CATEGORY_IDS.filter((id) => values.includes(id));
+  const stack = { ...draft.stack };
+
+  for (const category of selectedCategories) {
+    const isNew = !draft.selectedCategories.includes(category);
+    if (isNew && !stack[category]) {
+      stack[category] = { criticality: "medium", pain: "medium", urgency: "later" };
+    }
+  }
+
+  return { ...draft, selectedCategories, stack };
 }
 
 /** Assembles the parts of the draft a given step is responsible for. */
@@ -109,7 +171,47 @@ function subjectFor(step: StepId, draft: Draft): unknown {
   }
 }
 
-export function validateStep(step: StepId, draft: Draft): StepIssues {
+export type ErrorTranslator = (
+  key: string,
+  params?: Record<string, string | number | Date>,
+) => string;
+
+/**
+ * Maps a Zod issue to a translation key rather than showing `issue.message`.
+ *
+ * Zod's built-in messages are English and were never meant for end users —
+ * "Invalid option: expected one of..." is meaningless to the German-speaking
+ * audience this wizard is for. Keying off `issue.code` instead of the message
+ * text keeps this independent of Zod's wording and of any custom `message`
+ * set on a schema.
+ */
+function messageForIssue(issue: z.core.$ZodIssue, t: ErrorTranslator): string {
+  switch (issue.code) {
+    case "invalid_value":
+      return t("selectOption");
+    case "too_small":
+      return t("numberTooSmall", {
+        min: Number((issue as { minimum?: number }).minimum ?? 0),
+      });
+    case "too_big":
+      return t("numberTooBig", {
+        max: Number((issue as { maximum?: number }).maximum ?? 0),
+      });
+    case "invalid_type":
+      return t("required");
+    default:
+      return t("invalid");
+  }
+}
+
+/** Falls back to the raw key so callers without a translator (tests) still work. */
+const defaultTranslator: ErrorTranslator = (key) => key;
+
+export function validateStep(
+  step: StepId,
+  draft: Draft,
+  t: ErrorTranslator = defaultTranslator,
+): StepIssues {
   const schema = STEP_SCHEMAS[step];
   if (!schema) return {};
 
@@ -119,7 +221,7 @@ export function validateStep(step: StepId, draft: Draft): StepIssues {
   const issues: StepIssues = {};
   for (const issue of result.error.issues) {
     const key = issue.path.join(".") || "_";
-    issues[key] ??= issue.message;
+    issues[key] ??= messageForIssue(issue, t);
   }
   return issues;
 }
@@ -168,8 +270,19 @@ export function useHydrated(): boolean {
 }
 
 export function useWizard() {
+  const t = useTranslations("wizard.errors");
   const [draft, setDraft] = useState<Draft>(loadDraft);
   const [stepIndex, setStepIndex] = useState(0);
+  /**
+   * Steps the user has tried to leave.
+   *
+   * Validation runs on every render, so an untouched step is invalid the
+   * instant it appears (nothing has been filled in yet). Gating the visible
+   * issues on this set means a freshly shown step — or a freshly added
+   * category within it — stays quiet until the user actually attempts to
+   * move on, instead of greeting them with a wall of errors.
+   */
+  const [attempted, setAttempted] = useState<Partial<Record<StepId, boolean>>>({});
 
   useEffect(() => {
     try {
@@ -180,7 +293,9 @@ export function useWizard() {
   }, [draft]);
 
   const step = STEPS[stepIndex]!;
-  const issues = validateStep(step, draft);
+  const stepIssues = validateStep(step, draft, t);
+  const canAdvance = Object.keys(stepIssues).length === 0;
+  const issues = attempted[step] ? stepIssues : {};
 
   const update = useCallback((patch: (current: Draft) => Draft) => {
     setDraft((current) => patch(current));
@@ -194,7 +309,15 @@ export function useWizard() {
     }
     setDraft(emptyDraft());
     setStepIndex(0);
+    setAttempted({});
   }, []);
+
+  const next = useCallback(() => {
+    setAttempted((current) => ({ ...current, [step]: true }));
+    if (canAdvance) {
+      setStepIndex((index) => Math.min(index + 1, STEPS.length - 1));
+    }
+  }, [step, canAdvance]);
 
   return {
     draft,
@@ -204,8 +327,8 @@ export function useWizard() {
     stepIndex,
     setStepIndex,
     issues,
-    canAdvance: Object.keys(issues).length === 0,
-    next: () => setStepIndex((index) => Math.min(index + 1, STEPS.length - 1)),
+    canAdvance,
+    next,
     back: () => setStepIndex((index) => Math.max(index - 1, 0)),
   };
 }

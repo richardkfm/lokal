@@ -27,6 +27,8 @@ import {
   Toggle,
 } from "@/components/ui/field";
 import type { CategoryId, Level } from "@/domain/enums";
+import { stackEntrySchema } from "@/domain/intake";
+import { copyEntryValues, selectCategories } from "./state";
 import type { Draft, StepIssues } from "./state";
 
 /**
@@ -260,14 +262,10 @@ export function StackStep({ draft, update, issues }: StepProps) {
           name="categories"
           values={draft.selectedCategories}
           choices={choices("category", CATEGORY_IDS)}
-          onChange={(values) =>
-            update((d) => ({
-              ...d,
-              // Preserve the vocabulary's order rather than click order, so the
-              // detail step and the report read in the same sequence.
-              selectedCategories: CATEGORY_IDS.filter((id) => values.includes(id)),
-            }))
-          }
+          // Preserves the vocabulary's order rather than click order, so the
+          // detail step and the report read in the same sequence, and seeds a
+          // neutral starting rating for any newly checked category.
+          onChange={(values) => update((d) => selectCategories(d, values))}
         />
       </Fieldset>
       <p className="text-faint text-xs">{t("notAssessedNote")}</p>
@@ -290,9 +288,47 @@ export function DetailStep({ draft, update, issues }: StepProps) {
     return <p className="text-muted text-sm">{t("nothingSelected")}</p>;
   }
 
+  const firstCategory = draft.selectedCategories[0]!;
+  const completedCount = draft.selectedCategories.filter(
+    (category) =>
+      stackEntrySchema.safeParse({
+        currentTool: { kind: "none" },
+        seats: draft.org.totalSeats,
+        ...draft.stack[category],
+        category,
+      }).success,
+  ).length;
+
   return (
     <div className="space-y-10">
-      <p className="text-muted text-sm leading-relaxed">{t("intro")}</p>
+      <div className="space-y-2">
+        <p className="text-muted text-sm leading-relaxed">{t("intro")}</p>
+        <p className="text-faint text-xs">{t("keyboardHint")}</p>
+        <p className="text-faint text-xs">
+          {t("progress", {
+            done: completedCount,
+            total: draft.selectedCategories.length,
+          })}
+        </p>
+        {draft.selectedCategories.length > 1 ? (
+          <button
+            type="button"
+            onClick={() =>
+              update((d) => {
+                const patch = copyEntryValues(d.stack[firstCategory]);
+                const stack = { ...d.stack };
+                for (const category of d.selectedCategories.slice(1)) {
+                  stack[category] = { ...stack[category], ...patch };
+                }
+                return { ...d, stack };
+              })
+            }
+            className="text-brand text-xs underline underline-offset-2"
+          >
+            {t("applyToAllLabel")}
+          </button>
+        ) : null}
+      </div>
 
       {draft.selectedCategories.map((category, index) => {
         const entry = draft.stack[category] ?? {};
@@ -307,9 +343,27 @@ export function DetailStep({ draft, update, issues }: StepProps) {
             aria-labelledby={`detail-${category}`}
             className="border-line bg-surface rounded-lg border p-5"
           >
-            <h3 id={`detail-${category}`} className="text-ink text-base font-semibold">
-              {vocabulary(`category.${category}.label`)}
-            </h3>
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h3
+                id={`detail-${category}`}
+                className="text-ink text-base font-semibold"
+              >
+                {vocabulary(`category.${category}.label`)}
+              </h3>
+              {index > 0 ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setEntry(category, copyEntryValues(draft.stack[firstCategory]))
+                  }
+                  className="text-brand text-xs underline underline-offset-2"
+                >
+                  {t("copyFromFirstLabel", {
+                    category: vocabulary(`category.${firstCategory}.label`),
+                  })}
+                </button>
+              ) : null}
+            </div>
 
             <div className="mt-4 space-y-5">
               <TextField
@@ -331,7 +385,7 @@ export function DetailStep({ draft, update, issues }: StepProps) {
               <NumberField
                 label={t("seatsLabel")}
                 hint={t("seatsHint")}
-                value={entry.seats}
+                value={entry.seats ?? draft.org.totalSeats}
                 onChange={(value) => setEntry(category, { seats: value })}
                 error={issueFor("seats")}
               />

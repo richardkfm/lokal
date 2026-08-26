@@ -133,6 +133,13 @@
     "submitFailed": "Der Plan konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
     "completeStep": "Bitte füllen Sie diesen Schritt aus.",
     "startOver": "Von vorn beginnen",
+    "errors": {
+      "required": "Pflichtfeld.",
+      "selectOption": "Bitte eine Option auswählen.",
+      "numberTooSmall": "Bitte eine Zahl ab {min} angeben.",
+      "numberTooBig": "Bitte eine Zahl bis {max} angeben.",
+      "invalid": "Ungültiger Wert."
+    },
     "steps": {
       "organization": "Organisation",
       "operating": "Betrieb",
@@ -215,7 +222,11 @@
       "trainingSensitivityLabel": "Schulungsempfindlichkeit",
       "trainingSensitivityHint": "Wie schwer fällt den Beschäftigten eine Umstellung?",
       "urgencyLabel": "Dringlichkeit",
-      "urgencyHint": "Wann soll sich etwas ändern?"
+      "urgencyHint": "Wann soll sich etwas ändern?",
+      "keyboardHint": "Tipp: Innerhalb einer Auswahl wählen die Zifferntasten 1–3 die jeweilige Option.",
+      "progress": "{done} von {total} Bereichen vollständig",
+      "applyToAllLabel": "Werte des ersten Bereichs für alle übernehmen",
+      "copyFromFirstLabel": "Werte von „{category}“ übernehmen"
     },
     "ai": {
       "interestLegend": "Interesse an KI",

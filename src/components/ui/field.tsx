@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, type ReactNode } from "react";
+import { useId, type KeyboardEvent, type ReactNode } from "react";
 
 /**
  * Form primitives for the intake wizard.
@@ -54,6 +54,11 @@ export type RadioCardsProps = {
  * Cards rather than a dropdown because the hint text matters: "low / medium /
  * high" means nothing without saying what each one implies for this
  * organization, and a select hides that.
+ *
+ * Number keys 1-9 select the matching card while focus is inside the group.
+ * Every one of these scales tops out at three or four options, and the detail
+ * step alone asks five of them per category — a keyboard shortcut turns a
+ * click-hunt into a single keystroke without changing the visible layout.
  */
 export function RadioCards({
   name,
@@ -70,9 +75,18 @@ export function RadioCards({
         ? "sm:grid-cols-2"
         : "sm:grid-cols-3";
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const index = Number(event.key) - 1;
+    const choice = choices[index];
+    if (Number.isInteger(index) && choice) {
+      event.preventDefault();
+      onChange(choice.value);
+    }
+  };
+
   return (
-    <div className={`grid grid-cols-1 gap-2 ${columnClass}`}>
-      {choices.map((choice) => {
+    <div className={`grid grid-cols-1 gap-2 ${columnClass}`} onKeyDown={handleKeyDown}>
+      {choices.map((choice, index) => {
         const id = `${groupId}-${choice.value}`;
         const selected = value === choice.value;
 
@@ -95,6 +109,7 @@ export function RadioCards({
               value={choice.value}
               checked={selected}
               onChange={() => onChange(choice.value)}
+              aria-keyshortcuts={String(index + 1)}
               className="sr-only"
             />
             <span className="text-ink block text-sm font-medium">{choice.label}</span>

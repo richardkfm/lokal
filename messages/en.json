@@ -133,6 +133,13 @@
     "submitFailed": "The plan could not be created. Please try again.",
     "completeStep": "Please complete this step.",
     "startOver": "Start over",
+    "errors": {
+      "required": "Required.",
+      "selectOption": "Please select an option.",
+      "numberTooSmall": "Please enter a number of at least {min}.",
+      "numberTooBig": "Please enter a number of at most {max}.",
+      "invalid": "Invalid value."
+    },
     "steps": {
       "organization": "Organization",
       "operating": "Operations",
@@ -215,7 +222,11 @@
       "trainingSensitivityLabel": "Training sensitivity",
       "trainingSensitivityHint": "How hard would staff find a change?",
       "urgencyLabel": "Urgency",
-      "urgencyHint": "When should something change?"
+      "urgencyHint": "When should something change?",
+      "keyboardHint": "Tip: within a choice, the number keys 1-3 select the matching option.",
+      "progress": "{done} of {total} areas complete",
+      "applyToAllLabel": "Apply the first area's values to all",
+      "copyFromFirstLabel": "Copy values from \"{category}\""
     },
     "ai": {
       "interestLegend": "Interest in AI",
