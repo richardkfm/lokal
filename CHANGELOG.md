@@ -83,6 +83,13 @@ Dates are ISO 8601.
 
 ### Added
 
+- Impressum, Datenschutzerklärung and Barrierefreiheitserklärung in the footer,
+  as `LOKAL_LEGAL_*_URL` links. Their absence was the most conspicuous omission
+  on a site whose pitch is sovereignty and compliance-consciousness, aimed at
+  people who check §5 DDG before reading the argument — and lokal stores intake
+  answers server-side, so a privacy notice is not merely formal. lokal cannot
+  write them: they are declarations about a specific operator, and a placeholder
+  looks discharged. Unset means absent, and the whole column disappears.
 - Hints on all nine categories in step 3, with examples. "Dateiablage" versus
   "Dokumentenmanagement" versus "Intranet und Wissen" is a genuine question, and
   that step decides the shape of everything downstream.
@@ -93,6 +100,13 @@ Dates are ISO 8601.
 
 ### Fixed
 
+- **The landing page's closing section collapsed.** `flex-1` sets
+  `flex-basis: 0`, so the text column had no floor: beside the contact block the
+  headline was crushed to about 180px at 1280 and wider, setting as a four-line
+  ladder over copy wrapping at twenty-two characters, while the seal orphaned
+  itself onto a third row. It got worse the wider the screen, and it is the last
+  thing a visitor sees before deciding whether to spend fifteen minutes. Now a
+  grid with a real minimum.
 - **The step connectors on the landing page.** They animated correctly while
   painting nothing: an unlayered `width: 100%` in `globals.css` beat the `w-10`
   utility meant to size them, and a percentage width in an indefinite grid track

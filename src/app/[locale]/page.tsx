@@ -515,8 +515,18 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
 
       {/* Closing */}
       <section className="mx-auto max-w-6xl px-6 py-24">
-        <div className="flex flex-wrap items-center gap-x-16 gap-y-10">
-          <div className="reveal max-w-2xl flex-1">
+        {/* A grid with a real minimum, not `flex-1`.
+         *
+         * `flex-1` sets `flex-basis: 0`, so this column had no floor: with the
+         * contact block beside it the headline was crushed into roughly 180px
+         * at 1280 and above, setting as a four-line ladder over body copy
+         * wrapping at about twenty-two characters — a picket fence, in a
+         * language full of long compounds — while 450px sat empty to the
+         * right and the seal wrapped alone to a third row. It got worse the
+         * wider the screen, and it is the last thing a visitor sees before
+         * deciding whether to spend fifteen minutes. */}
+        <div className="grid items-start gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,30rem)_minmax(0,1fr)]">
+          <div className="reveal">
             <h2 className="text-ink display text-3xl font-semibold">
               {t("closing.title")}
             </h2>
@@ -532,11 +542,23 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
               </Link>
               <span className="text-faint text-xs">{t("closing.note")}</span>
             </div>
+
+            {/* The only ornament on the page, and it is made of words the
+                product stands behind. Decorative: the same three claims are
+                made in plain text in the sovereignty section above. It lives
+                inside this column so it can never orphan itself onto a row of
+                its own. */}
+            <SpinSeal
+              id="lokal-seal"
+              text={t("sealText")}
+              className="text-faint mt-12 hidden h-40 w-40 lg:inline-flex"
+            >
+              <span className="text-brand font-mono text-lg font-medium">
+                &gt;lokal
+              </span>
+            </SpinSeal>
           </div>
 
-          {/* The only ornament on the page, and it is made of words the product
-              stands behind. Decorative: the same three claims are made in plain
-              text in the sovereignty section above. */}
           {/* Suspense keeps the rest of this page statically prerendered: only
               the contact block waits for a request, which is what lets the
               operator set LOKAL_EXPERT_* at container start rather than at
@@ -544,14 +566,6 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
           <Suspense fallback={null}>
             <ExpertContactBlock />
           </Suspense>
-
-          <SpinSeal
-            id="lokal-seal"
-            text={t("sealText")}
-            className="text-faint hidden h-40 w-40 shrink-0 lg:inline-flex"
-          >
-            <span className="text-brand font-mono text-lg font-medium">&gt;lokal</span>
-          </SpinSeal>
         </div>
       </section>
     </>

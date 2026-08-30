@@ -16,6 +16,12 @@
     "sourceLink": "Quellcode",
     "footerProductTitle": "Produkt",
     "footerProjectTitle": "Projekt",
+    "footerLegalTitle": "Rechtliches",
+    "footerLegal": {
+      "imprint": "Impressum",
+      "privacy": "Datenschutzerklärung",
+      "accessibility": "Barrierefreiheitserklärung"
+    },
     "footerLicense": "Lizenz (AGPL-3.0)",
     "footerRulepack": "Regelwerk {version}",
     "expert": {
@@ -41,7 +47,7 @@
       "risks": "Welche Risiken, Abhängigkeiten und Schulungsbedarfe kommen auf uns zu?"
     },
     "audienceTitle": "Für wen",
-    "audience": "Kommunen, Landkreise, Schulen, Stadtwerke, Vereine und Mittelstand.",
+    "audience": "Überall dort, wo ein Wechsel geplant und nicht nur diskutiert werden muss.",
     "outputTitle": "Was am Ende herauskommt",
     "ctaSecondary": "So entsteht der Plan",
     "trust": {
@@ -109,7 +115,7 @@
       "school": "Schulen",
       "utility": "Stadtwerke",
       "association": "Vereine",
-      "sme": "KMU"
+      "sme": "Mittelstand"
     },
     "sovereignty": {
       "title": "Souverän auch im Werkzeug selbst",
@@ -154,7 +160,7 @@
       "fact2Label": "geprüfte Zielwerkzeuge in {categories} Bereichen, alle quellenbelegt",
       "fact3Value": "AGPL",
       "fact3Label": "Sie können lokal selbst betreiben, ändern und weitergeben",
-      "euroOffice": "Neu im Regelwerk: Euro-Office, die europäische Office-Suite von Nextcloud, IONOS und Partnern — bewertet wie alles andere, einschließlich ihrer Jugend."
+      "euroOffice": "Im Regelwerk enthalten: Euro-Office, die europäische Office-Suite von Nextcloud, IONOS und Partnern — nach denselben Kriterien bewertet wie jede andere, Reifegrad eingeschlossen."
     }
   },
   "wizard": {

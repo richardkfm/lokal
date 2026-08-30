@@ -16,6 +16,12 @@
     "sourceLink": "Source code",
     "footerProductTitle": "Product",
     "footerProjectTitle": "Project",
+    "footerLegalTitle": "Legal",
+    "footerLegal": {
+      "imprint": "Imprint",
+      "privacy": "Privacy notice",
+      "accessibility": "Accessibility statement"
+    },
     "footerLicense": "License (AGPL-3.0)",
     "footerRulepack": "Rulepack {version}",
     "expert": {
@@ -41,7 +47,7 @@
       "risks": "Which risks, dependencies and training needs are coming our way?"
     },
     "audienceTitle": "Who it is for",
-    "audience": "Municipalities, district offices, schools, utilities, associations and SMEs.",
+    "audience": "Wherever a move has to be planned rather than only discussed.",
     "outputTitle": "What you end up with",
     "ctaSecondary": "How the plan is built",
     "trust": {
@@ -154,7 +160,7 @@
       "fact2Label": "reviewed target tools across {categories} areas, every one sourced",
       "fact3Value": "AGPL",
       "fact3Label": "you can run, modify and redistribute lokal yourself",
-      "euroOffice": "New in the rulepack: Euro-Office, the European office suite from Nextcloud, IONOS and partners — rated like everything else, including how young it is."
+      "euroOffice": "In the rulepack: Euro-Office, the European office suite from Nextcloud, IONOS and partners — rated on the same criteria as every other, maturity included."
     }
   },
   "wizard": {
