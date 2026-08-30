@@ -107,6 +107,18 @@ Dates are ISO 8601.
   itself onto a third row. It got worse the wider the screen, and it is the last
   thing a visitor sees before deciding whether to spend fifteen minutes. Now a
   grid with a real minimum.
+- **Severity was encoded in colour alone.** A 6px amber dot beside a 6px grey
+  one, at a size where hue barely registers and which a mono laser flattens
+  entirely. Caution and blocker items now use a rotated square as well, and
+  carry a screen-reader prefix — a sighted reader was getting information from
+  the colour that nobody else got at all. Unfilled complexity dots moved from
+  `line-strong` (1.63:1) to `neutral` (3.95:1), which is what a non-text
+  indicator needs.
+- **The rotating seal read upside down along its lower arc.** A single circular
+  path inverts the bottom half of any phrase set on it. Two arcs now, both
+  running left to right. It is the one purely decorative element on a page that
+  otherwise earns everything it shows, which is the wrong thing to be
+  unreadable.
 - **The step connectors on the landing page.** They animated correctly while
   painting nothing: an unlayered `width: 100%` in `globals.css` beat the `w-10`
   utility meant to size them, and a percentage width in an indefinite grid track

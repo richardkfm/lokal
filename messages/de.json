@@ -141,7 +141,8 @@
     "headingWord2": "Google Workspace",
     "headingWord3": "SharePoint",
     "headingWord4": "Slack und Zoom",
-    "sealText": "souverän · offen · nachvollziehbar",
+    "sealTop": "souverän · offen",
+    "sealBottom": "nachvollziehbar",
     "numbers": {
       "title": "Was Sie heute zahlen, und was daran hängt",
       "lead": "lokal erfindet keine Zahlen. Es multipliziert Ihre Arbeitsplätze mit den Listenpreisen, die die Anbieter selbst veröffentlichen — mit Quelle und Datum.",
@@ -764,6 +765,7 @@
   },
   "report": {
     "documentKind": "Internes Planungsdokument",
+    "severityCaution": "Zu beachten:",
     "title": "Migrationsplan",
     "coverLine": "{orgType} · {seats} Arbeitsplätze · erstellt am {date}",
     "draftRulepackNotice": "Hinweis: Das Regelwerk ({version}) wurde noch nicht fachkundig gegen die aktuellen Produktstände geprüft. Die Bewertungen sind sorgfältig, aber unbestätigt — vor einer Beschaffungsentscheidung selbst prüfen.",

@@ -55,15 +55,26 @@ function RationaleList({
     <ul className={`max-w-[68ch] space-y-1.5 ${dense ? "text-sm" : "text-base"}`}>
       {items.map((item, index) => (
         <li key={`${item.code}-${index}`} className="flex gap-2">
+          {/* Severity by shape as well as colour.
+           *
+           * A 6px amber dot beside a 6px grey one is the difference between
+           * "note this" and "and also", encoded in hue alone at a size where
+           * hue barely registers. It survives the print palette by luck and a
+           * mono laser not at all. A rotated square costs nothing and reads in
+           * greyscale, and the screen-reader label is what a sighted reader
+           * gets from the colour. */}
           <span
             aria-hidden="true"
             className={[
-              "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full",
+              "mt-1.5 h-1.5 w-1.5 shrink-0",
               item.severity === "blocker" || item.severity === "caution"
-                ? "bg-[var(--color-caution)]"
-                : "bg-[var(--color-line-strong)]",
+                ? "rotate-45 bg-[var(--color-caution)]"
+                : "rounded-full bg-[var(--color-neutral)]",
             ].join(" ")}
           />
+          {item.severity === "blocker" || item.severity === "caution" ? (
+            <span className="sr-only">{t("report.severityCaution")} </span>
+          ) : null}
           <span className="text-muted leading-relaxed">
             {rationaleText(t, item, labels)}
           </span>

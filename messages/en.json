@@ -141,7 +141,8 @@
     "headingWord2": "Google Workspace",
     "headingWord3": "SharePoint",
     "headingWord4": "Slack and Zoom",
-    "sealText": "sovereign · open · accountable",
+    "sealTop": "sovereign · open",
+    "sealBottom": "traceable",
     "numbers": {
       "title": "What you pay today, and what hangs on it",
       "lead": "lokal invents no figures. It multiplies your seat count by the list prices vendors publish themselves — with the source and the date.",
@@ -764,6 +765,7 @@
   },
   "report": {
     "documentKind": "Internal planning document",
+    "severityCaution": "Watch out:",
     "title": "Migration plan",
     "coverLine": "{orgType} · {seats} seats · created {date}",
     "draftRulepackNotice": "Note: rulepack {version} has not yet been checked against current product releases by a qualified reviewer. The ratings are careful but unconfirmed — verify before any procurement decision.",

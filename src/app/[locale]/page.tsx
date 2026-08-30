@@ -550,7 +550,8 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
                 its own. */}
             <SpinSeal
               id="lokal-seal"
-              text={t("sealText")}
+              top={t("sealTop")}
+              bottom={t("sealBottom")}
               className="text-faint mt-12 hidden h-40 w-40 lg:inline-flex"
             >
               <span className="text-brand font-mono text-lg font-medium">

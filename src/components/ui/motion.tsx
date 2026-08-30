@@ -108,36 +108,60 @@ export function WordCycle({
  */
 export function SpinSeal({
   id,
-  text,
+  top,
+  bottom,
   children,
   className = "",
 }: {
   id: string;
-  text: string;
+  top: string;
+  bottom: string;
   children?: ReactNode;
   className?: string;
 }) {
-  // A trailing separator so the phrase meets its own start around the circle.
-  //
-  // One pass, not two. The path is a 46-unit radius, so roughly 289 units of
-  // circumference at this size — a second repeat runs past the start and
-  // overlaps the first, which is what shipped in the first draft of this
-  // component. A short phrase leaves a gap; a long one is the caller's problem
-  // and these strings are ours.
-  const ring = `${text} · `;
+  /**
+   * Two arcs, not one ring.
+   *
+   * A single circular path puts the lower half of the phrase upside down — the
+   * first version of this read "nachvollziehbar" mirrored, which on the one
+   * purely decorative element of a page that otherwise earns everything it
+   * shows is the wrong thing to be unreadable.
+   *
+   * The top arc runs left to right over the crown, glyphs outside. The bottom
+   * arc runs left to right under the base, which places its glyphs inside the
+   * circle and upright — the ordinary seal convention, and the only way to get
+   * upright text along the bottom without `side="right"`, which Chromium does
+   * not support.
+   */
+  const topPath = `${id}-top`;
+  const bottomPath = `${id}-bottom`;
 
   return (
     <span className={`relative inline-flex items-center justify-center ${className}`}>
       <svg viewBox="0 0 120 120" className="h-full w-full" aria-hidden="true">
         <defs>
-          <path id={id} d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0" />
+          <path id={topPath} fill="none" d="M14,60 A46,46 0 0,1 106,60" />
+          <path id={bottomPath} fill="none" d="M17,60 A43,43 0 0,0 103,60" />
         </defs>
         <g className="spin-seal">
           <text
             fill="currentColor"
+            textAnchor="middle"
             style={{ fontSize: "10.5px", letterSpacing: "0.18em" }}
           >
-            <textPath href={`#${id}`}>{ring}</textPath>
+            <textPath href={`#${topPath}`} startOffset="50%">
+              {top}
+            </textPath>
+          </text>
+          <text
+            fill="currentColor"
+            textAnchor="middle"
+            dominantBaseline="hanging"
+            style={{ fontSize: "10.5px", letterSpacing: "0.18em" }}
+          >
+            <textPath href={`#${bottomPath}`} startOffset="50%">
+              {bottom}
+            </textPath>
           </text>
         </g>
       </svg>

@@ -108,11 +108,14 @@ export function ComplexityDots({ score, label }: { score: number; label: string 
         {[1, 2, 3, 4, 5].map((step) => (
           <span
             key={step}
+            // An unfilled dot is a non-text indicator and needs 3:1 against
+            // the surface behind it. `line-strong` measures 1.63:1 — fine for a
+            // hairline separator, not for something carrying a rating.
             className={[
               "h-1.5 w-1.5 rounded-full border",
               step <= filled
                 ? "border-[var(--color-ink)] bg-[var(--color-ink)]"
-                : "border-[var(--color-line-strong)]",
+                : "border-[var(--color-neutral)]",
             ].join(" ")}
           />
         ))}
