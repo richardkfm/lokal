@@ -21,10 +21,11 @@ import {
 import { DIFFICULTY_LABELS } from "@/engine/difficulty";
 import { runEngine } from "@/engine";
 import { buildReport } from "@/report/build-report";
-import { localizeParams } from "@/report/params";
+import { localizeParams, prerequisiteLabels } from "@/report/params";
 import { toMarkdown } from "@/report/to-markdown";
 import { currentRulepack } from "@/rulepack";
 import { PERSONAS, persona } from "../fixtures/personas";
+import type { RationaleItem } from "@/domain/rationale";
 
 /**
  * Raw enum values must never reach a reader.
@@ -95,13 +96,90 @@ function prose(markdown: string): string {
     .replace(/`[^`]*`/g, " ");
 }
 
-function markdownFor(id: string): string {
+function reportFor(id: string) {
   const input = { ...persona(id).input, locale: "de" as const };
-  const report = buildReport(runEngine(input, pack), pack, {
+  return buildReport(runEngine(input, pack), pack, {
     generatedAt: "2026-08-12T00:00:00.000Z",
   });
-  return toMarkdown(report, { t: translate });
 }
+
+function markdownFor(id: string): string {
+  return toMarkdown(reportFor(id), { t: translate });
+}
+
+/** Every rationale item anywhere in the document, however deeply nested. */
+function rationaleItems(node: unknown, found: RationaleItem[] = []): RationaleItem[] {
+  if (Array.isArray(node)) {
+    for (const child of node) rationaleItems(child, found);
+    return found;
+  }
+  if (node === null || typeof node !== "object") return found;
+
+  const candidate = node as Partial<RationaleItem>;
+  if (typeof candidate.code === "string" && typeof candidate.params === "object") {
+    found.push(candidate as RationaleItem);
+  }
+  for (const value of Object.values(node)) rationaleItems(value, found);
+
+  return found;
+}
+
+/**
+ * Every machine identifier the report could interpolate.
+ *
+ * Enum values are only half of them. Prerequisite ids, tool ids and category
+ * ids come from the rulepack, carry their labels as `{ de, en }` objects rather
+ * than message keys, and are therefore unreachable by a catalogue lookup — which
+ * is how `Voraussetzung schaffen: identity-directory` printed in section 9 while
+ * section 5 rendered the same six by name.
+ */
+/**
+ * The one identifier still rendered raw, named rather than quietly excluded.
+ *
+ * `fit.fits_chosen_ecosystem` interpolates a target tool's `ecosystem`, and an
+ * ecosystem is the only rulepack identifier with no label anywhere — not in the
+ * catalogue, not on the entry, not in the report document. It reads as "Fügt
+ * sich in den bereits gewählten Verbund (nextcloud) ein": a product name in
+ * lowercase rather than a machine code, so it is a blemish and not the defect
+ * this suite exists for.
+ *
+ * Fixing it properly means giving ecosystems a name in the rulepack, and a
+ * released rulepack is never edited — it would ship as `v2026-10`. That is a
+ * decision about versioning, not a bug fix, so it is recorded here instead of
+ * being made silently. Remove this the moment such a pack exists.
+ */
+const KNOWN_UNRESOLVED = new Set(["fit.fits_chosen_ecosystem"]);
+
+const IDENTIFIERS = new Set<string>([
+  ...ENUM_VALUES,
+  ...pack.sourceTools.map((tool) => tool.id),
+  ...pack.targetTools.map((tool) => tool.id),
+  ...pack.prerequisites.map((entry) => entry.id),
+]);
+
+describe("machine identifiers in rendered output", () => {
+  it.each(PERSONAS.map((p) => [p.id] as const))(
+    "leaves none in any localized parameter for %s",
+    (id) => {
+      const report = reportFor(id);
+      const labels = prerequisiteLabels(report.roadmap.phases, "de");
+
+      const leaked = new Set<string>();
+      for (const item of rationaleItems(report)) {
+        if (KNOWN_UNRESOLVED.has(item.code)) continue;
+
+        const localized = localizeParams(item.params, translate, labels);
+        for (const [name, value] of Object.entries(localized)) {
+          if (typeof value === "string" && IDENTIFIERS.has(value)) {
+            leaked.add(`${item.code}.${name}=${value}`);
+          }
+        }
+      }
+
+      expect([...leaked]).toEqual([]);
+    },
+  );
+});
 
 describe("enum values in rendered output", () => {
   it.each(PERSONAS.map((p) => [p.id] as const))(

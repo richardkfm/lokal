@@ -19,12 +19,20 @@ Dates are ISO 8601.
   keeping free text for anything not listed. Typed text is deliberately not
   matched against product names: attributing a euro figure to an organization
   that never named the product is what ADR-0003 exists to prevent.
-- **Enum values reaching the reader.** "Hoher Aufwand (very_high)" and "Wartet
-  auf file_sharing" were printed verbatim in the roadmap, on screen and on
-  paper. `localizeParams` resolved only the `category` parameter; it now covers
-  every parameter any stage passes an enum through, and the two renderer call
-  sites that bypassed it entirely go through it. A new test renders each persona
-  in German and fails on any enum value that survives as a bare word.
+- **Machine identifiers reaching the reader.** "Hoher Aufwand (very_high)",
+  "Wartet auf file_sharing" and "Voraussetzung schaffen: identity-directory"
+  were printed verbatim, on screen and on paper. Two separate families were
+  involved: enum values, whose labels live in the message catalogue, and
+  rulepack ids, whose labels live in the rulepack as `{ de, en }` objects and
+  are therefore unreachable by a catalogue lookup. `localizeParams` now covers
+  every parameter any stage passes an enum through, and takes the second family
+  as labels supplied by the renderer from the report document itself. The two
+  renderer call sites that bypassed it entirely go through it. A new test walks
+  every rationale item in every persona's report and fails on any identifier
+  that survives localization. One is knowingly left: a target tool's
+  `ecosystem` has no label anywhere in the rulepack, so it renders as
+  "Verbund (nextcloud)"; giving ecosystems a name means a new rulepack version
+  and is recorded in the test rather than fixed silently.
 - **The step connectors on the landing page.** They animated correctly while
   painting nothing: an unlayered `width: 100%` in `globals.css` beat the `w-10`
   utility meant to size them, and a percentage width in an indefinite grid track

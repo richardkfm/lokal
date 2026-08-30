@@ -69,7 +69,52 @@ const RESOLVERS: Record<string, Resolver> = {
   },
 };
 
-export function localizeParams(params: Params, t: Translate): Params {
+/**
+ * Labels the catalogue cannot supply.
+ *
+ * Two families of identifier reach the reader, and only one of them lives in
+ * `messages/*.json`. The other — prerequisite ids, and anything else the
+ * rulepack names — carries its own `{ de, en }` label in rulepack content, so
+ * no message key exists to look it up by. The resolver table above structurally
+ * cannot reach those, which is how `Voraussetzung schaffen: identity-directory`
+ * printed in section 9 while section 5 rendered the same six prerequisites as
+ * "Zentrale Benutzerverwaltung" and the rest.
+ *
+ * Renderers pass them in, because they are the only layer that knows the
+ * reader's locale, and `PlanningReport` already carries every label needed —
+ * see `prerequisiteLabels` below.
+ */
+export type DocumentLabels = Partial<Record<string, Record<string, string>>>;
+
+/**
+ * The prerequisite labels a report contains, ready to substitute.
+ *
+ * Taken from the document rather than the rulepack so a stored assessment
+ * rendered later reads the labels its own report was built with.
+ */
+export function prerequisiteLabels(
+  phases: readonly {
+    prerequisites: readonly { id: string; label: { de: string; en?: string } }[];
+  }[],
+  locale: string,
+): DocumentLabels {
+  const prerequisite: Record<string, string> = {};
+
+  for (const phase of phases) {
+    for (const entry of phase.prerequisites) {
+      prerequisite[entry.id] =
+        locale === "en" ? (entry.label.en ?? entry.label.de) : entry.label.de;
+    }
+  }
+
+  return { prerequisite };
+}
+
+export function localizeParams(
+  params: Params,
+  t: Translate,
+  labels: DocumentLabels = {},
+): Params {
   let localized: Params | undefined;
 
   for (const [name, resolver] of Object.entries(RESOLVERS)) {
@@ -78,6 +123,17 @@ export function localizeParams(params: Params, t: Translate): Params {
 
     localized ??= { ...params };
     localized[name] = t(resolver.key(value));
+  }
+
+  for (const [name, byId] of Object.entries(labels)) {
+    const value = params[name];
+    if (typeof value !== "string") continue;
+
+    const label = byId?.[value];
+    if (label === undefined) continue;
+
+    localized ??= { ...params };
+    localized[name] = label;
   }
 
   return localized ?? params;

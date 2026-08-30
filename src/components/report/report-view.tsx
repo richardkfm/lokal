@@ -11,7 +11,8 @@ import {
   toneForScore,
 } from "./indicators";
 import { basisLine, formatAmount } from "@/report/money";
-import { localizeParams } from "@/report/params";
+import { localizeParams, prerequisiteLabels } from "@/report/params";
+import type { DocumentLabels } from "@/report/params";
 import type { PlanningReport } from "@/report/schema";
 import type { RationaleItem } from "@/domain/rationale";
 
@@ -28,18 +29,24 @@ import type { RationaleItem } from "@/domain/rationale";
 type Translate = Awaited<ReturnType<typeof getTranslations>>;
 
 /** Renders a rationale code with its parameters. */
-function rationaleText(t: Translate, item: RationaleItem): string {
-  const params = localizeParams(item.params, (key) => t(key as never));
+function rationaleText(
+  t: Translate,
+  item: RationaleItem,
+  labels: DocumentLabels,
+): string {
+  const params = localizeParams(item.params, (key) => t(key as never), labels);
   return t(`rationale.${item.code}` as never, params as never);
 }
 
 function RationaleList({
   items,
   t,
+  labels,
   dense,
 }: {
   items: RationaleItem[];
   t: Translate;
+  labels: DocumentLabels;
   dense?: boolean;
 }) {
   if (items.length === 0) return null;
@@ -57,7 +64,9 @@ function RationaleList({
                 : "bg-[var(--color-line-strong)]",
             ].join(" ")}
           />
-          <span className="text-muted leading-relaxed">{rationaleText(t, item)}</span>
+          <span className="text-muted leading-relaxed">
+            {rationaleText(t, item, labels)}
+          </span>
         </li>
       ))}
     </ul>
@@ -79,6 +88,9 @@ export async function ReportView({
   const r = await getTranslations("report");
   const v = await getTranslations("vocabulary");
   const locale = report.locale;
+  // Prerequisite ids are interpolated into section 9's next steps, and their
+  // labels live in the document rather than the message catalogue.
+  const labels = prerequisiteLabels(report.roadmap.phases, locale);
 
   const categoryLabel = (id: string) => v(`category.${id}.label` as never);
   const glance = report.atAGlance;
@@ -185,7 +197,7 @@ export async function ReportView({
 
         {/* 2 Advantages */}
         <Section id="advantages" number={2} title={r("advantages.title")}>
-          <RationaleList items={report.advantages} t={t} />
+          <RationaleList items={report.advantages} t={t} labels={labels} />
         </Section>
 
         {/* 3 Savings */}
@@ -208,13 +220,23 @@ export async function ReportView({
               <h3 className="text-ink mb-2 text-sm font-medium">
                 {r("savings.drivers")}
               </h3>
-              <RationaleList items={report.savings.drivers} t={t} dense />
+              <RationaleList
+                items={report.savings.drivers}
+                t={t}
+                labels={labels}
+                dense
+              />
             </div>
             <div>
               <h3 className="text-ink mb-2 text-sm font-medium">
                 {r("savings.offsets")}
               </h3>
-              <RationaleList items={report.savings.offsets} t={t} dense />
+              <RationaleList
+                items={report.savings.offsets}
+                t={t}
+                labels={labels}
+                dense
+              />
             </div>
           </div>
           {exposure ? (
@@ -282,13 +304,18 @@ export async function ReportView({
               </ul>
 
               <div className="mt-4">
-                <RationaleList items={exposure.notes} t={t} dense />
+                <RationaleList items={exposure.notes} t={t} labels={labels} dense />
               </div>
             </div>
           ) : null}
 
           <div className="border-line mt-5 border-t pt-3">
-            <RationaleList items={report.savings.modelLimitations} t={t} dense />
+            <RationaleList
+              items={report.savings.modelLimitations}
+              t={t}
+              labels={labels}
+              dense
+            />
           </div>
         </Section>
 
@@ -334,12 +361,22 @@ export async function ReportView({
                     </p>
 
                     <div className="mt-3">
-                      <RationaleList items={entry.recommended.fitReasons} t={t} dense />
+                      <RationaleList
+                        items={entry.recommended.fitReasons}
+                        t={t}
+                        labels={labels}
+                        dense
+                      />
                     </div>
 
                     {entry.recommended.cautions.length > 0 ? (
                       <div className="mt-3 rounded-md border border-[var(--color-caution)] bg-[var(--color-caution-soft)] p-3">
-                        <RationaleList items={entry.recommended.cautions} t={t} dense />
+                        <RationaleList
+                          items={entry.recommended.cautions}
+                          t={t}
+                          labels={labels}
+                          dense
+                        />
                       </div>
                     ) : null}
 
@@ -365,14 +402,14 @@ export async function ReportView({
                       {entry.ruledOut.map(({ tool, reason }) => (
                         <li key={tool.id} className="text-muted leading-relaxed">
                           <span className="text-ink font-medium">{tool.name}</span>:{" "}
-                          {rationaleText(t, reason)}
+                          {rationaleText(t, reason, labels)}
                         </li>
                       ))}
                     </ul>
                   </details>
                 ) : null}
 
-                <RationaleList items={entry.notes} t={t} dense />
+                <RationaleList items={entry.notes} t={t} labels={labels} dense />
               </div>
             ))}
           </div>
@@ -480,7 +517,12 @@ export async function ReportView({
                           </p>
 
                           <div className="mt-2">
-                            <RationaleList items={migration.reasons} t={t} dense />
+                            <RationaleList
+                              items={migration.reasons}
+                              t={t}
+                              labels={labels}
+                              dense
+                            />
                           </div>
 
                           {migration.gotchas.length > 0 ? (
@@ -505,7 +547,7 @@ export async function ReportView({
                     </div>
                   ) : null}
 
-                  <RationaleList items={phase.notes} t={t} dense />
+                  <RationaleList items={phase.notes} t={t} labels={labels} dense />
                 </div>
               ))}
           </div>
@@ -528,7 +570,7 @@ export async function ReportView({
                       <span className="text-faint"> ({deferred.currentToolName})</span>
                     ) : null}
                     <span className="text-muted block text-xs leading-relaxed">
-                      {rationaleText(t, deferred.reason)}{" "}
+                      {rationaleText(t, deferred.reason, labels)}{" "}
                       {t(`rationale.${deferred.revisitWhen}` as never)}
                     </span>
                   </li>
@@ -582,13 +624,13 @@ export async function ReportView({
               <h3 className="text-ink mb-2 text-sm font-medium">
                 {r("capacity.gaps")}
               </h3>
-              <RationaleList items={report.readiness.gaps} t={t} />
+              <RationaleList items={report.readiness.gaps} t={t} labels={labels} />
             </div>
           ) : null}
 
           {report.capacity.gaps.length > 0 ? (
             <div className="mt-4">
-              <RationaleList items={report.capacity.gaps} t={t} />
+              <RationaleList items={report.capacity.gaps} t={t} labels={labels} />
             </div>
           ) : null}
         </Section>
@@ -602,7 +644,7 @@ export async function ReportView({
           breakBefore
         >
           {report.aiLane.recommendations.length === 0 ? (
-            <RationaleList items={report.aiLane.notes} t={t} />
+            <RationaleList items={report.aiLane.notes} t={t} labels={labels} />
           ) : (
             <div className="space-y-4">
               {report.aiLane.recommendations.map((recommendation) => (
@@ -637,7 +679,12 @@ export async function ReportView({
                   </p>
 
                   <div className="mt-3">
-                    <RationaleList items={recommendation.reasons} t={t} dense />
+                    <RationaleList
+                      items={recommendation.reasons}
+                      t={t}
+                      labels={labels}
+                      dense
+                    />
                   </div>
 
                   <p className="text-faint mt-3 text-xs leading-relaxed">
@@ -645,11 +692,16 @@ export async function ReportView({
                   </p>
 
                   <div className="mt-2">
-                    <RationaleList items={recommendation.risks} t={t} dense />
+                    <RationaleList
+                      items={recommendation.risks}
+                      t={t}
+                      labels={labels}
+                      dense
+                    />
                   </div>
                 </div>
               ))}
-              <RationaleList items={report.aiLane.notes} t={t} dense />
+              <RationaleList items={report.aiLane.notes} t={t} labels={labels} dense />
             </div>
           )}
         </Section>
@@ -677,7 +729,12 @@ export async function ReportView({
                   {r(`scalability.${key}` as never)}
                 </dt>
                 <dd className="flex-1">
-                  <RationaleList items={report.scalability[key]} t={t} dense />
+                  <RationaleList
+                    items={report.scalability[key]}
+                    t={t}
+                    labels={labels}
+                    dense
+                  />
                 </dd>
               </div>
             ))}
@@ -700,7 +757,7 @@ export async function ReportView({
                   <h3 className="text-ink mb-2 text-sm font-medium">
                     {r(`next.${key}` as never)}
                   </h3>
-                  <RationaleList items={items} t={t} dense />
+                  <RationaleList items={items} t={t} labels={labels} dense />
                 </div>
               ) : null,
             )}
@@ -751,7 +808,12 @@ export async function ReportView({
                     {r("method.dataQuality")}
                   </h3>
                   <div className="mt-1.5">
-                    <RationaleList items={report.method.dataQualityNotes} t={t} dense />
+                    <RationaleList
+                      items={report.method.dataQualityNotes}
+                      t={t}
+                      labels={labels}
+                      dense
+                    />
                   </div>
                 </div>
               ) : null}
