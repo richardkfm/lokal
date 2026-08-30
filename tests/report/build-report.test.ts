@@ -39,9 +39,33 @@ describe("planning report", () => {
     expect(roundTripped).toEqual(original);
   });
 
-  it("states no currency amount in any persona", () => {
+  it("carries money as data, never as formatted text", () => {
     for (const { id } of PERSONAS) {
-      expect(JSON.stringify(report(id))).not.toMatch(/€|\bEUR\b/);
+      // Renderers format; the document does not. A formatted amount in here is
+      // one that has been separated from the plan, source and date that make it
+      // checkable — see ADR-0003.
+      expect(JSON.stringify(report(id))).not.toMatch(/€/);
+    }
+  });
+
+  it("never states a figure without the basis needed to check it", () => {
+    for (const { id } of PERSONAS) {
+      const exposure = report(id).savings.subscriptionExposure;
+      if (!exposure) continue;
+
+      expect(exposure.basis.length).toBeGreaterThan(0);
+      for (const basis of exposure.basis) {
+        expect(basis.planName.length).toBeGreaterThan(0);
+        expect(basis.source).toMatch(/^https:\/\//);
+        expect(basis.observedOn).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      }
+
+      // Coverage travels with the sum, always.
+      expect(exposure.categoriesAssessed).toBeGreaterThanOrEqual(
+        exposure.categoriesPriced,
+      );
+      // Gross exposure only. Never a net saving.
+      expect(exposure.avoidedAnnualCents).toBeLessThanOrEqual(exposure.annualCents);
     }
   });
 

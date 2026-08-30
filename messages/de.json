@@ -641,7 +641,7 @@
         "existing_contracts": "Bestehende Verträge und Laufzeiten",
         "integrations_with_specialist_software": "Anbindungen an Fachverfahren",
         "legal_retention_duties": "Gesetzliche Aufbewahrungs- und Archivpflichten",
-        "licence_prices": "Lizenzpreise und konkrete Kosten",
+        "negotiated_contract_terms": "Ausgehandelte Vertragskonditionen, Rabatte und Rahmenverträge",
         "network_topology": "Netzaufbau und Standortanbindung",
         "staff_skills_in_detail": "Kenntnisse einzelner Beschäftigter"
       }
@@ -682,7 +682,7 @@
       "model_is_qualitative": "Die Gesamteinschätzung ist qualitativ. Genannte Beträge sind keine Prognose, sondern Ihre Angaben multipliziert mit veröffentlichten Listenpreisen.",
       "parallel_running_costs": "Über {phases} Phasen laufen alte und neue Systeme zeitweise nebeneinander.",
       "priced_exposure_partial": "Nur {priced} von {assessed} betrachteten Bereichen haben einen belegbaren Listenpreis. Die genannte Summe ist damit eine Teilsumme, keine Gesamtsumme.",
-      "prices_are_list_prices": "Grundlage sind {count} veröffentlichte Listenpreise der Anbieter. Ihre tatsächlichen Vertragskonditionen können abweichen; bitte gegen Ihre Rechnungen prüfen.",
+      "prices_are_list_prices": "Grundlage sind die veröffentlichten Listenpreise der Anbieter. Ihre tatsächlichen Vertragskonditionen können abweichen; bitte gegen Ihre Rechnungen prüfen.",
       "procurement_flexibility": "Mehr Spielraum in der Beschaffung.",
       "recurring_licence_exposure_reduced": "Wiederkehrende Lizenzbindung bei {tool} für {seats} Arbeitsplätze entfällt.",
       "subscription_not_fully_replaced": "{plan} entfällt noch nicht: {remaining} Bereich(e) laufen weiterhin über dieses Abonnement. Der Vertrag endet erst, wenn der letzte davon abgelöst ist.",
@@ -786,7 +786,28 @@
     "savings": {
       "title": "Einsparperspektive",
       "drivers": "Wo Aufwand entfällt",
-      "offsets": "Was dagegen steht"
+      "offsets": "Was dagegen steht",
+      "exposureTitle": "Heutige Abonnementkosten",
+      "exposureFigure": "Kennzahl",
+      "exposureAmount": "Betrag",
+      "exposureCurrent": "Aktuell pro Jahr",
+      "exposureAvoided": "Entfällt mit diesem Plan",
+      "exposureCoverage": "Belegt für {priced} von {assessed} betrachteten Bereichen, gerechnet auf {seats} Arbeitsplätze.",
+      "exposureNote": "Die Beträge sind Ihre eigenen Angaben multipliziert mit veröffentlichten Listenpreisen der Anbieter — keine Schätzung und keine Prognose.",
+      "basisTitle": "Rechengrundlage",
+      "basisAnnual": "Pro Jahr",
+      "basisCovers": "Deckt ab",
+      "basisRemains": "Läuft weiter für: {categories}",
+      "basisSource": "Quelle",
+      "basisLine": "{plan}: {unit} je Arbeitsplatz und Monat, {seats} Arbeitsplätze ({term}, {tax}, erhoben am {observed})",
+      "term": {
+        "annual_commitment": "Jahresabonnement",
+        "monthly_flexible": "monatlich kündbar"
+      },
+      "tax": {
+        "net": "zzgl. MwSt.",
+        "gross": "inkl. MwSt."
+      }
     },
     "stack": {
       "title": "Empfohlener Zielaufbau",

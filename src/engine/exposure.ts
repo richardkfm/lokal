@@ -208,7 +208,6 @@ export function assessExposure(
     rationale({
       code: "savings.prices_are_list_prices",
       severity: "note",
-      params: { count: basis.length },
     }),
   );
 

@@ -641,7 +641,7 @@
         "existing_contracts": "Existing contracts and their terms",
         "integrations_with_specialist_software": "Integrations with specialist software",
         "legal_retention_duties": "Legal retention and archival duties",
-        "licence_prices": "Licence prices and concrete costs",
+        "negotiated_contract_terms": "Negotiated contract terms, discounts and framework agreements",
         "network_topology": "Network topology and site connectivity",
         "staff_skills_in_detail": "The skills of individual staff"
       }
@@ -682,7 +682,7 @@
       "model_is_qualitative": "The overall assessment is qualitative. Any amounts shown are not a forecast — they are your own figures multiplied by published list prices.",
       "parallel_running_costs": "Across {phases} phases, old and new systems run alongside each other for a time.",
       "priced_exposure_partial": "Only {priced} of {assessed} assessed areas carry a citable list price, so the amount shown is a partial sum rather than a total.",
-      "prices_are_list_prices": "Based on {count} published vendor list prices. Your actual contract terms may differ; check against your own invoices.",
+      "prices_are_list_prices": "Based on the vendors' published list prices. Your actual contract terms may differ; check against your own invoices.",
       "procurement_flexibility": "More room to manoeuvre in procurement.",
       "recurring_licence_exposure_reduced": "Recurring licence exposure for {tool} across {seats} seats falls away.",
       "subscription_not_fully_replaced": "{plan} does not fall away yet: {remaining} area(s) still run on this subscription. The contract ends only once the last of them is replaced.",
@@ -786,7 +786,28 @@
     "savings": {
       "title": "Savings outlook",
       "drivers": "Where cost falls away",
-      "offsets": "What works against it"
+      "offsets": "What works against it",
+      "exposureTitle": "Today's subscription cost",
+      "exposureFigure": "Figure",
+      "exposureAmount": "Amount",
+      "exposureCurrent": "Current, per year",
+      "exposureAvoided": "Removed by this plan",
+      "exposureCoverage": "Evidenced for {priced} of {assessed} assessed areas, across {seats} seats.",
+      "exposureNote": "These amounts are your own figures multiplied by published vendor list prices — not an estimate and not a forecast.",
+      "basisTitle": "How this is calculated",
+      "basisAnnual": "Per year",
+      "basisCovers": "Covers",
+      "basisRemains": "Still runs for: {categories}",
+      "basisSource": "Source",
+      "basisLine": "{plan}: {unit} per seat per month, {seats} seats ({term}, {tax}, observed {observed})",
+      "term": {
+        "annual_commitment": "annual subscription",
+        "monthly_flexible": "monthly, cancellable"
+      },
+      "tax": {
+        "net": "excl. VAT",
+        "gross": "incl. VAT"
+      }
     },
     "stack": {
       "title": "Recommended target stack",
