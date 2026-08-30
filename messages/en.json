@@ -28,7 +28,7 @@
   },
   "landing": {
     "heading": "From your current situation to a plan you can defend",
-    "subheading": "lokal takes your organization’s actual starting position and turns it into a traceable plan: target stack, sequence, effort, capacity needs and a realistic view of where AI fits today.",
+    "subheading": "Your starting point in, a reasoned migration plan out: target stack, sequence, effort, capacity, AI.",
     "ctaPrimary": "Start assessment",
     "ctaNote": "Six steps, about fifteen minutes. No account needed.",
     "answersTitle": "Questions this plan answers",
@@ -36,12 +36,12 @@
       "first": "What should we replace first — and what stays as it is for now?",
       "fit": "Which target stack fits this organization, and why?",
       "seats": "How many seats does each individual change affect?",
-      "gaps": "Where are we underprepared, and where will we need outside support?",
+      "gaps": "Where are we underprepared, and where do we need outside help?",
       "ai": "Which AI use cases are viable today, and which should wait?",
       "risks": "Which risks, dependencies and training needs are coming our way?"
     },
     "audienceTitle": "Who it is for",
-    "audience": "Municipalities, district offices, schools, utilities, associations and small to mid-sized companies — Germany first.",
+    "audience": "Municipalities, district offices, schools, utilities, associations and SMEs.",
     "outputTitle": "What you end up with",
     "ctaSecondary": "How the plan is built",
     "trust": {
@@ -52,7 +52,7 @@
     },
     "preview": {
       "title": "What a plan looks like",
-      "lead": "Not a list of alternatives, but an order with reasons: what goes first, what waits, what stays as it is for now — and what was ruled out.",
+      "lead": "Not a list of alternatives but a reasoned sequence: what first, what later, what stays, what is ruled out.",
       "badge": "Example excerpt",
       "docTitle": "Migration plan",
       "docSubtitle": "Municipality · 180 seats",
@@ -87,12 +87,12 @@
       "title": "How the plan is built",
       "lead": "Three steps, none of them opaque.",
       "step1Title": "Assess",
-      "step1Body": "Six steps: organization, operations and capacity, current position per area, stance on AI. Only things already known inside your organization.",
+      "step1Body": "Six steps: organization, operations, current state per area, stance on AI. Only what you already know.",
       "step2Title": "Apply the rulepack",
-      "step2Body": "A rulepack you can read scores fit, dependencies, effort and sequence. The same answers produce the same result — next week too.",
+      "step2Body": "Published rules weigh fit, dependencies and effort. Same answers, same result — next week too.",
       "step3Title": "Get the plan",
-      "step3Body": "Target stack with rationale, a phased roadmap, a capacity check and an AI assessment. Immediately, without an account or a queue.",
-      "proof": "No language model takes part in any of these steps. That is why every recommendation can be traced back to the rule that produced it."
+      "step3Body": "Target stack, roadmap, capacity check, AI assessment. Immediately, no account.",
+      "proof": "No language model in any of these steps. That is why every recommendation traces back to the rule that produced it."
     },
     "formats": {
       "lead": "A report you can pass on — in whichever form the situation calls for.",
@@ -101,7 +101,7 @@
       "markdownTitle": "As Markdown",
       "markdownBody": "Pastes cleanly into a wiki — Confluence, BookStack, Nextcloud Collectives.",
       "printTitle": "As a print version",
-      "printBody": "A4 with clean page breaks. Ready to put in front of a council, a board or procurement."
+      "printBody": "A4 with clean page breaks. Ready for a council, a board or procurement."
     },
     "audienceChips": {
       "municipality": "Municipalities",
@@ -113,18 +113,18 @@
     },
     "sovereignty": {
       "title": "Sovereign in the tool itself",
-      "lead": "A tool that argues for independence should not create a new dependency of its own.",
+      "lead": "A tool arguing for independence should not create a new dependency of its own.",
       "terminalLabel": "bash",
       "selfHostTitle": "On your own infrastructure",
       "selfHostBody": "One container, one file as the database. No API keys, no external services, no phoning home.",
       "rulepackTitle": "A readable rulepack",
-      "rulepackBody": "Every recommendation comes from versioned rules with sources and a review date. You can read them — and disagree with them.",
+      "rulepackBody": "Versioned rules with a source and a review date. Readable — and arguable.",
       "licenseTitle": "AGPL-3.0",
       "licenseBody": "Audit it, fork it, adapt it. What you build on it stays open too."
     },
     "closing": {
       "title": "Start with what you already know",
-      "body": "The assessment asks for nothing you would have to go and research. A quarter of an hour later you have something you can put in front of people.",
+      "body": "The intake asks nothing you would have to look up. A quarter of an hour later you have something you can present.",
       "cta": "Go to the assessment",
       "note": "No account, no email address, no sign-up."
     },
@@ -139,7 +139,7 @@
   },
   "wizard": {
     "title": "Assessment",
-    "subtitle": "Six steps, about fifteen minutes. Your answers stay in your browser until you submit at the end.",
+    "subtitle": "Six steps, about fifteen minutes. Your answers stay in the browser until you submit.",
     "loading": "Loading your draft …",
     "back": "Back",
     "next": "Next",
@@ -173,10 +173,10 @@
     },
     "descriptions": {
       "organization": "Type and size determine which recommendations are viable at all.",
-      "operating": "These answers decide what you can run yourself and where external support becomes necessary.",
-      "stack": "Choose the areas you actually want to look at. Unselected areas are reported as not assessed.",
-      "detail": "These answers determine sequence, effort and risk. This is the heart of the planning.",
-      "ai": "This determines which AI use cases are viable today and which should wait.",
+      "operating": "Determines what you can run yourself and where outside support is needed.",
+      "stack": "Pick the areas you want to look at. Unselected ones are marked not assessed in the report.",
+      "detail": "Determines sequence, effort and risk — the real core of the planning.",
+      "ai": "Determines which AI use cases are viable today and which should wait.",
       "review": "Check your answers. You can still change any step."
     },
     "organization": {
@@ -218,16 +218,16 @@
     "stack": {
       "legend": "Areas in scope",
       "hint": "Choose at least one area.",
-      "notAssessedNote": "Unselected areas appear in the report explicitly as not assessed — not as unproblematic."
+      "notAssessedNote": "Unselected areas appear in the report as not assessed — not as unproblematic."
     },
     "detail": {
-      "intro": "These answers determine the sequence. Estimates are fine; accuracy helps, precision is not needed.",
+      "intro": "These answers set the sequence. Estimates are enough.",
       "nothingSelected": "No area has been selected yet.",
       "currentToolLabel": "Currently in use",
       "currentToolHint": "Free text. Leave empty if nothing is in use yet.",
       "currentToolPlaceholder": "e.g. SharePoint",
       "seatsLabel": "Seats affected",
-      "seatsHint": "May differ from the total — a ticket system often serves only a few people.",
+      "seatsHint": "May differ from the total — a ticket system often affects only a few people.",
       "criticalityLabel": "Business criticality",
       "criticalityHint": "What happens if this system is down for a day?",
       "painLabel": "Level of pain",
@@ -256,7 +256,7 @@
       "useCasesHint": "Choose what you actually intend to do."
     },
     "review": {
-      "intro": "A short summary of your answers. The plan is calculated from these alone.",
+      "intro": "Your answers in brief. The plan is calculated from these alone.",
       "edit": "Change",
       "orgType": "Type",
       "seats": "Seats",
@@ -722,7 +722,7 @@
     "documentKind": "Internal planning document",
     "title": "Migration plan",
     "coverLine": "{orgType} · {seats} seats · created {date}",
-    "draftRulepackNotice": "Note: the underlying rulepack ({version}) has not yet been checked against current product releases by a qualified reviewer. The ratings are careful but unconfirmed. Verify independently before any procurement decision.",
+    "draftRulepackNotice": "Note: rulepack {version} has not yet been checked against current product releases by a qualified reviewer. The ratings are careful but unconfirmed — verify before any procurement decision.",
     "glance": {
       "title": "At a glance",
       "readiness": "Readiness",
@@ -760,8 +760,8 @@
       "proceed": "Preconditions are met"
     },
     "postureNarrative": {
-      "prepare_first": "The target stack is sound; the organization is not yet, in ways that matter. Establish the named prerequisites before the first substantial project, or the effort simply moves later and costs more.",
-      "start_selectively": "Some projects can start now; others need groundwork first. The sequence in section 5 reflects that.",
+      "prepare_first": "The target stack holds up; the organization does not yet, in decisive places. Without the prerequisites named here the effort only moves later — and gets more expensive.",
+      "start_selectively": "Some work can start now, some needs groundwork first. Section 5 is ordered accordingly.",
       "proceed": "The preconditions are broadly met. The plan can be approached in the order proposed."
     },
     "aiNarrative": {
@@ -792,7 +792,7 @@
     },
     "summary": {
       "title": "Executive summary",
-      "context": "The assessment covers a {orgType} with {seats} seats (size band {bucket}). {categories} areas were assessed.",
+      "context": "{orgType} with {seats} seats (size band {bucket}), {categories} areas assessed.",
       "target": "The plan proposes {planned} migrations. {keep} areas should stay as they are for now."
     },
     "advantages": {
@@ -808,7 +808,7 @@
       "exposureCurrent": "Current, per year",
       "exposureAvoided": "Removed by this plan",
       "exposureCoverage": "Evidenced for {priced} of {assessed} assessed areas, across {seats} seats.",
-      "exposureNote": "These amounts are your own figures multiplied by published vendor list prices — not an estimate and not a forecast.",
+      "exposureNote": "Your own figures multiplied by published list prices — not an estimate, not a forecast.",
       "basisTitle": "How this is calculated",
       "basisAnnual": "Per year",
       "basisCovers": "Covers",
@@ -826,7 +826,7 @@
     },
     "stack": {
       "title": "Recommended target stack",
-      "lead": "One recommendation per area with its rationale, backup options, and the alternatives that were examined and ruled out.",
+      "lead": "One reasoned recommendation per area, with fallbacks and the candidates ruled out.",
       "current": "Today",
       "seats": "{seats} seats",
       "backups": "Backup options",
@@ -837,7 +837,7 @@
     },
     "roadmap": {
       "title": "Migration roadmap",
-      "lead": "Sequence, effort and seats affected per phase. Effort figures are planning estimates in administrator-days.",
+      "lead": "Sequence, effort and affected seats per phase. Effort is a planning estimate in admin days.",
       "effort": "{min}–{max} days",
       "seatsAffected": "Seats affected",
       "pilot": "pilot recommended",
@@ -899,12 +899,12 @@
     },
     "method": {
       "title": "Method and limits",
-      "lead": "This plan was calculated from the answers given and a fixed rulepack. No language model was involved; the same answers produce the same result.",
+      "lead": "Calculated from your answers and a fixed rulepack. No language model involved; same answers, same result.",
       "notModelled": "Not modelled",
       "notAssessed": "Areas not assessed",
       "dataQuality": "Notes on the answers",
       "footer": "Calculated with lokal (engine {engineVersion}, rulepack {rulepackVersion}).",
-      "linkNotice": "The link to this report is unguessable but not protected. Treat it as an internal document."
+      "linkNotice": "The link is unguessable but unprotected. Treat it as an internal document."
     },
     "actions": {
       "markdown": "Download Markdown",
@@ -916,6 +916,6 @@
       "body": "There is no report at this link. It may have been removed, or the link may be incomplete.",
       "cta": "Start a new assessment"
     },
-    "rulesChanged": "Note: this report was recalculated with a newer rulepack because the version originally used ({version}) is no longer available. Individual recommendations may differ from the original."
+    "rulesChanged": "Note: recalculated with a newer rulepack because the original version ({version}) is no longer available. Some recommendations may differ."
   }
 }

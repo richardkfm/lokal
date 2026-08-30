@@ -28,7 +28,7 @@
   },
   "landing": {
     "heading": "Vom Ist-Zustand zum belastbaren Migrationsplan",
-    "subheading": "lokal nimmt die tatsächliche Ausgangslage Ihrer Organisation auf und erzeugt daraus einen nachvollziehbaren Plan: Zielarchitektur, Reihenfolge, Aufwand, Kapazitätsbedarf und eine realistische Einschätzung zur KI-Nutzung.",
+    "subheading": "Ihre Ausgangslage rein, ein begründeter Migrationsplan raus: Zielaufbau, Reihenfolge, Aufwand, Kapazität, KI.",
     "ctaPrimary": "Erhebung starten",
     "ctaNote": "Sechs Schritte, etwa fünfzehn Minuten. Kein Konto erforderlich.",
     "answersTitle": "Fragen, die dieser Plan beantwortet",
@@ -36,12 +36,12 @@
       "first": "Was sollten wir zuerst ablösen — und was bleibt vorerst, wie es ist?",
       "fit": "Welche Zielarchitektur passt zu dieser Organisation, und warum?",
       "seats": "Wie viele Arbeitsplätze betrifft jede einzelne Umstellung?",
-      "gaps": "Wo sind wir nicht ausreichend vorbereitet, und wo brauchen wir Unterstützung von außen?",
+      "gaps": "Wo sind wir nicht vorbereitet, und wo brauchen wir Hilfe von außen?",
       "ai": "Welche KI-Anwendungsfälle sind heute tragfähig, welche sollten warten?",
       "risks": "Welche Risiken, Abhängigkeiten und Schulungsbedarfe kommen auf uns zu?"
     },
     "audienceTitle": "Für wen",
-    "audience": "Kommunen, Landkreise, Schulen, Stadtwerke, Vereine und kleine bis mittlere Unternehmen — zunächst in Deutschland.",
+    "audience": "Kommunen, Landkreise, Schulen, Stadtwerke, Vereine und Mittelstand.",
     "outputTitle": "Was am Ende herauskommt",
     "ctaSecondary": "So entsteht der Plan",
     "trust": {
@@ -52,7 +52,7 @@
     },
     "preview": {
       "title": "Wie ein Plan aussieht",
-      "lead": "Keine Liste von Alternativen, sondern eine Reihenfolge mit Begründung: was zuerst, was später, was vorerst bleibt — und was ausgeschieden ist.",
+      "lead": "Keine Liste von Alternativen, sondern eine begründete Reihenfolge: was zuerst, was später, was bleibt, was ausscheidet.",
       "badge": "Beispielausschnitt",
       "docTitle": "Migrationsplan",
       "docSubtitle": "Kommune · 180 Arbeitsplätze",
@@ -87,12 +87,12 @@
       "title": "So entsteht der Plan",
       "lead": "Drei Schritte, keiner davon undurchsichtig.",
       "step1Title": "Erheben",
-      "step1Body": "Sechs Schritte: Organisation, Betrieb und Kapazitäten, aktueller Stand je Bereich, Haltung zu KI. Nur Angaben, die bei Ihnen ohnehin bekannt sind.",
+      "step1Body": "Sechs Schritte: Organisation, Betrieb, Ist-Stand je Bereich, Haltung zu KI. Nur, was Sie ohnehin wissen.",
       "step2Title": "Regelwerk anwenden",
-      "step2Body": "Ein offengelegtes Regelwerk bewertet Eignung, Abhängigkeiten, Aufwand und Reihenfolge. Gleiche Angaben führen zu gleichem Ergebnis — auch nächste Woche.",
+      "step2Body": "Offengelegte Regeln bewerten Eignung, Abhängigkeiten und Aufwand. Gleiche Angaben, gleiches Ergebnis — auch nächste Woche.",
       "step3Title": "Plan erhalten",
-      "step3Body": "Zielaufbau mit Begründung, Fahrplan in Phasen, Kapazitätsabgleich und KI-Einschätzung. Sofort, ohne Konto, ohne Wartezeit.",
-      "proof": "An keinem dieser Schritte ist ein Sprachmodell beteiligt. Das ist der Grund, warum sich jede Empfehlung bis zu der Regel zurückverfolgen lässt, die sie erzeugt hat."
+      "step3Body": "Zielaufbau, Fahrplan, Kapazitätsabgleich, KI-Einschätzung. Sofort, ohne Konto.",
+      "proof": "Kein Sprachmodell in diesen Schritten. Deshalb lässt sich jede Empfehlung bis zur Regel zurückverfolgen, die sie erzeugt hat."
     },
     "formats": {
       "lead": "Ein Bericht, den Sie weitergeben können — in der Form, die zur Situation passt.",
@@ -101,7 +101,7 @@
       "markdownTitle": "Als Markdown",
       "markdownBody": "Fügt sich sauber in ein Wiki ein — Confluence, BookStack, Nextcloud Collectives.",
       "printTitle": "Als Druckfassung",
-      "printBody": "A4 mit sauberen Seitenumbrüchen. Vorlagefähig für Rat, Geschäftsführung oder Beschaffung."
+      "printBody": "A4 mit sauberen Umbrüchen. Vorlagefähig für Rat, Geschäftsführung oder Beschaffung."
     },
     "audienceChips": {
       "municipality": "Kommunen",
@@ -113,18 +113,18 @@
     },
     "sovereignty": {
       "title": "Souverän auch im Werkzeug selbst",
-      "lead": "Ein Werkzeug, das für Unabhängigkeit argumentiert, sollte selbst keine neue Abhängigkeit schaffen.",
+      "lead": "Ein Werkzeug für Unabhängigkeit sollte selbst keine neue Abhängigkeit schaffen.",
       "terminalLabel": "bash",
       "selfHostTitle": "Auf Ihrer eigenen Infrastruktur",
       "selfHostBody": "Ein Container, eine Datei als Datenbank. Keine API-Schlüssel, keine externen Dienste, kein Rückkanal.",
       "rulepackTitle": "Lesbares Regelwerk",
-      "rulepackBody": "Jede Empfehlung stammt aus versionierten Regeln mit Quellen und Prüfdatum. Sie können sie lesen — und ihnen widersprechen.",
+      "rulepackBody": "Versionierte Regeln mit Quelle und Prüfdatum. Lesbar — und widersprechbar.",
       "licenseTitle": "AGPL-3.0",
       "licenseBody": "Prüfen, forken, anpassen. Auch Weiterentwicklungen bleiben offen."
     },
     "closing": {
       "title": "Beginnen Sie mit dem, was Sie ohnehin wissen",
-      "body": "Die Erhebung fragt nichts ab, was Sie erst recherchieren müssten. Eine Viertelstunde später liegt etwas vor, das Sie vorlegen können.",
+      "body": "Die Erhebung fragt nichts ab, was Sie erst recherchieren müssten. Nach einer Viertelstunde haben Sie etwas Vorlagefähiges.",
       "cta": "Zur Erhebung",
       "note": "Kein Konto, keine E-Mail-Adresse, keine Registrierung."
     },
@@ -139,7 +139,7 @@
   },
   "wizard": {
     "title": "Erhebung",
-    "subtitle": "Sechs Schritte, etwa fünfzehn Minuten. Ihre Angaben bleiben im Browser, bis Sie am Ende absenden.",
+    "subtitle": "Sechs Schritte, etwa fünfzehn Minuten. Ihre Angaben bleiben bis zum Absenden im Browser.",
     "loading": "Entwurf wird geladen …",
     "back": "Zurück",
     "next": "Weiter",
@@ -173,10 +173,10 @@
     },
     "descriptions": {
       "organization": "Art und Größe bestimmen, welche Empfehlungen überhaupt tragfähig sind.",
-      "operating": "Diese Angaben entscheiden darüber, was Sie selbst betreiben können und wo externe Unterstützung nötig wird.",
-      "stack": "Wählen Sie die Bereiche, die Sie tatsächlich betrachten möchten. Nicht ausgewählte Bereiche werden im Bericht als nicht erhoben ausgewiesen.",
-      "detail": "Diese Angaben bestimmen Reihenfolge, Aufwand und Risiko. Sie sind der eigentliche Kern der Planung.",
-      "ai": "Hieraus ergibt sich, welche KI-Anwendungsfälle heute tragfähig sind und welche warten sollten.",
+      "operating": "Bestimmt, was Sie selbst betreiben können und wo externe Unterstützung nötig wird.",
+      "stack": "Wählen Sie die Bereiche, die Sie betrachten wollen. Nicht gewählte gelten im Bericht als nicht erhoben.",
+      "detail": "Bestimmt Reihenfolge, Aufwand und Risiko — der eigentliche Kern der Planung.",
+      "ai": "Bestimmt, welche KI-Anwendungsfälle heute tragfähig sind und welche warten sollten.",
       "review": "Prüfen Sie Ihre Angaben. Sie können jeden Schritt noch ändern."
     },
     "organization": {
@@ -218,16 +218,16 @@
     "stack": {
       "legend": "Bereiche in Betrachtung",
       "hint": "Wählen Sie mindestens einen Bereich.",
-      "notAssessedNote": "Nicht ausgewählte Bereiche erscheinen im Bericht ausdrücklich als nicht erhoben — nicht als unproblematisch."
+      "notAssessedNote": "Nicht gewählte Bereiche stehen im Bericht als nicht erhoben — nicht als unproblematisch."
     },
     "detail": {
-      "intro": "Diese Angaben bestimmen die Reihenfolge im Plan. Schätzungen genügen; Genauigkeit hilft, Präzision ist nicht nötig.",
+      "intro": "Diese Angaben bestimmen die Reihenfolge. Schätzungen genügen.",
       "nothingSelected": "Es wurde noch kein Bereich ausgewählt.",
       "currentToolLabel": "Derzeit eingesetzt",
       "currentToolHint": "Frei eintragen. Leer lassen, wenn bislang nichts im Einsatz ist.",
       "currentToolPlaceholder": "z. B. SharePoint",
       "seatsLabel": "Betroffene Arbeitsplätze",
-      "seatsHint": "Kann von der Gesamtzahl abweichen — ein Ticketsystem betrifft oft nur wenige Personen.",
+      "seatsHint": "Kann von der Gesamtzahl abweichen — ein Ticketsystem betrifft oft wenige.",
       "criticalityLabel": "Betriebskritikalität",
       "criticalityHint": "Was passiert, wenn dieses System einen Tag ausfällt?",
       "painLabel": "Leidensdruck",
@@ -256,7 +256,7 @@
       "useCasesHint": "Wählen Sie, was Sie tatsächlich vorhaben."
     },
     "review": {
-      "intro": "Kurze Zusammenfassung Ihrer Angaben. Der Plan wird ausschließlich hieraus berechnet.",
+      "intro": "Ihre Angaben in Kurzform. Der Plan wird ausschließlich hieraus berechnet.",
       "edit": "Ändern",
       "orgType": "Art",
       "seats": "Arbeitsplätze",
@@ -722,7 +722,7 @@
     "documentKind": "Internes Planungsdokument",
     "title": "Migrationsplan",
     "coverLine": "{orgType} · {seats} Arbeitsplätze · erstellt am {date}",
-    "draftRulepackNotice": "Hinweis: Das zugrunde liegende Regelwerk ({version}) wurde noch nicht durch eine fachkundige Person gegen die aktuellen Produktstände geprüft. Die Bewertungen sind sorgfältig, aber unbestätigt. Vor einer Beschaffungsentscheidung ist eine eigene Prüfung erforderlich.",
+    "draftRulepackNotice": "Hinweis: Das Regelwerk ({version}) wurde noch nicht fachkundig gegen die aktuellen Produktstände geprüft. Die Bewertungen sind sorgfältig, aber unbestätigt — vor einer Beschaffungsentscheidung selbst prüfen.",
     "glance": {
       "title": "Auf einen Blick",
       "readiness": "Bereitschaft",
@@ -760,8 +760,8 @@
       "proceed": "Voraussetzungen sind gegeben"
     },
     "postureNarrative": {
-      "prepare_first": "Der Zielaufbau ist tragfähig, die Organisation ist es an entscheidenden Stellen noch nicht. Vor dem ersten größeren Vorhaben sind die benannten Voraussetzungen zu schaffen; andernfalls verschiebt sich der Aufwand lediglich nach hinten und wird teurer.",
-      "start_selectively": "Einzelne Vorhaben lassen sich jetzt beginnen, andere brauchen Vorarbeiten. Die Reihenfolge in Abschnitt 5 ist entsprechend gewählt.",
+      "prepare_first": "Der Zielaufbau trägt, die Organisation an entscheidenden Stellen noch nicht. Ohne die benannten Voraussetzungen verschiebt sich der Aufwand nur nach hinten — und wird teurer.",
+      "start_selectively": "Einiges lässt sich jetzt beginnen, anderes braucht Vorarbeiten. Abschnitt 5 ist entsprechend sortiert.",
       "proceed": "Die Voraussetzungen sind im Wesentlichen gegeben. Der Plan lässt sich in der vorgeschlagenen Reihenfolge angehen."
     },
     "aiNarrative": {
@@ -792,7 +792,7 @@
     },
     "summary": {
       "title": "Zusammenfassung",
-      "context": "Betrachtet wurde eine Organisation vom Typ {orgType} mit {seats} Arbeitsplätzen (Größenklasse {bucket}). Erhoben wurden {categories} Bereiche.",
+      "context": "{orgType} mit {seats} Arbeitsplätzen (Größenklasse {bucket}), {categories} erhobene Bereiche.",
       "target": "Der Plan sieht {planned} Migrationen vor. {keep} Bereiche sollten vorerst unverändert bleiben."
     },
     "advantages": {
@@ -808,7 +808,7 @@
       "exposureCurrent": "Aktuell pro Jahr",
       "exposureAvoided": "Entfällt mit diesem Plan",
       "exposureCoverage": "Belegt für {priced} von {assessed} betrachteten Bereichen, gerechnet auf {seats} Arbeitsplätze.",
-      "exposureNote": "Die Beträge sind Ihre eigenen Angaben multipliziert mit veröffentlichten Listenpreisen der Anbieter — keine Schätzung und keine Prognose.",
+      "exposureNote": "Ihre Angaben multipliziert mit veröffentlichten Listenpreisen — keine Schätzung, keine Prognose.",
       "basisTitle": "Rechengrundlage",
       "basisAnnual": "Pro Jahr",
       "basisCovers": "Deckt ab",
@@ -826,7 +826,7 @@
     },
     "stack": {
       "title": "Empfohlener Zielaufbau",
-      "lead": "Je Bereich eine Empfehlung mit Begründung, Ausweichoptionen und den geprüften, aber ausgeschiedenen Alternativen.",
+      "lead": "Je Bereich eine begründete Empfehlung, Ausweichoptionen und die ausgeschiedenen Alternativen.",
       "current": "Heute",
       "seats": "{seats} Arbeitsplätze",
       "backups": "Ausweichoptionen",
@@ -899,12 +899,12 @@
     },
     "method": {
       "title": "Methodik und Grenzen",
-      "lead": "Dieser Plan wurde aus den erhobenen Angaben und einem festen Regelwerk berechnet. Es war kein Sprachmodell beteiligt; gleiche Angaben führen zu gleichen Ergebnissen.",
+      "lead": "Berechnet aus Ihren Angaben und einem festen Regelwerk. Kein Sprachmodell beteiligt; gleiche Angaben, gleiches Ergebnis.",
       "notModelled": "Nicht berücksichtigt",
       "notAssessed": "Nicht erhobene Bereiche",
       "dataQuality": "Hinweise zu den Angaben",
       "footer": "Berechnet mit lokal (Engine {engineVersion}, Regelwerk {rulepackVersion}).",
-      "linkNotice": "Der Link zu diesem Bericht ist nicht erratbar, aber nicht geschützt. Behandeln Sie ihn als internes Dokument."
+      "linkNotice": "Der Link ist nicht erratbar, aber ungeschützt. Behandeln Sie ihn als internes Dokument."
     },
     "actions": {
       "markdown": "Markdown herunterladen",
@@ -916,6 +916,6 @@
       "body": "Unter diesem Link liegt kein Bericht. Möglicherweise wurde er entfernt oder der Link ist unvollständig.",
       "cta": "Neue Erhebung starten"
     },
-    "rulesChanged": "Hinweis: Dieser Bericht wurde mit einem neueren Regelwerk neu berechnet, weil die ursprünglich verwendete Fassung ({version}) nicht mehr verfügbar ist. Einzelne Empfehlungen können von der ursprünglichen Fassung abweichen."
+    "rulesChanged": "Hinweis: Neu berechnet mit einem neueren Regelwerk, weil die ursprüngliche Fassung ({version}) nicht mehr verfügbar ist. Einzelne Empfehlungen können abweichen."
   }
 }
