@@ -90,7 +90,9 @@ test("the landing page leads into the wizard", async ({ page }) => {
   await expect(page).toHaveURL(/\/de$/);
   await expect(
     page.getByRole("heading", {
-      name: "Vom Ist-Zustand zum belastbaren Migrationsplan",
+      // The cycling word is aria-hidden; the accessible name is the stable
+      // phrase behind it, which is exactly what this assertion should pin.
+      name: "Von Microsoft 365 zum belastbaren Migrationsplan",
     }),
   ).toBeVisible();
 
@@ -106,8 +108,9 @@ test("the landing page leads into the wizard", async ({ page }) => {
   await expect(excerpt.getByText("Phase 1")).toBeVisible();
   await expect(excerpt.getByText("Vorerst unverändert lassen")).toBeVisible();
   await expect(excerpt.getByText("Ausgeschieden")).toBeVisible();
-  // Savings stay a band with no figure attached, as the report states them.
-  await expect(excerpt.getByText("qualitativ, ohne Beträge")).toBeVisible();
+  // Savings lead with the band, as the report does. Figures sit under it with
+  // their basis; the band is what the excerpt shows.
+  await expect(excerpt.getByText("Band plus belegte Beträge")).toBeVisible();
 
   await page.getByRole("link", { name: "Erhebung starten" }).click();
   await expect(page).toHaveURL(/\/de\/assessment$/);

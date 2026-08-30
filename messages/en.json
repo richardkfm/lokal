@@ -74,7 +74,7 @@
       "footnote": "An illustration with invented figures. Not a generated report.",
       "savingsLabel": "Savings outlook",
       "savingsValue": "Low",
-      "savingsDetail": "qualitative, no figures"
+      "savingsDetail": "band plus evidenced amounts"
     },
     "how": {
       "title": "How the plan is built",
@@ -120,7 +120,15 @@
       "body": "The assessment asks for nothing you would have to go and research. A quarter of an hour later you have something you can put in front of people.",
       "cta": "Go to the assessment",
       "note": "No account, no email address, no sign-up."
-    }
+    },
+    "headingLead": "From",
+    "headingTail": "to a migration plan that holds up",
+    "headingSpoken": "From Microsoft 365 to a migration plan that holds up",
+    "headingWord1": "Microsoft 365",
+    "headingWord2": "Google Workspace",
+    "headingWord3": "SharePoint",
+    "headingWord4": "Slack and Zoom",
+    "sealText": "sovereign · open · accountable"
   },
   "wizard": {
     "title": "Assessment",
@@ -714,7 +722,7 @@
       "readinessDetail": "{score} of 100",
       "posture": "Approach",
       "savings": "Savings outlook",
-      "savingsDetail": "qualitative, no amounts",
+      "savingsDetail": "band plus evidenced amounts",
       "ai": "AI",
       "aiDetail": "Recommended stance",
       "seats": "Seats affected",

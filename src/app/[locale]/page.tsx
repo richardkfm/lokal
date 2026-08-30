@@ -1,5 +1,7 @@
+import { Fragment } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Badge, KpiCard, Meter } from "@/components/report/indicators";
+import { PathRail, SpinSeal, WordCycle } from "@/components/ui/motion";
 import { Terminal } from "@/components/ui/terminal";
 import { Link } from "@/i18n/navigation";
 
@@ -58,8 +60,23 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
 
         <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28 sm:pb-20">
           <div className="max-w-3xl">
+            {/* The cycling word names the incumbent the visitor is actually
+                leaving. `headingWord1` is the resting word — what shows in
+                print, under reduced motion and in any paused frame — so it is
+                the most common one rather than the most interesting. */}
             <h1 className="text-ink display text-4xl font-semibold sm:text-5xl lg:text-6xl">
-              {t("heading")}
+              {t("headingLead")}{" "}
+              <WordCycle
+                className="text-brand"
+                spoken={t("headingSpoken")}
+                words={[
+                  t("headingWord1"),
+                  t("headingWord2"),
+                  t("headingWord3"),
+                  t("headingWord4"),
+                ]}
+              />{" "}
+              {t("headingTail")}
             </h1>
             <p className="text-muted mt-6 max-w-2xl text-lg leading-relaxed text-pretty sm:text-xl">
               {t("subheading")}
@@ -227,22 +244,33 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
             <p className="text-muted mt-4 leading-relaxed">{t("how.lead")}</p>
           </div>
 
-          <ol className="mt-10 grid gap-6 md:grid-cols-3">
-            {steps.map((step) => (
-              <li
-                key={step}
-                className="reveal border-line bg-surface shadow-card rounded-xl border p-6"
-              >
-                <span className="text-brand font-mono text-sm font-medium">
-                  {String(step).padStart(2, "0")}
-                </span>
-                <h3 className="text-ink mt-3 font-semibold">
-                  {t(`how.step${step}Title`)}
-                </h3>
-                <p className="text-muted mt-2 text-sm leading-relaxed">
-                  {t(`how.step${step}Body`)}
-                </p>
-              </li>
+          {/* The rail between the cards is the point of the section: intake,
+              rules and plan are one sequence, not three features. The dot
+              travelling it says so without a word of copy. */}
+          <ol className="mt-10 grid items-stretch gap-6 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
+            {steps.map((step, index) => (
+              <Fragment key={step}>
+                {index > 0 ? (
+                  <li
+                    aria-hidden="true"
+                    className="hidden items-center md:flex"
+                    role="presentation"
+                  >
+                    <PathRail className="w-10" />
+                  </li>
+                ) : null}
+                <li className="reveal border-line bg-surface shadow-card rounded-xl border p-6">
+                  <span className="text-brand font-mono text-sm font-medium">
+                    {String(step).padStart(2, "0")}
+                  </span>
+                  <h3 className="text-ink mt-3 font-semibold">
+                    {t(`how.step${step}Title`)}
+                  </h3>
+                  <p className="text-muted mt-2 text-sm leading-relaxed">
+                    {t(`how.step${step}Body`)}
+                  </p>
+                </li>
+              </Fragment>
             ))}
           </ol>
 
@@ -347,22 +375,35 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
 
       {/* Closing */}
       <section className="mx-auto max-w-6xl px-6 py-24">
-        <div className="reveal max-w-2xl">
-          <h2 className="text-ink display text-3xl font-semibold">
-            {t("closing.title")}
-          </h2>
-          <p className="text-muted mt-4 leading-relaxed text-pretty">
-            {t("closing.body")}
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link
-              href="/assessment"
-              className="bg-brand hover:bg-brand-strong shadow-card rounded-lg px-6 py-3 text-sm font-medium text-white transition-colors"
-            >
-              {t("closing.cta")}
-            </Link>
-            <span className="text-faint text-xs">{t("closing.note")}</span>
+        <div className="flex flex-wrap items-center gap-x-16 gap-y-10">
+          <div className="reveal max-w-2xl flex-1">
+            <h2 className="text-ink display text-3xl font-semibold">
+              {t("closing.title")}
+            </h2>
+            <p className="text-muted mt-4 leading-relaxed text-pretty">
+              {t("closing.body")}
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <Link
+                href="/assessment"
+                className="bg-brand hover:bg-brand-strong shadow-card rounded-lg px-6 py-3 text-sm font-medium text-white transition-colors"
+              >
+                {t("closing.cta")}
+              </Link>
+              <span className="text-faint text-xs">{t("closing.note")}</span>
+            </div>
           </div>
+
+          {/* The only ornament on the page, and it is made of words the product
+              stands behind. Decorative: the same three claims are made in plain
+              text in the sovereignty section above. */}
+          <SpinSeal
+            id="lokal-seal"
+            text={t("sealText")}
+            className="text-faint hidden h-40 w-40 shrink-0 lg:inline-flex"
+          >
+            <span className="text-brand font-mono text-lg font-medium">&gt;lokal</span>
+          </SpinSeal>
         </div>
       </section>
     </>

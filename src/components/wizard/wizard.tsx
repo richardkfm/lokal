@@ -75,6 +75,18 @@ function Stepper({
           );
         })}
       </ol>
+
+      {/* Progress as one continuous line rather than six separate pills.
+          The pills wrap on a narrow screen and stop reading as a sequence; this
+          does not. Decorative — `aria-current` on the buttons above is what
+          actually announces position. */}
+      <div className="path-rail path-rail-h mt-4" aria-hidden="true">
+        <div
+          className="bg-brand absolute inset-y-0 left-0"
+          style={{ width: `${(STEP_ORDER[current] / STEPS.length) * 100}%` }}
+        />
+        <span className="path-dot" />
+      </div>
     </nav>
   );
 }

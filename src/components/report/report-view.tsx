@@ -385,7 +385,17 @@ export async function ReportView({
           lead={r("roadmap.lead")}
           breakBefore
         >
-          <div className="space-y-4">
+          {/* A spine down the left of the phases, so the roadmap reads as one
+              sequence rather than a stack of cards. The rail draws its own line,
+              so it survives printing and reduced motion unchanged; only the dot
+              is motion. */}
+          <div className="relative space-y-4 sm:pl-8">
+            <div
+              className="path-rail path-rail-v absolute top-2 bottom-2 left-3 hidden sm:block"
+              aria-hidden="true"
+            >
+              <span className="path-dot" />
+            </div>
             {report.roadmap.phases
               .filter(
                 (phase) =>

@@ -74,7 +74,7 @@
       "footnote": "Illustration mit erfundenen Angaben. Kein erzeugter Bericht.",
       "savingsLabel": "Einsparperspektive",
       "savingsValue": "Gering",
-      "savingsDetail": "qualitativ, ohne Beträge"
+      "savingsDetail": "Band plus belegte Beträge"
     },
     "how": {
       "title": "So entsteht der Plan",
@@ -120,7 +120,15 @@
       "body": "Die Erhebung fragt nichts ab, was Sie erst recherchieren müssten. Eine Viertelstunde später liegt etwas vor, das Sie vorlegen können.",
       "cta": "Zur Erhebung",
       "note": "Kein Konto, keine E-Mail-Adresse, keine Registrierung."
-    }
+    },
+    "headingLead": "Von",
+    "headingTail": "zum belastbaren Migrationsplan",
+    "headingSpoken": "Von Microsoft 365 zum belastbaren Migrationsplan",
+    "headingWord1": "Microsoft 365",
+    "headingWord2": "Google Workspace",
+    "headingWord3": "SharePoint",
+    "headingWord4": "Slack und Zoom",
+    "sealText": "souverän · offen · nachvollziehbar"
   },
   "wizard": {
     "title": "Erhebung",
@@ -714,7 +722,7 @@
       "readinessDetail": "{score} von 100",
       "posture": "Vorgehen",
       "savings": "Einsparperspektive",
-      "savingsDetail": "qualitativ, ohne Beträge",
+      "savingsDetail": "Band plus belegte Beträge",
       "ai": "KI",
       "aiDetail": "Empfohlene Haltung",
       "seats": "Betroffene Arbeitsplätze",
