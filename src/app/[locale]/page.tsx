@@ -1,6 +1,7 @@
-import { Fragment } from "react";
+import { Fragment, Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Badge, KpiCard, Meter } from "@/components/report/indicators";
+import { ExpertContactBlock } from "@/components/shell/expert-contact";
 import { PathRail, SpinSeal, WordCycle } from "@/components/ui/motion";
 import { Terminal } from "@/components/ui/terminal";
 import { Link } from "@/i18n/navigation";
@@ -397,6 +398,14 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
           {/* The only ornament on the page, and it is made of words the product
               stands behind. Decorative: the same three claims are made in plain
               text in the sovereignty section above. */}
+          {/* Suspense keeps the rest of this page statically prerendered: only
+              the contact block waits for a request, which is what lets the
+              operator set LOKAL_EXPERT_* at container start rather than at
+              build time. Renders nothing when unconfigured. */}
+          <Suspense fallback={null}>
+            <ExpertContactBlock />
+          </Suspense>
+
           <SpinSeal
             id="lokal-seal"
             text={t("sealText")}

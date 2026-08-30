@@ -17,7 +17,14 @@
     "footerProductTitle": "Produkt",
     "footerProjectTitle": "Projekt",
     "footerLicense": "Lizenz (AGPL-3.0)",
-    "footerRulepack": "Regelwerk {version}"
+    "footerRulepack": "Regelwerk {version}",
+    "expert": {
+      "eyebrow": "Unterstützung",
+      "title": "Sie müssen das nicht allein umsetzen",
+      "lead": "Wenn der Plan mehr Kapazität verlangt, als im Haus vorhanden ist, hilft ein Gespräch oft mehr als ein weiteres Dokument.",
+      "website": "Website",
+      "disclaimer": "Dieser Kontakt wurde von der Betreiberin dieser Installation hinterlegt. lokal prüft, vermittelt und empfiehlt niemanden."
+    }
   },
   "landing": {
     "heading": "Vom Ist-Zustand zum belastbaren Migrationsplan",

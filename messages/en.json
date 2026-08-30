@@ -17,7 +17,14 @@
     "footerProductTitle": "Product",
     "footerProjectTitle": "Project",
     "footerLicense": "License (AGPL-3.0)",
-    "footerRulepack": "Rulepack {version}"
+    "footerRulepack": "Rulepack {version}",
+    "expert": {
+      "eyebrow": "Support",
+      "title": "You do not have to do this alone",
+      "lead": "Where the plan needs more capacity than you have in house, a conversation usually helps more than another document.",
+      "website": "Website",
+      "disclaimer": "This contact was configured by whoever runs this installation. lokal does not vet, broker or endorse anyone."
+    }
   },
   "landing": {
     "heading": "From your current situation to a plan you can defend",

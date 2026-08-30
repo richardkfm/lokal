@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { ExpertContactBlock } from "@/components/shell/expert-contact";
 import {
   Badge,
   ComplexityDots,
@@ -704,6 +705,12 @@ export async function ReportView({
             )}
           </div>
         </Section>
+
+        {/* A human to call, when the operator has configured one.
+            Placed after "next steps" because that is where a reader who has just
+            been told the plan exceeds their capacity actually is. Renders
+            nothing when unconfigured. */}
+        <ExpertContactBlock variant={print ? "print" : "card"} />
 
         {/* Method and limits */}
         <section
