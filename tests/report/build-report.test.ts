@@ -247,3 +247,66 @@ describe("a plan taken against an older rulepack", () => {
     expect(JSON.stringify(render())).toBe(JSON.stringify(report));
   });
 });
+
+/**
+ * Definition of done, item 5: "Removing the rulepack breaks the build — no
+ * recommendation is hardcoded in UI."
+ *
+ * It was the only item on that list with nothing automated behind it, checked
+ * until now by remembering to grep. The property is worth holding: the moment a
+ * tool name is typed into a renderer, lokal is quietly asserting something the
+ * rulepack has not sourced, dated or reviewed — which is the whole basis on
+ * which this tool asks to be believed.
+ *
+ * Asserted over the document rather than over the components, because the
+ * document is what every renderer draws from. A name that reaches a reader
+ * reaches them through here.
+ */
+describe("no recommendation is hardcoded", () => {
+  it("names only tools the rulepack knows about", () => {
+    const pack = currentRulepack();
+    const known = new Set([
+      ...pack.targetTools.map((tool) => tool.name),
+      ...pack.sourceTools.map((tool) => tool.name),
+    ]);
+
+    for (const { id } of PERSONAS) {
+      const document = report(id);
+
+      const named = [
+        ...document.targetStack.flatMap((entry) => [
+          entry.recommended?.tool.name,
+          ...entry.backups.map((backup) => backup.tool.name),
+          ...entry.ruledOut.map((candidate) => candidate.tool.name),
+        ]),
+        ...document.roadmap.phases.flatMap((phase) =>
+          phase.migrations.map((migration) => migration.toolName),
+        ),
+      ].filter((name): name is string => typeof name === "string");
+
+      // A persona that recommends nothing would pass this vacuously.
+      expect({ id, named: named.length > 0 }).toEqual({ id, named: true });
+
+      for (const name of named) {
+        expect({ id, name, fromRulepack: known.has(name) }).toEqual({
+          id,
+          name,
+          fromRulepack: true,
+        });
+      }
+    }
+  });
+
+  it("cites a source for every tool it recommends", () => {
+    for (const { id } of PERSONAS) {
+      for (const entry of report(id).targetStack) {
+        if (!entry.recommended) continue;
+        expect({
+          id,
+          tool: entry.recommended.tool.name,
+          sourced: entry.recommended.tool.sources.length > 0,
+        }).toEqual({ id, tool: entry.recommended.tool.name, sourced: true });
+      }
+    }
+  });
+});
