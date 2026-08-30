@@ -79,13 +79,13 @@ Each chunk is one reviewable commit, roughly 30 minutes of work.
 
 | #   | Chunk                                           | Verify                                                          |
 | --- | ----------------------------------------------- | --------------------------------------------------------------- |
-| 5.1 | Markdown renderer and download route            | Golden snapshots; pastes cleanly into a wiki                    | done |
-| 5.2 | Print route, print CSS, cover page, page breaks | Manual print preview: clean A4, no cut cards                    | done |
-| 5.3 | Landing page content                            | Reads calm and operational                                      | done |
-| 5.4 | Playwright smoke test and accessibility pass    | One spec green; no critical axe issues                          | done |
-| 5.5 | Visual identity, landing page, design tokens    | Landing sells the concept; axe clean; print chrome still hidden | done |
-| 5.6 | German copy review, English stubs complete      | No missing keys in either locale                                |
-| 5.7 | Docs pass, `v0.1.0` tag                         | `git describe` shows the tag                                    |
+| 5.1 | Markdown renderer and download route            | Golden snapshots; pastes cleanly into a wiki                    | done                   |
+| 5.2 | Print route, print CSS, cover page, page breaks | Manual print preview: clean A4, no cut cards                    | done                   |
+| 5.3 | Landing page content                            | Reads calm and operational                                      | done                   |
+| 5.4 | Playwright smoke test and accessibility pass    | One spec green; no critical axe issues                          | done                   |
+| 5.5 | Visual identity, landing page, design tokens    | Landing sells the concept; axe clean; print chrome still hidden | done                   |
+| 5.6 | German copy review, English stubs complete      | No missing keys in either locale                                | done                   |
+| 5.7 | Docs pass, `v0.1.0` tag                         | `git describe` shows the tag                                    | docs done; tag pending |
 
 ### Phase 6 — Engagement
 
@@ -143,15 +143,43 @@ this list and are now deliberately off it:
 
 See `plans/phase-06-engagement.md` and `docs/adr/0003-priced-exposure-from-published-list-prices.md`.
 
+## Before the tag
+
+Everything in phases 0–6 is implemented, and the docs half of 5.7 is done: the
+changelog carries a `0.1.0` section, `package.json` reads `0.1.0`, and no
+document still describes the tag as forthcoming.
+
+The tag itself is deliberately not applied yet. Three things stand in front of it
+and none is code:
+
+1. **The work is on a branch.** `v0.1.0` belongs on `main`, after the open pull
+   request lands.
+2. **Two definition-of-done items are human judgements**, 3 and 4 below. Nobody
+   has yet sat down and completed a 180-seat municipal intake against a clock, or
+   held the printed PDF and decided it can go to a management board unedited.
+   Both are the kind of check this project exists to pass and neither can be
+   automated into a green tick.
+3. **A pushed tag is permanent in practice.** It is worth spending the fifteen
+   minutes item 2 asks for before spending it.
+
+Once those are settled: `git tag -a v0.1.0 -m "..."` on `main`, push, and 5.7's
+own verification (`git describe`) is satisfied.
+
 ## Definition of done for v0.1.0
 
-1. `pnpm check` green, including engine invariants and golden fixtures.
-2. Playwright smoke green: wizard → report → Markdown → print.
+1. `pnpm check` green, including engine invariants and golden fixtures. **Met** —
+   230 unit tests, plus 20 browser tests across both locales.
+2. Playwright smoke green: wizard → report → Markdown → print. **Met.**
 3. A human completes intake for a 180-seat municipality in under 15 minutes, and
    the resulting brief answers every question listed in the README's "What lokal
-   is" section.
-4. The printed PDF is presentable to management without editing.
+   is" section. **Open — needs a person, not a test.**
+4. The printed PDF is presentable to management without editing. **Open — needs a
+   person.** The print route is verified to render fully server-side, carry no
+   site chrome and freeze every animation to a legible frame; whether it _reads_
+   well enough is a judgement.
 5. Removing the rulepack breaks the build — no recommendation is hardcoded in UI.
+   **Met**, and now pinned by a test rather than by grepping.
 6. Every euro figure in generated output is a declared seat count times a
    published vendor list price, shown with its source, plan and observation
-   date. No net savings, ROI or payback figures anywhere (ADR-0003).
+   date. No net savings, ROI or payback figures anywhere (ADR-0003). **Met**, in
+   both locales and on paper.

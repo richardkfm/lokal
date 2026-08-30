@@ -8,6 +8,11 @@ Dates are ISO 8601.
 
 ## [Unreleased]
 
+## [0.1.0] – 2026-08-30
+
+First working release: intake, engine, rulepack, report, Markdown export and a
+print route, German complete and English complete alongside it.
+
 ### Added (phase 6 — engagement)
 
 - **Priced subscription exposure.** The report now states what the current

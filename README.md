@@ -8,7 +8,8 @@ einen nachvollziehbaren Migrationsplan: Zielarchitektur, Reihenfolge, Aufwand,
 Kapazitätsbedarf, Einsparperspektive und eine realistische Einschätzung, welche
 KI-Anwendungsfälle heute tragfähig sind.
 
-> Status: in Entwicklung. Erste lauffähige Fassung ist v0.1.0.
+> Status: v0.1.0 — erste vollständige Fassung. Deutsch und Englisch vollständig,
+> Regelwerk als Entwurf gekennzeichnet.
 
 ## What lokal is
 
@@ -297,10 +298,12 @@ See [`docs/architecture.md`](docs/architecture.md) for the full picture, and
 - Polished report view with an at-a-glance summary and nine sections
 - Markdown export
 - Print-optimized report route
-- German content complete, English wired
+- German and English content complete, both proved by the browser suite
 
-All of the above is implemented and running on `main`; what remains before the
-`v0.1.0` tag is copy review and a docs pass (see [`plans/roadmap.md`](plans/roadmap.md)).
+All of the above is implemented and released as `v0.1.0`. What comes next is in
+[`plans/roadmap.md`](plans/roadmap.md); every rulepack entry still ships as
+`draft` until a human has checked it against a current release, and the report
+says so on its cover.
 
 ### Screenshots
 
