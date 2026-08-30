@@ -110,7 +110,13 @@ export function SpinSeal({
   children?: ReactNode;
   className?: string;
 }) {
-  // A trailing separator so the phrase joins back to itself around the circle.
+  // A trailing separator so the phrase meets its own start around the circle.
+  //
+  // One pass, not two. The path is a 46-unit radius, so roughly 289 units of
+  // circumference at this size — a second repeat runs past the start and
+  // overlaps the first, which is what shipped in the first draft of this
+  // component. A short phrase leaves a gap; a long one is the caller's problem
+  // and these strings are ours.
   const ring = `${text} · `;
 
   return (
@@ -124,7 +130,7 @@ export function SpinSeal({
             fill="currentColor"
             style={{ fontSize: "10.5px", letterSpacing: "0.18em" }}
           >
-            <textPath href={`#${id}`}>{ring.repeat(2)}</textPath>
+            <textPath href={`#${id}`}>{ring}</textPath>
           </text>
         </g>
       </svg>

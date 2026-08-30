@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { runEngine } from "@/engine";
 import { buildReport } from "@/report/build-report";
 import { parsePlanningReport } from "@/report/schema";
-import { currentRulepack } from "@/rulepack";
+import { currentRulepack, getRulepack } from "@/rulepack";
 import { PERSONAS, persona } from "../fixtures/personas";
 import type { PlanningReport } from "@/report/schema";
 
@@ -217,5 +217,33 @@ describe("report content", () => {
         expect(entry.recommended.tool.sources.length).toBeGreaterThan(0);
       }
     }
+  });
+});
+
+/**
+ * The promise that makes a released rulepack immutable worth anything.
+ *
+ * `src/rulepack/index.ts` says a correction ships as a new version rather than a
+ * silent edit, because a report regenerated next month must not disagree with
+ * the printed copy in someone's folder. v2026-09 added Euro-Office and list
+ * prices; this is what proves it added them to a new pack rather than to the old
+ * one.
+ */
+describe("a plan taken against an older rulepack", () => {
+  it("renders against its own pack, untouched by later ones", () => {
+    const older = getRulepack("v2026-08");
+    const input = persona("municipality-180").input;
+    const render = () =>
+      buildReport(runEngine(input, older), older, { generatedAt: GENERATED_AT });
+
+    const report = render();
+    expect(report.rulepackVersion).toBe("v2026-08");
+
+    // Neither addition existed when that plan was made, so neither appears in it.
+    expect(JSON.stringify(report)).not.toContain("euro-office");
+    expect(report.savings.subscriptionExposure).toBeNull();
+    expect(JSON.stringify(report)).not.toMatch(/€/);
+
+    expect(JSON.stringify(render())).toBe(JSON.stringify(report));
   });
 });
