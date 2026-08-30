@@ -289,7 +289,8 @@
       "warnSeatsExceedOrg": "Ein Bereich weist mehr Arbeitsplätze aus als die Organisation insgesamt.",
       "warnNoDepartments": "Es wurden keine Bereiche benannt, obwohl die Organisation größer ist.",
       "warnNoAiUseCases": "Es wurde Interesse an KI angegeben, aber kein Anwendungsfall gewählt."
-    }
+    },
+    "progressLabel": "Fortschritt"
   },
   "vocabulary": {
     "orgType": {
@@ -755,7 +756,8 @@
       "seats": "Betroffene Arbeitsplätze",
       "seatsDetail": "von {total} insgesamt",
       "phases": "Phasen",
-      "phasesDetail": "mit Vorhaben belegt"
+      "phasesDetail": "mit Vorhaben belegt",
+      "meterScale": "{score} von 100"
     },
     "readinessLabel": {
       "weak": "Gering",

@@ -289,7 +289,8 @@
       "warnSeatsExceedOrg": "One area reports more seats than the organization has in total.",
       "warnNoDepartments": "No areas were named, although the organization is larger.",
       "warnNoAiUseCases": "Interest in AI was indicated, but no use case was chosen."
-    }
+    },
+    "progressLabel": "Progress"
   },
   "vocabulary": {
     "orgType": {
@@ -755,7 +756,8 @@
       "seats": "Seats affected",
       "seatsDetail": "of {total} in total",
       "phases": "Phases",
-      "phasesDetail": "carrying work"
+      "phasesDetail": "carrying work",
+      "meterScale": "{score} out of 100"
     },
     "readinessLabel": {
       "weak": "Weak",

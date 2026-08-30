@@ -559,6 +559,7 @@ export async function ReportView({
                 label={r(`readinessBand.${key}` as never)}
                 score={band.score}
                 caption={r(`readinessLabel.${band.label}` as never)}
+                scaleLabel={r("glance.meterScale", { score: band.score })}
               />
             ))}
           </div>

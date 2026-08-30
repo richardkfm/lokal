@@ -39,6 +39,9 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
   setRequestLocale(locale);
 
   const t = await getTranslations("landing");
+  // The excerpt reuses the report's own Meter, so it needs the report's scale
+  // phrase too — the same string the real report puts on the same component.
+  const meterScale = await getTranslations("report");
   // `locale` off the route params is a plain string; the money formatters take
   // the same union the report document uses.
   const money = locale === "en" ? ("en" as const) : ("de" as const);
@@ -203,6 +206,7 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
               label={t("preview.readinessLabel")}
               score={68}
               caption={t("preview.readinessCaption")}
+              scaleLabel={meterScale("glance.meterScale", { score: 68 })}
             />
 
             <div>

@@ -36,16 +36,26 @@ export function toneForScore(score: number): Tone {
   return "risk";
 }
 
-/** A 0–100 band with its label. The number is never shown without the word. */
+/**
+ * A 0–100 band with its label. The number is never shown without the word.
+ *
+ * `scaleLabel` is the already-translated "{score} von 100" phrase, and it is
+ * required rather than optional on purpose. It used to be built inline here,
+ * which meant the accessible name of every meter in the report was German — on
+ * the English report too, and on the printed copy. Making the caller supply it
+ * is what stops that from being reintroduced by forgetting a prop.
+ */
 export function Meter({
   label,
   score,
   caption,
+  scaleLabel,
   tone,
 }: {
   label: string;
   score: number;
   caption: string;
+  scaleLabel: string;
   tone?: Tone;
 }) {
   const resolved = tone ?? toneForScore(score);
@@ -61,7 +71,7 @@ export function Meter({
       <div
         className="bg-sunken mt-1.5 h-2 w-full overflow-hidden rounded-full print:border print:border-[var(--color-line-strong)]"
         role="img"
-        aria-label={`${label}: ${caption}, ${score} von 100`}
+        aria-label={`${label}: ${caption}, ${scaleLabel}`}
       >
         <div
           className={`h-full rounded-full ${TONE_BAR[resolved]}`}
