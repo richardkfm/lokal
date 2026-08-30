@@ -36,16 +36,26 @@ export function toneForScore(score: number): Tone {
   return "risk";
 }
 
-/** A 0–100 band with its label. The number is never shown without the word. */
+/**
+ * A 0–100 band with its label. The number is never shown without the word.
+ *
+ * `scaleLabel` is the already-translated "{score} von 100" phrase, and it is
+ * required rather than optional on purpose. It used to be built inline here,
+ * which meant the accessible name of every meter in the report was German — on
+ * the English report too, and on the printed copy. Making the caller supply it
+ * is what stops that from being reintroduced by forgetting a prop.
+ */
 export function Meter({
   label,
   score,
   caption,
+  scaleLabel,
   tone,
 }: {
   label: string;
   score: number;
   caption: string;
+  scaleLabel: string;
   tone?: Tone;
 }) {
   const resolved = tone ?? toneForScore(score);
@@ -61,7 +71,7 @@ export function Meter({
       <div
         className="bg-sunken mt-1.5 h-2 w-full overflow-hidden rounded-full print:border print:border-[var(--color-line-strong)]"
         role="img"
-        aria-label={`${label}: ${caption}, ${score} von 100`}
+        aria-label={`${label}: ${caption}, ${scaleLabel}`}
       >
         <div
           className={`h-full rounded-full ${TONE_BAR[resolved]}`}
@@ -109,6 +119,44 @@ export function ComplexityDots({ score, label }: { score: number; label: string 
       </span>
       <span className="text-muted text-xs">{label}</span>
     </span>
+  );
+}
+
+/**
+ * A large figure with the line that makes it checkable underneath it.
+ *
+ * `basis` is not optional decoration: ADR-0003 guardrail 3 says a euro amount
+ * never appears without its plan name, source and observation date, and putting
+ * that in the component signature is the cheapest way to keep a future caller
+ * from rendering a bare number.
+ *
+ * `.tabular` gives the digits fixed advance widths so two figures stacked in a
+ * grid line up on the decimal, which is what makes them read as an account
+ * rather than as marketing.
+ */
+export function FigureCard({
+  label,
+  value,
+  basis,
+  tone = "neutral",
+}: {
+  label: string;
+  value: string;
+  basis: string;
+  tone?: Tone;
+}) {
+  return (
+    <div className="border-line bg-surface break-inside-avoid rounded-lg border p-4">
+      <p className="text-faint text-xs tracking-wide uppercase">{label}</p>
+      <p
+        className={`display tabular mt-1.5 text-2xl leading-none font-semibold ${
+          tone === "good" ? "text-[var(--color-good)]" : "text-ink"
+        }`}
+      >
+        {value}
+      </p>
+      <p className="text-muted mt-2 text-xs leading-snug">{basis}</p>
+    </div>
   );
 }
 

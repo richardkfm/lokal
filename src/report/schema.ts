@@ -132,6 +132,42 @@ export const phaseSchema = z.object({
   notes: rationaleList,
 });
 
+/**
+ * One line of the price audit trail: which subscription, at which published
+ * plan and price, counted at how many seats, covering which assessed categories.
+ *
+ * This exists so that a reader can check the figure rather than trust it. Every
+ * number in the savings section traces back to one of these lines, and every
+ * line names a page they can open.
+ */
+export const priceBasisSchema = z.object({
+  toolId: z.string().min(1),
+  toolName: z.string().min(1),
+  planName: z.string().min(1),
+  amountCents: z.number().int().min(0),
+  billingTerm: z.enum(["annual_commitment", "monthly_flexible"]),
+  taxBasis: z.enum(["net", "gross"]),
+  observedOn: z.string().min(1),
+  source: z.url(),
+  seats: z.number().int().min(0),
+  annualCents: z.number().int().min(0),
+  categories: z.array(z.enum(CATEGORY_IDS)),
+  remainingCategories: z.array(z.enum(CATEGORY_IDS)),
+  fallsAway: z.boolean(),
+});
+
+export const subscriptionExposureSchema = z.object({
+  currency: z.literal("EUR"),
+  annualCents: z.number().int().min(0),
+  avoidedAnnualCents: z.number().int().min(0),
+  seatsPriced: z.number().int().min(0),
+  /** Coverage, rendered every time so a partial sum is never read as a total. */
+  categoriesPriced: z.number().int().min(0),
+  categoriesAssessed: z.number().int().min(0),
+  basis: z.array(priceBasisSchema),
+  notes: rationaleList,
+});
+
 export const planningReportSchema = z.object({
   schemaVersion: z.literal(REPORT_SCHEMA_VERSION),
   generatedAt: z.string(),
@@ -202,6 +238,16 @@ export const planningReportSchema = z.object({
     offsets: rationaleList,
     parallelRunPhases: z.number().int(),
     modelLimitations: rationaleList,
+    /**
+     * Today's priced subscription exposure, or `null` when nothing in the stack
+     * carries a citable published price (ADR-0003).
+     *
+     * Amounts are integers in minor units with a currency code. Renderers format
+     * them; the document never carries formatted money, because a formatted
+     * amount is one that has been separated from the plan name, source and
+     * observation date that make it checkable.
+     */
+    subscriptionExposure: subscriptionExposureSchema.nullable(),
   }),
 
   advantages: rationaleList,
@@ -258,6 +304,8 @@ export const planningReportSchema = z.object({
   }),
 });
 
+export type PriceBasis = z.infer<typeof priceBasisSchema>;
+export type SubscriptionExposure = z.infer<typeof subscriptionExposureSchema>;
 export type PlanningReport = z.infer<typeof planningReportSchema>;
 export type TargetStackEntry = z.infer<typeof targetStackEntrySchema>;
 export type ReportPhase = z.infer<typeof phaseSchema>;

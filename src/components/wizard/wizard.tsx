@@ -41,13 +41,15 @@ function Stepper({
   current,
   onSelect,
   labels,
+  progressLabel,
 }: {
   current: StepId;
   onSelect: (index: number) => void;
   labels: Record<StepId, string>;
+  progressLabel: string;
 }) {
   return (
-    <nav aria-label="Fortschritt" className="mb-8">
+    <nav aria-label={progressLabel} className="mb-8">
       <ol className="flex flex-wrap gap-x-1 gap-y-2 text-xs">
         {STEPS.map((step, index) => {
           const isCurrent = step === current;
@@ -75,6 +77,18 @@ function Stepper({
           );
         })}
       </ol>
+
+      {/* Progress as one continuous line rather than six separate pills.
+          The pills wrap on a narrow screen and stop reading as a sequence; this
+          does not. Decorative — `aria-current` on the buttons above is what
+          actually announces position. */}
+      <div className="path-rail path-rail-h mt-4" aria-hidden="true">
+        <div
+          className="bg-brand absolute inset-y-0 left-0"
+          style={{ width: `${(STEP_ORDER[current] / STEPS.length) * 100}%` }}
+        />
+        <span className="path-dot" />
+      </div>
     </nav>
   );
 }
@@ -242,7 +256,12 @@ function WizardForm() {
 
   return (
     <div>
-      <Stepper current={wizard.step} onSelect={wizard.setStepIndex} labels={labels} />
+      <Stepper
+        current={wizard.step}
+        onSelect={wizard.setStepIndex}
+        labels={labels}
+        progressLabel={t("progressLabel")}
+      />
 
       <h2 className="text-ink text-xl font-semibold tracking-tight">
         {t(`headings.${wizard.step}`)}

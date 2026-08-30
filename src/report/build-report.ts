@@ -505,6 +505,7 @@ export function buildReport(
       offsets: result.savings.offsets,
       parallelRunPhases: result.savings.parallelRunPhases,
       modelLimitations: result.savings.modelLimitations,
+      subscriptionExposure: result.savings.subscriptionExposure,
     },
 
     advantages: advantages(result),
@@ -564,7 +565,7 @@ export function buildReport(
       // Stated plainly, because a planning tool that hides its blind spots is
       // more dangerous than one with fewer features.
       notModelled: [
-        "method.not_modelled.licence_prices",
+        "method.not_modelled.negotiated_contract_terms",
         "method.not_modelled.existing_contracts",
         "method.not_modelled.staff_skills_in_detail",
         "method.not_modelled.legal_retention_duties",

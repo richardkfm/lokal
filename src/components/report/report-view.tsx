@@ -1,13 +1,17 @@
 import { getTranslations } from "next-intl/server";
+import { ExpertContactBlock } from "@/components/shell/expert-contact";
 import {
   Badge,
   ComplexityDots,
+  FigureCard,
   KpiCard,
   Meter,
   Section,
   SeatImpactBar,
   toneForScore,
 } from "./indicators";
+import { basisLine, formatAmount } from "@/report/money";
+import { localizeParams } from "@/report/params";
 import type { PlanningReport } from "@/report/schema";
 import type { RationaleItem } from "@/domain/rationale";
 
@@ -25,7 +29,8 @@ type Translate = Awaited<ReturnType<typeof getTranslations>>;
 
 /** Renders a rationale code with its parameters. */
 function rationaleText(t: Translate, item: RationaleItem): string {
-  return t(`rationale.${item.code}` as never, item.params as never);
+  const params = localizeParams(item.params, (key) => t(key as never));
+  return t(`rationale.${item.code}` as never, params as never);
 }
 
 function RationaleList({
@@ -77,6 +82,13 @@ export async function ReportView({
 
   const categoryLabel = (id: string) => v(`category.${id}.label` as never);
   const glance = report.atAGlance;
+
+  // Priced subscription exposure, or null when nothing in the stack carries a
+  // citable published price (ADR-0003). Formatting lives in `@/report/money` so
+  // this view, the Markdown export and the print route cannot disagree about a
+  // figure someone is going to check against an invoice.
+  const exposure = report.savings.subscriptionExposure;
+  const money = (cents: number) => formatAmount(cents, "EUR", locale);
 
   return (
     <article className={print ? "report-print" : ""}>
@@ -205,6 +217,76 @@ export async function ReportView({
               <RationaleList items={report.savings.offsets} t={t} dense />
             </div>
           </div>
+          {exposure ? (
+            <div className="border-line mt-6 border-t pt-5">
+              <h3 className="text-ink mb-3 text-sm font-medium">
+                {r("savings.exposureTitle")}
+              </h3>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <FigureCard
+                  label={r("savings.exposureCurrent")}
+                  value={money(exposure.annualCents)}
+                  basis={r("savings.exposureCoverage", {
+                    priced: exposure.categoriesPriced,
+                    assessed: exposure.categoriesAssessed,
+                    seats: exposure.seatsPriced,
+                  })}
+                />
+                <FigureCard
+                  label={r("savings.exposureAvoided")}
+                  value={money(exposure.avoidedAnnualCents)}
+                  tone={exposure.avoidedAnnualCents > 0 ? "good" : "neutral"}
+                  basis={r("savings.exposureNote")}
+                />
+              </div>
+
+              {/* The audit trail. Every figure above traces to a line here, and
+                  every line names a page the reader can open. */}
+              <h4 className="text-faint mt-5 mb-2 text-xs tracking-wide uppercase">
+                {r("savings.basisTitle")}
+              </h4>
+              <ul className="space-y-3">
+                {exposure.basis.map((basis) => (
+                  <li
+                    key={basis.toolId}
+                    className="border-line bg-sunken break-inside-avoid rounded-md border p-3 text-xs"
+                  >
+                    <p className="text-ink">
+                      {basisLine(
+                        basis,
+                        exposure.currency,
+                        report.locale,
+                        (key, values) => t(key as never, values as never),
+                      )}
+                    </p>
+                    <p className="text-muted mt-1">
+                      {r("savings.basisAnnual")}: {money(basis.annualCents)} ·{" "}
+                      {r("savings.basisCovers")}:{" "}
+                      {basis.categories.map((id) => categoryLabel(id)).join(", ")}
+                    </p>
+                    {!basis.fallsAway ? (
+                      <p className="mt-1 text-[var(--color-caution)]">
+                        {r("savings.basisRemains", {
+                          categories: basis.remainingCategories
+                            .map((id) => categoryLabel(id))
+                            .join(", "),
+                        })}
+                      </p>
+                    ) : null}
+                    <p className="text-faint mt-1 break-all">
+                      {r("savings.basisSource")}: {basis.source}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-4">
+                <RationaleList items={exposure.notes} t={t} dense />
+              </div>
+            </div>
+          ) : null}
+
           <div className="border-line mt-5 border-t pt-3">
             <RationaleList items={report.savings.modelLimitations} t={t} dense />
           </div>
@@ -304,7 +386,17 @@ export async function ReportView({
           lead={r("roadmap.lead")}
           breakBefore
         >
-          <div className="space-y-4">
+          {/* A spine down the left of the phases, so the roadmap reads as one
+              sequence rather than a stack of cards. The rail draws its own line,
+              so it survives printing and reduced motion unchanged; only the dot
+              is motion. */}
+          <div className="relative space-y-4 sm:pl-8">
+            <div
+              className="path-rail path-rail-v absolute top-2 bottom-2 left-3 hidden sm:block"
+              aria-hidden="true"
+            >
+              <span className="path-dot" />
+            </div>
             {report.roadmap.phases
               .filter(
                 (phase) =>
@@ -467,6 +559,7 @@ export async function ReportView({
                 label={r(`readinessBand.${key}` as never)}
                 score={band.score}
                 caption={r(`readinessLabel.${band.label}` as never)}
+                scaleLabel={r("glance.meterScale", { score: band.score })}
               />
             ))}
           </div>
@@ -613,6 +706,12 @@ export async function ReportView({
             )}
           </div>
         </Section>
+
+        {/* A human to call, when the operator has configured one.
+            Placed after "next steps" because that is where a reader who has just
+            been told the plan exceeds their capacity actually is. Renders
+            nothing when unconfigured. */}
+        <ExpertContactBlock variant={print ? "print" : "card"} />
 
         {/* Method and limits */}
         <section

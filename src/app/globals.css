@@ -358,3 +358,284 @@ body {
     transform: none !important;
   }
 }
+
+/* ── Motion: path dots, rotating seal, cycling word ─────────────────────────
+ *
+ * Three effects, one discipline. Only `transform` and `opacity` are animated,
+ * so the compositor handles every frame without layout or paint — the same
+ * reasoning that kept `filter: blur()` out of the hero. No `offset-path`
+ * either: every connector in this product is a straight line, and a dot
+ * travelling one needs a translate and an `overflow: hidden` rail. That costs
+ * no feature-detection branch and degrades to a plain line where it does not
+ * run.
+ *
+ * Each effect carries four guards, and phase 5.5 recorded what happens when one
+ * is missed — an infinite animation broke the accessibility helper, and a
+ * scroll timeline printed the landing page blank:
+ *
+ * 1. A legible resting state. The global `prefers-reduced-motion` block zeroes
+ *    durations, which does nothing for a stacked group whose start frame is
+ *    `opacity: 0` — that group would simply stay invisible. So every effect
+ *    here starts from its readable frame and animates away from it, never
+ *    towards it.
+ * 2. `@media print` freezes to that same frame. The roadmap rail appears in the
+ *    printed brief, so this is not hypothetical.
+ * 3. The axe helper pauses infinite animations at `currentTime = 0`. That frame
+ *    is what axe measures for contrast, and it is the resting frame above.
+ * 4. Decorative motion is `aria-hidden` and announces nothing.
+ */
+
+/* Path dots.
+ *
+ * A rail is the connector between two steps; the dot travels it. The rail keeps
+ * its own static line so the connection is visible with no animation at all,
+ * which is what makes the dot an accent rather than the thing carrying meaning.
+ */
+.path-rail {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-line);
+}
+
+.path-rail-h {
+  height: 1px;
+  width: 100%;
+}
+
+.path-rail-v {
+  width: 1px;
+  height: 100%;
+}
+
+/* The travelling element spans the whole rail and draws the visible dot at one
+ * end of itself with `::after`.
+ *
+ * That indirection is what makes the motion compositor-only. A percentage in
+ * `translate` resolves against the element's *own* size, so animating a 5px dot
+ * to `translateX(100%)` would move it five pixels — the obvious version of this
+ * is silently broken. Sizing the carrier to the rail makes 100% mean one rail
+ * length, at any width, with no measurement passed in from the caller and no
+ * `left` animation to trigger layout every frame.
+ */
+.path-dot {
+  position: absolute;
+  inset: 0;
+}
+
+.path-dot::after {
+  content: "";
+  position: absolute;
+  height: 5px;
+  width: 5px;
+  border-radius: 9999px;
+  background: var(--color-brand);
+}
+
+.path-rail-h > .path-dot::after {
+  top: 50%;
+  left: 0;
+  margin-top: -2.5px;
+  margin-left: -2.5px;
+}
+
+.path-rail-v > .path-dot::after {
+  left: 50%;
+  top: 0;
+  margin-left: -2.5px;
+  margin-top: -2.5px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .path-rail-h > .path-dot {
+    animation: path-travel-h 4.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
+  .path-rail-v > .path-dot {
+    animation: path-travel-v 5.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+}
+
+/* The dot is fully visible at 0% and fades as it arrives, so it reads as a pulse
+ * travelling the rail rather than a bead sliding along it.
+ *
+ * 0% being the *visible* frame is deliberate and not cosmetic: the accessibility
+ * helper pauses infinite animations at `currentTime = 0` and measures that
+ * frame, and a screenshot taken by any capture tool sees it too. Starting from
+ * opacity 0 would make every such frame show a rail with no dot on it. */
+@keyframes path-travel-h {
+  0% {
+    transform: translateX(0);
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes path-travel-v {
+  0% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+/* Rotating seal.
+ *
+ * Text set on a circle, turning slowly. Purely typographic — an SVG textPath on
+ * a circle, with the whole group rotated. It is the one piece of ornament on the
+ * page, and it earns its place by being made of words the product actually
+ * stands behind rather than of decoration.
+ */
+.spin-seal {
+  transform-origin: 50% 50%;
+}
+
+/* Behind the same guard as the other two effects, rather than relying on the
+ * global reduced-motion block to blunt it. That block collapses the duration to
+ * 0.01ms, which happens to be harmless for a full rotation and would not be for
+ * anything else — depending on it would make this the one effect here whose
+ * correctness is a coincidence. */
+@media (prefers-reduced-motion: no-preference) {
+  .spin-seal {
+    animation: spin-seal 38s linear infinite;
+  }
+}
+
+@keyframes spin-seal {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Cycling word.
+ *
+ * Stacked spans in one grid cell, one visible at a time, swapping the incumbent
+ * product in the headline. The group is `aria-hidden` and a visually-hidden
+ * phrase carries the real sentence: a heading whose accessible name changes
+ * every three seconds is a screen-reader defect, not an animation.
+ *
+ * The staggering is the subtle part, and the naive version is wrong.
+ *
+ * The obvious approach — one keyframe set, negative `animation-delay` per span —
+ * looks right in a browser and breaks under the accessibility helper, which
+ * pauses every infinite animation at `currentTime = 0`. Negative delays all
+ * resolve to the same progress at that instant, so every word would be measured
+ * stacked on top of the others. The same is true of any tool that samples a
+ * fixed frame.
+ *
+ * So the lead word and the alternates get *different* keyframes, and the
+ * alternates get *positive* delays. At `currentTime = 0` the lead is at its
+ * opacity-1 frame and every alternate is still inside its delay, holding the
+ * plain CSS `opacity: 0`. Exactly one word is visible in the paused frame, in
+ * the printed page, and under reduced motion — all three for the same reason,
+ * with no override needed anywhere.
+ *
+ * `--i` is the span's index and `--word-count` how many there are; the caller
+ * sets both, so the effect works for any number of words.
+ */
+.word-cycle {
+  position: relative;
+  display: inline-grid;
+  vertical-align: bottom;
+}
+
+.word-cycle > * {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+}
+
+/* The resting frame, and the reason nothing below needs an `!important`. */
+.word-cycle > *:not(:first-child) {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .word-cycle > * {
+    animation-duration: var(--cycle-duration, 12s);
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-delay: calc(
+      var(--cycle-duration, 12s) / var(--word-count, 4) * var(--i, 0)
+    );
+  }
+
+  .word-cycle > *:first-child {
+    animation-name: word-cycle-lead;
+  }
+
+  .word-cycle > *:not(:first-child) {
+    animation-name: word-cycle-alt;
+  }
+}
+
+/* Each word holds for one slot of the cycle. The lead starts visible; the
+ * alternates fade up as it fades down, so the swap is a crossfade rather than a
+ * blink. Percentages assume four words — with a different `--word-count` the
+ * hold shortens but the sequence stays correct. */
+@keyframes word-cycle-lead {
+  0%,
+  20% {
+    opacity: 1;
+  }
+  25%,
+  95% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes word-cycle-alt {
+  0% {
+    opacity: 0;
+  }
+  5%,
+  20% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media print {
+  .path-dot,
+  .spin-seal,
+  .word-cycle > * {
+    animation: none !important;
+  }
+
+  .path-dot {
+    transform: none !important;
+    opacity: 0.9 !important;
+  }
+
+  .spin-seal {
+    transform: none !important;
+  }
+
+  /* The resting frame again: lead word visible, alternates hidden. The
+   * `:not(:first-child)` rule outside this block already says so, but a printed
+   * page is the one place an invisible headline cannot be recovered from, so it
+   * is stated rather than inherited. */
+  .word-cycle > *:first-child {
+    opacity: 1 !important;
+  }
+
+  .word-cycle > *:not(:first-child) {
+    opacity: 0 !important;
+  }
+}

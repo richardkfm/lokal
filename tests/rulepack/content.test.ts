@@ -144,8 +144,66 @@ describe("shipped rulepack", () => {
     }
   });
 
-  it("states no euro amounts anywhere in rule text", () => {
-    expect(JSON.stringify(pack)).not.toMatch(/€|\bEUR\b/);
+  // ADR-0003 lets the rulepack carry prices. What it does not let anyone do is
+  // hand-format one: money is `{ amountCents, currency }` here and becomes text
+  // only in a renderer, where the locale is known. A euro glyph in rule data
+  // means an amount was written out by hand, and a hand-written amount has lost
+  // the plan name, source and date that make it checkable.
+  it("carries money as data, never as formatted text", () => {
+    expect(JSON.stringify(pack)).not.toMatch(/€/);
+  });
+
+  // The guardrails from ADR-0003, as assertions. A price without a vendor source
+  // is the exact failure the ADR was written to prevent: researching this pack
+  // found four different figures for comparable plans depending on which
+  // reseller was asked.
+  it("cites the vendor's own page for every list price", () => {
+    const priced = pack.sourceTools.filter((tool) => tool.listPrice);
+    expect(priced.length).toBeGreaterThan(0);
+
+    for (const tool of priced) {
+      const price = tool.listPrice!;
+      expect({ id: tool.id, plan: price.planName }).toEqual({
+        id: tool.id,
+        plan: expect.any(String),
+      });
+      expect(price.planName.length).toBeGreaterThan(0);
+      expect(price.source).toMatch(/^https:\/\//);
+      expect(price.observedOn).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(price.currency).toBe("EUR");
+      expect(Number.isInteger(price.amountCents)).toBe(true);
+      expect(price.amountCents).toBeGreaterThan(0);
+    }
+  });
+
+  // Every Microsoft service an organization is likely to list separately comes
+  // out of one subscription. If they did not share a bundle id, a Kommune running
+  // Microsoft 365 for office, files, chat, intranet and forms would have a single
+  // invoice counted five times — the one arithmetic error large enough to
+  // discredit the whole report.
+  it("groups products sold as one subscription under one bundle", () => {
+    const microsoft = pack.sourceTools.filter((tool) =>
+      tool.listPrice?.source.includes("microsoft.com"),
+    );
+    expect(microsoft.length).toBeGreaterThan(1);
+
+    for (const tool of microsoft) {
+      expect({ id: tool.id, bundle: tool.listPrice?.bundleId }).toEqual({
+        id: tool.id,
+        bundle: "microsoft-365",
+      });
+    }
+  });
+
+  // Where no vendor page states a euro figure, the honest outcome is no entry at
+  // all. Google and Slack publish USD on their German pages; borrowing a
+  // reseller's euro number would be exactly the fabricated precision the old
+  // no-currency rule existed to stop.
+  it("records no price where no vendor euro figure could be cited", () => {
+    for (const id of ["google-workspace-docs", "google-drive", "slack", "dropbox"]) {
+      const tool = pack.sourceTools.find((t) => t.id === id);
+      expect({ id, priced: Boolean(tool?.listPrice) }).toEqual({ id, priced: false });
+    }
   });
 });
 
@@ -198,5 +256,87 @@ describe("capability regressions", () => {
 
     const collabora = pack.targetTools.find((t) => t.id === "collabora-online")!;
     expect(rule.when({ input: baseInput, entry, target: collabora })).toBe(false);
+  });
+});
+
+/**
+ * A released pack is immutable.
+ *
+ * v2026-09 is an overlay on v2026-08 rather than an edit of it, because a
+ * silently changed pack makes a report regenerated next month disagree with the
+ * printed copy in someone's folder — with nothing in either document explaining
+ * why. These tests are what stop a future contributor from "just adding" an
+ * entry to the older pack.
+ */
+describe("released packs stay immutable", () => {
+  const previous = getRulepack("v2026-08");
+
+  it("keeps the previous pack available for assessments taken against it", () => {
+    expect(availableRulepackVersions()).toEqual(["v2026-08", "v2026-09"]);
+    expect(CURRENT_RULEPACK_VERSION).toBe("v2026-09");
+  });
+
+  it("leaves the previous pack free of this release's additions", () => {
+    expect(previous.targetTools.map((t) => t.id)).not.toContain("euro-office");
+    expect(previous.sourceTools.filter((t) => t.listPrice)).toEqual([]);
+    expect(previous.blockerRules.map((r) => r.id)).not.toContain(
+      "young-suite-needs-pilot",
+    );
+  });
+
+  it("changes nothing else about the previous pack's content", () => {
+    expect(previous.categories).toEqual(pack.categories);
+    expect(previous.prerequisites).toEqual(pack.prerequisites);
+    expect(previous.aiUseCases).toEqual(pack.aiUseCases);
+    // Same source tools, differing only by the prices overlaid onto them.
+    expect(previous.sourceTools.map((t) => t.id)).toEqual(
+      pack.sourceTools.map((t) => t.id),
+    );
+  });
+});
+
+describe("Euro-Office", () => {
+  const entry = pack.targetTools.find((t) => t.id === "euro-office");
+
+  it("is a sourced office option in the current pack", () => {
+    expect(entry?.category).toBe("office_docs");
+    expect(entry?.license).toBe("agpl");
+    expect(entry?.sources.length).toBeGreaterThan(0);
+  });
+
+  // The most on-thesis entry in the pack is the one most at risk of being
+  // over-rated. It shipped 1.0 in June 2026; a low maturity score is what keeps
+  // the sequencing engine from scheduling it first for a risk-averse body.
+  it("is rated as the young release it is", () => {
+    expect(entry?.maturity).toBeLessThanOrEqual(2);
+  });
+
+  it("has a migration edge from each incumbent office suite", () => {
+    for (const from of [
+      "microsoft-365-apps",
+      "google-workspace-docs",
+      "ms-office-onprem",
+    ]) {
+      expect({
+        from,
+        found: pack.migrationEdges.some(
+          (e) => e.from === from && e.to === "euro-office",
+        ),
+      }).toEqual({ from, found: true });
+    }
+  });
+
+  // A caution, never a blocker. For an organization that has decided sovereignty
+  // is the priority, being early is the point — lokal's job is to make the trade
+  // visible, not to make it for them.
+  it("draws a pilot caution instead of being ruled out", () => {
+    const target = pack.targetTools.find((t) => t.id === "euro-office")!;
+    const stackEntry = baseInput.stack[0]!;
+    const fired = pack.blockerRules.filter((rule) =>
+      rule.when({ input: baseInput, entry: stackEntry, target }),
+    );
+
+    expect(fired.filter((r) => r.severity === "blocker").map((r) => r.id)).toEqual([]);
+    expect(fired.map((r) => r.id)).toContain("young-suite-needs-pilot");
   });
 });

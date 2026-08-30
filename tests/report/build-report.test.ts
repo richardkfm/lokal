@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { runEngine } from "@/engine";
 import { buildReport } from "@/report/build-report";
 import { parsePlanningReport } from "@/report/schema";
-import { currentRulepack } from "@/rulepack";
+import { currentRulepack, getRulepack } from "@/rulepack";
 import { PERSONAS, persona } from "../fixtures/personas";
 import type { PlanningReport } from "@/report/schema";
 
@@ -39,9 +39,33 @@ describe("planning report", () => {
     expect(roundTripped).toEqual(original);
   });
 
-  it("states no currency amount in any persona", () => {
+  it("carries money as data, never as formatted text", () => {
     for (const { id } of PERSONAS) {
-      expect(JSON.stringify(report(id))).not.toMatch(/€|\bEUR\b/);
+      // Renderers format; the document does not. A formatted amount in here is
+      // one that has been separated from the plan, source and date that make it
+      // checkable — see ADR-0003.
+      expect(JSON.stringify(report(id))).not.toMatch(/€/);
+    }
+  });
+
+  it("never states a figure without the basis needed to check it", () => {
+    for (const { id } of PERSONAS) {
+      const exposure = report(id).savings.subscriptionExposure;
+      if (!exposure) continue;
+
+      expect(exposure.basis.length).toBeGreaterThan(0);
+      for (const basis of exposure.basis) {
+        expect(basis.planName.length).toBeGreaterThan(0);
+        expect(basis.source).toMatch(/^https:\/\//);
+        expect(basis.observedOn).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      }
+
+      // Coverage travels with the sum, always.
+      expect(exposure.categoriesAssessed).toBeGreaterThanOrEqual(
+        exposure.categoriesPriced,
+      );
+      // Gross exposure only. Never a net saving.
+      expect(exposure.avoidedAnnualCents).toBeLessThanOrEqual(exposure.annualCents);
     }
   });
 
@@ -191,6 +215,97 @@ describe("report content", () => {
       for (const entry of report(id).targetStack) {
         if (!entry.recommended) continue;
         expect(entry.recommended.tool.sources.length).toBeGreaterThan(0);
+      }
+    }
+  });
+});
+
+/**
+ * The promise that makes a released rulepack immutable worth anything.
+ *
+ * `src/rulepack/index.ts` says a correction ships as a new version rather than a
+ * silent edit, because a report regenerated next month must not disagree with
+ * the printed copy in someone's folder. v2026-09 added Euro-Office and list
+ * prices; this is what proves it added them to a new pack rather than to the old
+ * one.
+ */
+describe("a plan taken against an older rulepack", () => {
+  it("renders against its own pack, untouched by later ones", () => {
+    const older = getRulepack("v2026-08");
+    const input = persona("municipality-180").input;
+    const render = () =>
+      buildReport(runEngine(input, older), older, { generatedAt: GENERATED_AT });
+
+    const report = render();
+    expect(report.rulepackVersion).toBe("v2026-08");
+
+    // Neither addition existed when that plan was made, so neither appears in it.
+    expect(JSON.stringify(report)).not.toContain("euro-office");
+    expect(report.savings.subscriptionExposure).toBeNull();
+    expect(JSON.stringify(report)).not.toMatch(/€/);
+
+    expect(JSON.stringify(render())).toBe(JSON.stringify(report));
+  });
+});
+
+/**
+ * Definition of done, item 5: "Removing the rulepack breaks the build — no
+ * recommendation is hardcoded in UI."
+ *
+ * It was the only item on that list with nothing automated behind it, checked
+ * until now by remembering to grep. The property is worth holding: the moment a
+ * tool name is typed into a renderer, lokal is quietly asserting something the
+ * rulepack has not sourced, dated or reviewed — which is the whole basis on
+ * which this tool asks to be believed.
+ *
+ * Asserted over the document rather than over the components, because the
+ * document is what every renderer draws from. A name that reaches a reader
+ * reaches them through here.
+ */
+describe("no recommendation is hardcoded", () => {
+  it("names only tools the rulepack knows about", () => {
+    const pack = currentRulepack();
+    const known = new Set([
+      ...pack.targetTools.map((tool) => tool.name),
+      ...pack.sourceTools.map((tool) => tool.name),
+    ]);
+
+    for (const { id } of PERSONAS) {
+      const document = report(id);
+
+      const named = [
+        ...document.targetStack.flatMap((entry) => [
+          entry.recommended?.tool.name,
+          ...entry.backups.map((backup) => backup.tool.name),
+          ...entry.ruledOut.map((candidate) => candidate.tool.name),
+        ]),
+        ...document.roadmap.phases.flatMap((phase) =>
+          phase.migrations.map((migration) => migration.toolName),
+        ),
+      ].filter((name): name is string => typeof name === "string");
+
+      // A persona that recommends nothing would pass this vacuously.
+      expect({ id, named: named.length > 0 }).toEqual({ id, named: true });
+
+      for (const name of named) {
+        expect({ id, name, fromRulepack: known.has(name) }).toEqual({
+          id,
+          name,
+          fromRulepack: true,
+        });
+      }
+    }
+  });
+
+  it("cites a source for every tool it recommends", () => {
+    for (const { id } of PERSONAS) {
+      for (const entry of report(id).targetStack) {
+        if (!entry.recommended) continue;
+        expect({
+          id,
+          tool: entry.recommended.tool.name,
+          sourced: entry.recommended.tool.sources.length > 0,
+        }).toEqual({ id, tool: entry.recommended.tool.name, sourced: true });
       }
     }
   });

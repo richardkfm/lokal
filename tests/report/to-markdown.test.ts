@@ -104,9 +104,30 @@ describe("markdown export", () => {
     expect(sme).toContain("Vorerst unverändert lassen");
   });
 
-  it("states no currency amount", () => {
+  // ADR-0003 permits euro figures and forbids unaccountable ones. Where the
+  // export names an amount it must also name the plan, the source and the date
+  // it was read, so a reader can check it against their own invoice.
+  it("never prints a euro figure without its basis", () => {
     for (const { id } of PERSONAS) {
-      expect(markdownFor(id)).not.toMatch(/€|\bEUR\b/);
+      const markdown = markdownFor(id);
+      if (!markdown.includes("€")) continue;
+
+      expect(markdown).toContain("Rechengrundlage");
+      expect(markdown).toMatch(/je Arbeitsplatz und Monat/);
+      expect(markdown).toMatch(/Quelle: https:\/\//);
+      expect(markdown).toMatch(/erhoben am \d{4}-\d{2}-\d{2}/);
+      // Coverage is stated wherever a sum is.
+      expect(markdown).toMatch(/Belegt für \d+ von \d+ betrachteten Bereichen/);
+    }
+  });
+
+  // The claims lokal must never make, whatever else changes about this section.
+  it("makes no net-saving, ROI or payback claim", () => {
+    for (const { id } of PERSONAS) {
+      const markdown = markdownFor(id);
+      expect(markdown).not.toMatch(/\bROI\b/i);
+      expect(markdown).not.toMatch(/Amortisation|Kapitalrendite|payback/i);
+      expect(markdown).not.toMatch(/\d+\s*% (?:Ersparnis|Einsparung|saving)/i);
     }
   });
 

@@ -1,3 +1,5 @@
+import { basisLine, formatAmount } from "./money";
+import { localizeParams } from "./params";
 import type { PlanningReport } from "./schema";
 import type { RationaleItem } from "@/domain/rationale";
 
@@ -21,7 +23,9 @@ function escapeCell(value: string): string {
 }
 
 function list(items: RationaleItem[], { t }: MarkdownContext): string[] {
-  return items.map((item) => `- ${t(`rationale.${item.code}`, item.params)}`);
+  return items.map(
+    (item) => `- ${t(`rationale.${item.code}`, localizeParams(item.params, t))}`,
+  );
 }
 
 function localized(text: { de: string; en?: string }, locale: string): string {
@@ -102,6 +106,49 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
   push(`**${r(`outlook.${report.savings.band}`)}**`, "");
   push(`### ${r("savings.drivers")}`, "", ...list(report.savings.drivers, context), "");
   push(`### ${r("savings.offsets")}`, "", ...list(report.savings.offsets, context), "");
+
+  // The figures come after the band, never instead of it, and every one of them
+  // is followed by the line that says where it came from (ADR-0003).
+  const exposure = report.savings.subscriptionExposure;
+  if (exposure) {
+    const money = (cents: number) => formatAmount(cents, exposure.currency, locale);
+
+    push(`### ${r("savings.exposureTitle")}`, "");
+    push(
+      `| ${r("savings.exposureFigure")} | ${r("savings.exposureAmount")} |`,
+      `| --- | --- |`,
+      `| ${r("savings.exposureCurrent")} | ${money(exposure.annualCents)} |`,
+      `| ${r("savings.exposureAvoided")} | ${money(exposure.avoidedAnnualCents)} |`,
+      "",
+    );
+    push(
+      r("savings.exposureCoverage", {
+        priced: exposure.categoriesPriced,
+        assessed: exposure.categoriesAssessed,
+        seats: exposure.seatsPriced,
+      }),
+      "",
+    );
+
+    push(`#### ${r("savings.basisTitle")}`, "");
+    for (const basis of exposure.basis) {
+      push(`- ${escapeCell(basisLine(basis, exposure.currency, locale, t))}`);
+      push(`  - ${r("savings.basisAnnual")}: ${money(basis.annualCents)}`);
+      push(
+        `  - ${r("savings.basisCovers")}: ${basis.categories.map(category).join(", ")}`,
+      );
+      if (!basis.fallsAway) {
+        push(
+          `  - ${r("savings.basisRemains", {
+            categories: basis.remainingCategories.map(category).join(", "),
+          })}`,
+        );
+      }
+      push(`  - ${r("savings.basisSource")}: ${basis.source}`);
+    }
+    push("", ...list(exposure.notes, context), "");
+  }
+
   push(...list(report.savings.modelLimitations, context));
   blank();
 

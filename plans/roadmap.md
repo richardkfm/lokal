@@ -79,13 +79,29 @@ Each chunk is one reviewable commit, roughly 30 minutes of work.
 
 | #   | Chunk                                           | Verify                                                          |
 | --- | ----------------------------------------------- | --------------------------------------------------------------- |
-| 5.1 | Markdown renderer and download route            | Golden snapshots; pastes cleanly into a wiki                    | done |
-| 5.2 | Print route, print CSS, cover page, page breaks | Manual print preview: clean A4, no cut cards                    | done |
-| 5.3 | Landing page content                            | Reads calm and operational                                      | done |
-| 5.4 | Playwright smoke test and accessibility pass    | One spec green; no critical axe issues                          | done |
-| 5.5 | Visual identity, landing page, design tokens    | Landing sells the concept; axe clean; print chrome still hidden | done |
-| 5.6 | German copy review, English stubs complete      | No missing keys in either locale                                |
-| 5.7 | Docs pass, `v0.1.0` tag                         | `git describe` shows the tag                                    |
+| 5.1 | Markdown renderer and download route            | Golden snapshots; pastes cleanly into a wiki                    | done                   |
+| 5.2 | Print route, print CSS, cover page, page breaks | Manual print preview: clean A4, no cut cards                    | done                   |
+| 5.3 | Landing page content                            | Reads calm and operational                                      | done                   |
+| 5.4 | Playwright smoke test and accessibility pass    | One spec green; no critical axe issues                          | done                   |
+| 5.5 | Visual identity, landing page, design tokens    | Landing sells the concept; axe clean; print chrome still hidden | done                   |
+| 5.6 | German copy review, English stubs complete      | No missing keys in either locale                                | done                   |
+| 5.7 | Docs pass, `v0.1.0` tag                         | `git describe` shows the tag                                    | docs done; tag pending |
+
+### Phase 6 — Engagement
+
+Added to v0.1.0 on explicit request; see the note under "Deferred" and
+`plans/phase-06-engagement.md`.
+
+| #   | Chunk                                                    | Verify                                                           | Status |
+| --- | -------------------------------------------------------- | ---------------------------------------------------------------- | ------ |
+| 6.1 | Phase plan, ADR-0003, roadmap amendments                 | Docs read coherently; DoD 6 restated                             | done   |
+| 6.2 | Rulepack `v2026-09`: Euro-Office, list prices            | Integrity passes; `v2026-08` still registered                    | done   |
+| 6.3 | Engine: subscription exposure in stage 7                 | Arithmetic tests; coverage gap reported; band unchanged          | done   |
+| 6.4 | Report: figures with their basis, in all three renderers | No euro figure without plan, source and date                     | done   |
+| 6.5 | Motion: path dots, rotating seal, cycling hero word      | Axe green; print preview shows no opacity-0 block                | done   |
+| 6.6 | Expert contact from `LOKAL_EXPERT_*`                     | Absent unset, present set, non-fatal when malformed              | done   |
+| 6.7 | Shorter German and English copy; e2e specs realigned     | No missing keys in either locale; smoke green                    | done   |
+| 6.8 | Landing numbers section; docs and screenshots            | Landing states a sourced figure; README no longer contradicts it | done   |
 
 ## Deferred
 
@@ -112,13 +128,58 @@ and redesigning immediately afterwards would undercut that argument and waste th
 tag. The report and wizard layouts stayed out of scope to keep the phase bounded.
 See `plans/phase-05-5-design-pass.md`.
 
+Phase 6 (engagement) was likewise added on explicit request and is likewise new
+scope without a matching deletion. It carries three items that were previously on
+this list and are now deliberately off it:
+
+- **Euro-denominated figures.** Reversed by ADR-0003, under six guardrails. lokal
+  still has no cost calculator: it multiplies the user's own seat counts by a
+  vendor's own published list price, cites it, dates it, and states its coverage.
+  Net savings, ROI and payback stay deferred permanently.
+- **An operator-configured expert contact.** Env-var driven, no account, no
+  stored enquiry — so "accounts and authentication" stays deferred intact.
+- **Rulepack `v2026-09`.** Adds Euro-Office, which shipped 1.0 on 2026-06-09,
+  after `v2026-08` was authored.
+
+See `plans/phase-06-engagement.md` and `docs/adr/0003-priced-exposure-from-published-list-prices.md`.
+
+## Before the tag
+
+Everything in phases 0–6 is implemented, and the docs half of 5.7 is done: the
+changelog carries a `0.1.0` section, `package.json` reads `0.1.0`, and no
+document still describes the tag as forthcoming.
+
+The tag itself is deliberately not applied yet. Three things stand in front of it
+and none is code:
+
+1. **The work is on a branch.** `v0.1.0` belongs on `main`, after the open pull
+   request lands.
+2. **Two definition-of-done items are human judgements**, 3 and 4 below. Nobody
+   has yet sat down and completed a 180-seat municipal intake against a clock, or
+   held the printed PDF and decided it can go to a management board unedited.
+   Both are the kind of check this project exists to pass and neither can be
+   automated into a green tick.
+3. **A pushed tag is permanent in practice.** It is worth spending the fifteen
+   minutes item 2 asks for before spending it.
+
+Once those are settled: `git tag -a v0.1.0 -m "..."` on `main`, push, and 5.7's
+own verification (`git describe`) is satisfied.
+
 ## Definition of done for v0.1.0
 
-1. `pnpm check` green, including engine invariants and golden fixtures.
-2. Playwright smoke green: wizard → report → Markdown → print.
+1. `pnpm check` green, including engine invariants and golden fixtures. **Met** —
+   230 unit tests, plus 20 browser tests across both locales.
+2. Playwright smoke green: wizard → report → Markdown → print. **Met.**
 3. A human completes intake for a 180-seat municipality in under 15 minutes, and
    the resulting brief answers every question listed in the README's "What lokal
-   is" section.
-4. The printed PDF is presentable to management without editing.
+   is" section. **Open — needs a person, not a test.**
+4. The printed PDF is presentable to management without editing. **Open — needs a
+   person.** The print route is verified to render fully server-side, carry no
+   site chrome and freeze every animation to a legible frame; whether it _reads_
+   well enough is a judgement.
 5. Removing the rulepack breaks the build — no recommendation is hardcoded in UI.
-6. No currency amounts in generated output.
+   **Met**, and now pinned by a test rather than by grepping.
+6. Every euro figure in generated output is a declared seat count times a
+   published vendor list price, shown with its source, plan and observation
+   date. No net savings, ROI or payback figures anywhere (ADR-0003). **Met**, in
+   both locales and on paper.

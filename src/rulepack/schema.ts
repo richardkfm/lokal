@@ -99,6 +99,49 @@ export const categorySchema = z.object({
 });
 export type Category = z.infer<typeof categorySchema>;
 
+/**
+ * A published per-seat list price for a product an organization is leaving.
+ *
+ * This is the only thing lokal is allowed to build a euro figure from: the
+ * vendor's own published price, multiplied by the seat count the user declared.
+ * There is no pricing model behind it, and there is deliberately no way to
+ * express one — see ADR-0003.
+ *
+ * Two fields carry most of the honesty.
+ *
+ * `source` must be the vendor's own price page. Resellers and comparison sites
+ * quote their own margins and contract terms: researching this change turned up
+ * 12,13 €, 13,60 €, 14,56 € and 26,10 € per seat for comparable plans depending
+ * on who was asked. Where a vendor renders prices client-side and no figure can
+ * be read from a citable page, the entry carries no price at all and the report
+ * counts it as a coverage gap. An honest hole beats a plausible number.
+ *
+ * `observedOn` is separate from the entry's `lastReviewed` because prices go
+ * stale faster than product ratings do, and the reader is shown both rather than
+ * left to infer one from the other.
+ */
+export const listPriceSchema = z.object({
+  /** The exact plan name as the vendor sells it, e.g. "Microsoft 365 Business Standard". */
+  planName: z.string().min(1),
+  /** Per seat per month, in minor units. Integers only — no floating-point money. */
+  amountCents: z.number().int().min(0),
+  currency: z.literal("EUR"),
+  billingTerm: z.enum(["annual_commitment", "monthly_flexible"]),
+  /** German vendor pages quote net ("zzgl. MwSt"); the report says which. */
+  taxBasis: z.enum(["net", "gross"]),
+  /**
+   * Products sold as one subscription share a bundle id, and the engine counts
+   * the bundle once. Without this, an organization running Microsoft 365 for
+   * office, files, chat, intranet and forms would have one subscription counted
+   * five times — which is the single most likely way a priced report could be
+   * wrong by a factor that discredits it.
+   */
+  bundleId: identifier.optional(),
+  observedOn: isoDate,
+  source: z.url(),
+});
+export type ListPrice = z.infer<typeof listPriceSchema>;
+
 export const sourceToolSchema = z.object({
   id: identifier,
   category: z.enum(CATEGORY_IDS),
@@ -109,6 +152,8 @@ export const sourceToolSchema = z.object({
   dataExportQuality: score5,
   /** Drives sensible defaults in the wizard, nothing more. */
   commonIn: z.array(z.enum(ORG_TYPES)).default([]),
+  /** Absent whenever no vendor-published euro figure could be cited. */
+  listPrice: listPriceSchema.optional(),
   ...provenance,
 });
 export type SourceTool = z.infer<typeof sourceToolSchema>;

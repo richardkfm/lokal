@@ -7,6 +7,8 @@ Three layers, each answering a question the others cannot.
 | Unit and fixture | `pnpm test`     | Do the rules, the engine and the renderers produce the right document? |
 | End-to-end smoke | `pnpm test:e2e` | Are the pieces actually wired to each other in a browser?              |
 | Accessibility    | `pnpm test:e2e` | Can the people this tool is for operate it?                            |
+| Print and motion | `pnpm test:e2e` | Does anything animated rest invisible on paper?                        |
+| Locale           | `pnpm test:e2e` | Is the English build in English, accessible names included?            |
 
 `pnpm check` runs format, lint, typecheck and the first layer. It deliberately
 does not run the browser suite: the inner loop has to stay usable without a
@@ -23,6 +25,15 @@ snapshots.
 
 Vitest collects `*.test.ts`. Playwright collects `*.spec.ts`. The two suites
 share the `tests/` tree and cannot pick up each other's files.
+
+Two of the browser specs exist because of bugs that shipped rather than bugs
+that were imagined, which is worth knowing before deciding either is optional.
+`print-and-motion.spec.ts` follows a scroll-driven animation that printed the
+landing page nearly blank; it asserts that every animated element rests on a
+legible frame under print media and reduced motion. `locale.spec.ts` follows two
+German accessible names that reached the English report — invisible on screen,
+and invisible to axe, which has no opinion about which language a valid
+accessible name is in.
 
 ## What the smoke test covers
 

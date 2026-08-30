@@ -66,15 +66,50 @@ const eslintConfig = defineConfig([
     name: "lokal/no-currency-in-output",
     files: ["src/engine/**/*.ts", "src/report/**/*.ts", "src/rulepack/**/*.ts"],
     rules: {
-      // lokal never states euro amounts. Savings are qualitative bands with
-      // named drivers — inventing precision would be the fastest way to lose
-      // credibility with the audiences this report is written for.
+      // Money is data in these layers and a string only in renderers.
+      //
+      // ADR-0003 lets lokal state euro figures, but only as a declared seat
+      // count times a vendor's published list price. The pure layers carry that
+      // as `{ amountCents, currency: "EUR" }` and never as rendered text —
+      // formatting is `Intl.NumberFormat`'s job in a renderer, where the locale
+      // is known. So the currency *code* is allowed here and the currency
+      // *glyph* is not: a euro sign in this code means someone hand-formatted
+      // an amount, which is how a figure loses the basis line that makes it
+      // checkable.
       "no-restricted-syntax": [
         "error",
         {
-          selector: "Literal[value=/[€]|\\bEUR\\b/]",
+          selector: "Literal[value=/[€]/]",
           message:
-            "No currency amounts in engine, rulepack or report output. Use qualitative savings bands instead.",
+            "No formatted currency in engine, rulepack or report. Carry { amountCents, currency } and format with Intl.NumberFormat in a renderer (ADR-0003).",
+        },
+      ],
+    },
+  },
+
+  {
+    name: "lokal/no-hardcoded-accessible-names",
+    files: ["src/components/**/*.tsx", "src/app/**/*.tsx"],
+    rules: {
+      // An accessible name written as a literal is a string that never went
+      // through the catalogue, so it stays in one language for every locale.
+      //
+      // Two shipped exactly this way: `aria-label="Fortschritt"` on the wizard
+      // and `${score} von 100` on the report's readiness meter. Neither is
+      // visible on screen, so a design pass, a copy pass and an axe run all
+      // missed them — axe cannot help here, because a German accessible name on
+      // an English page is still a valid accessible name.
+      //
+      // A German-token scan in `tests/e2e/locale.spec.ts` catches the sentence
+      // case; it cannot catch a single noun like "Fortschritt". This can, and it
+      // catches it at the moment it is typed rather than a suite later.
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "JSXAttribute[name.name=/^(aria-label|title|placeholder|alt)$/] > Literal",
+          message:
+            'Accessible names must come from the message catalogue: use {t("key")}, not a literal.',
         },
       ],
     },

@@ -12,7 +12,7 @@ as a planning brief rather than a tool dump.
 | At a glance              | Six cards: readiness, migration posture, savings outlook, AI readiness, seats affected, phase count    |
 | 1 Executive summary      | Context, current state, target state, migration posture, AI posture                                    |
 | 2 Key advantages         | Lock-in, sovereignty, hosting control, data location, open standards, flexibility                      |
-| 3 Savings outlook        | Band, drivers, offsets, and the model's own limits                                                     |
+| 3 Savings outlook        | Band, drivers, offsets, priced subscription exposure with its basis, and the model's own limits        |
 | 4 Target stack           | Per category: current → recommended → backups, rationale, scalability, plus "considered and ruled out" |
 | 5 Migration roadmap      | Phases 0–4: goals, systems, seats, effort, blockers, pilots, gotchas                                   |
 | 6 Capacity and readiness | Readiness bands, effort against available time, gaps                                                   |

@@ -1,6 +1,11 @@
+import { Fragment, Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Badge, KpiCard, Meter } from "@/components/report/indicators";
+import { ExpertContactBlock } from "@/components/shell/expert-contact";
+import { PathRail, SpinSeal, WordCycle } from "@/components/ui/motion";
 import { Terminal } from "@/components/ui/terminal";
+import { formatAmount, formatUnitPrice } from "@/report/money";
+import { currentRulepack } from "@/rulepack";
 import { Link } from "@/i18n/navigation";
 
 /**
@@ -26,11 +31,38 @@ const INSTALL = [
   "docker compose up --build",
 ];
 
+/** The seat count the worked example is stated at. Named, never implied. */
+const EXAMPLE_SEATS = 180;
+
 export default async function LandingPage(props: PageProps<"/[locale]">) {
   const { locale } = await props.params;
   setRequestLocale(locale);
 
   const t = await getTranslations("landing");
+  // The excerpt reuses the report's own Meter, so it needs the report's scale
+  // phrase too — the same string the real report puts on the same component.
+  const meterScale = await getTranslations("report");
+  // `locale` off the route params is a plain string; the money formatters take
+  // the same union the report document uses.
+  const money = locale === "en" ? ("en" as const) : ("de" as const);
+
+  // Prices, tool counts and the observation date all come from the rulepack.
+  // Writing any of them into this page would let the sales copy and the plan
+  // disagree, which is the one thing a tool arguing for verifiable claims
+  // cannot afford.
+  const pack = currentRulepack();
+  const prices = [
+    ...new Map(
+      pack.sourceTools
+        .flatMap((tool) => (tool.listPrice ? [tool.listPrice] : []))
+        .map((price) => [price.planName, price]),
+    ).values(),
+  ].sort((a, b) => b.amountCents - a.amountCents);
+
+  const example = prices[0];
+  const observedOn = example?.observedOn ?? "";
+  const targetToolCount = pack.targetTools.length;
+  const categoryCount = pack.categories.length;
 
   const answers = ["first", "fit", "seats", "gaps", "ai", "risks"] as const;
   const trust = ["account", "noLlm", "license", "selfHost"] as const;
@@ -58,8 +90,23 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
 
         <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-16 sm:pt-28 sm:pb-20">
           <div className="max-w-3xl">
+            {/* The cycling word names the incumbent the visitor is actually
+                leaving. `headingWord1` is the resting word — what shows in
+                print, under reduced motion and in any paused frame — so it is
+                the most common one rather than the most interesting. */}
             <h1 className="text-ink display text-4xl font-semibold sm:text-5xl lg:text-6xl">
-              {t("heading")}
+              {t("headingLead")}{" "}
+              <WordCycle
+                className="text-brand"
+                spoken={t("headingSpoken")}
+                words={[
+                  t("headingWord1"),
+                  t("headingWord2"),
+                  t("headingWord3"),
+                  t("headingWord4"),
+                ]}
+              />{" "}
+              {t("headingTail")}
             </h1>
             <p className="text-muted mt-6 max-w-2xl text-lg leading-relaxed text-pretty sm:text-xl">
               {t("subheading")}
@@ -159,6 +206,7 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
               label={t("preview.readinessLabel")}
               score={68}
               caption={t("preview.readinessCaption")}
+              scaleLabel={meterScale("glance.meterScale", { score: 68 })}
             />
 
             <div>
@@ -227,22 +275,33 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
             <p className="text-muted mt-4 leading-relaxed">{t("how.lead")}</p>
           </div>
 
-          <ol className="mt-10 grid gap-6 md:grid-cols-3">
-            {steps.map((step) => (
-              <li
-                key={step}
-                className="reveal border-line bg-surface shadow-card rounded-xl border p-6"
-              >
-                <span className="text-brand font-mono text-sm font-medium">
-                  {String(step).padStart(2, "0")}
-                </span>
-                <h3 className="text-ink mt-3 font-semibold">
-                  {t(`how.step${step}Title`)}
-                </h3>
-                <p className="text-muted mt-2 text-sm leading-relaxed">
-                  {t(`how.step${step}Body`)}
-                </p>
-              </li>
+          {/* The rail between the cards is the point of the section: intake,
+              rules and plan are one sequence, not three features. The dot
+              travelling it says so without a word of copy. */}
+          <ol className="mt-10 grid items-stretch gap-6 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
+            {steps.map((step, index) => (
+              <Fragment key={step}>
+                {index > 0 ? (
+                  <li
+                    aria-hidden="true"
+                    className="hidden items-center md:flex"
+                    role="presentation"
+                  >
+                    <PathRail className="w-10" />
+                  </li>
+                ) : null}
+                <li className="reveal border-line bg-surface shadow-card rounded-xl border p-6">
+                  <span className="text-brand font-mono text-sm font-medium">
+                    {String(step).padStart(2, "0")}
+                  </span>
+                  <h3 className="text-ink mt-3 font-semibold">
+                    {t(`how.step${step}Title`)}
+                  </h3>
+                  <p className="text-muted mt-2 text-sm leading-relaxed">
+                    {t(`how.step${step}Body`)}
+                  </p>
+                </li>
+              </Fragment>
             ))}
           </ol>
 
@@ -310,6 +369,115 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
         </div>
       </section>
 
+      {/* Numbers.
+          Every figure here is read from the rulepack rather than written into
+          the page, so the landing page and the report cannot drift apart — and
+          so a price that goes stale goes stale in exactly one place, next to the
+          date it was read (ADR-0003). */}
+      <section className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
+        <div className="reveal max-w-2xl">
+          <h2 className="text-ink display text-3xl font-semibold">
+            {t("numbers.title")}
+          </h2>
+          <p className="text-muted mt-4 leading-relaxed">{t("numbers.lead")}</p>
+        </div>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+          <div className="reveal border-line bg-surface shadow-card rounded-xl border p-6">
+            <h3 className="text-ink text-sm font-semibold">
+              {t("numbers.priceTitle")}
+            </h3>
+            <table className="mt-4 w-full text-sm">
+              <thead>
+                <tr className="text-faint border-line border-b text-xs">
+                  <th scope="col" className="pb-2 text-left font-normal">
+                    {t("numbers.priceColPlan")}
+                  </th>
+                  <th scope="col" className="pb-2 text-right font-normal">
+                    {t("numbers.priceColUnit")}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-line divide-y">
+                {prices.map((price) => (
+                  <tr key={price.planName}>
+                    <th scope="row" className="text-ink py-2.5 text-left font-normal">
+                      <a
+                        href={price.source}
+                        rel="noopener noreferrer"
+                        className="underline decoration-dotted underline-offset-2"
+                      >
+                        {price.planName}
+                      </a>
+                    </th>
+                    <td className="text-ink tabular py-2.5 text-right font-medium">
+                      {formatUnitPrice(price.amountCents, "EUR", money)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="text-faint mt-4 text-xs leading-relaxed">
+              {t("numbers.priceNote", { observed: observedOn })}
+            </p>
+          </div>
+
+          <div className="reveal border-brand/30 bg-brand-soft/40 rounded-xl border p-6">
+            <h3 className="text-ink text-sm font-semibold">
+              {t("numbers.exampleTitle")}
+            </h3>
+            <p className="text-muted mt-3 text-sm leading-relaxed">
+              {t("numbers.exampleBody", {
+                seats: EXAMPLE_SEATS,
+                plan: example?.planName ?? "",
+              })}
+            </p>
+            <p className="text-ink display tabular mt-4 text-4xl leading-none font-semibold">
+              {formatAmount(
+                EXAMPLE_SEATS * (example?.amountCents ?? 0) * 12,
+                "EUR",
+                money,
+              )}
+            </p>
+            <p className="text-muted mt-1 text-xs">{t("numbers.examplePerYear")}</p>
+            {/* The sentence that keeps this from being a savings claim. */}
+            <p className="text-muted mt-5 text-xs leading-relaxed">
+              {t("numbers.exampleCaveat")}
+            </p>
+          </div>
+        </div>
+
+        <h3 className="text-ink reveal mt-14 text-sm font-semibold">
+          {t("numbers.factsTitle")}
+        </h3>
+        <dl className="reveal mt-4 grid gap-6 sm:grid-cols-3">
+          {(
+            [
+              [t("numbers.fact1Value"), t("numbers.fact1Label")],
+              [
+                t("numbers.fact2Value", { tools: targetToolCount }),
+                t("numbers.fact2Label", {
+                  tools: targetToolCount,
+                  categories: categoryCount,
+                }),
+              ],
+              [t("numbers.fact3Value"), t("numbers.fact3Label")],
+            ] as const
+          ).map(([value, label]) => (
+            <div key={label} className="border-line border-t pt-4">
+              <dt className="text-ink display tabular text-3xl font-semibold">
+                {value}
+              </dt>
+              <dd className="text-muted mt-2 text-sm leading-relaxed">{label}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <p className="border-brand text-ink reveal mt-12 max-w-2xl border-l-2 pl-5 text-sm leading-relaxed">
+          {t("numbers.euroOffice")}
+        </p>
+      </section>
+
       {/* Sovereignty */}
       <section className="border-line bg-sunken/40 border-y">
         <div className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
@@ -347,22 +515,43 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
 
       {/* Closing */}
       <section className="mx-auto max-w-6xl px-6 py-24">
-        <div className="reveal max-w-2xl">
-          <h2 className="text-ink display text-3xl font-semibold">
-            {t("closing.title")}
-          </h2>
-          <p className="text-muted mt-4 leading-relaxed text-pretty">
-            {t("closing.body")}
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <Link
-              href="/assessment"
-              className="bg-brand hover:bg-brand-strong shadow-card rounded-lg px-6 py-3 text-sm font-medium text-white transition-colors"
-            >
-              {t("closing.cta")}
-            </Link>
-            <span className="text-faint text-xs">{t("closing.note")}</span>
+        <div className="flex flex-wrap items-center gap-x-16 gap-y-10">
+          <div className="reveal max-w-2xl flex-1">
+            <h2 className="text-ink display text-3xl font-semibold">
+              {t("closing.title")}
+            </h2>
+            <p className="text-muted mt-4 leading-relaxed text-pretty">
+              {t("closing.body")}
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <Link
+                href="/assessment"
+                className="bg-brand hover:bg-brand-strong shadow-card rounded-lg px-6 py-3 text-sm font-medium text-white transition-colors"
+              >
+                {t("closing.cta")}
+              </Link>
+              <span className="text-faint text-xs">{t("closing.note")}</span>
+            </div>
           </div>
+
+          {/* The only ornament on the page, and it is made of words the product
+              stands behind. Decorative: the same three claims are made in plain
+              text in the sovereignty section above. */}
+          {/* Suspense keeps the rest of this page statically prerendered: only
+              the contact block waits for a request, which is what lets the
+              operator set LOKAL_EXPERT_* at container start rather than at
+              build time. Renders nothing when unconfigured. */}
+          <Suspense fallback={null}>
+            <ExpertContactBlock />
+          </Suspense>
+
+          <SpinSeal
+            id="lokal-seal"
+            text={t("sealText")}
+            className="text-faint hidden h-40 w-40 shrink-0 lg:inline-flex"
+          >
+            <span className="text-brand font-mono text-lg font-medium">&gt;lokal</span>
+          </SpinSeal>
         </div>
       </section>
     </>
