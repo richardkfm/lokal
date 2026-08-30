@@ -225,7 +225,10 @@ describe("runEngine", () => {
     expect(result.rulepackVersion).toBe(pack.version);
   });
 
-  it("never states a currency amount", () => {
+  // ADR-0003 lets the engine compute money. It does not let the engine render
+  // it: a hand-formatted amount is one that has escaped its plan name, source
+  // and observation date, which are the only things making the figure checkable.
+  it("carries money as data, never as formatted text", () => {
     const result = run({
       categories: ["file_sharing", "office_docs", "chat_video", "helpdesk"],
       aiInterest: "active",
@@ -233,7 +236,9 @@ describe("runEngine", () => {
       aiUseCases: ["summarization", "document_qa"],
     });
 
-    expect(JSON.stringify(result)).not.toMatch(/€|\bEUR\b/);
+    const serialized = JSON.stringify(result);
+    expect(serialized).not.toMatch(/€/);
+    expect(serialized).not.toMatch(/\d[\d.,]*\s*(?:€|EUR)\b/);
   });
 
   it("attaches at least one rationale to every recommendation", () => {
@@ -294,5 +299,165 @@ describe("runEngine", () => {
     expect(result.recommendations).toHaveLength(9);
     const planned = result.sequencing.phases.flatMap((p) => p.migrations).length;
     expect(planned + result.sequencing.keepForNow.length).toBe(9);
+  });
+});
+
+/**
+ * Priced subscription exposure (ADR-0003).
+ *
+ * The arithmetic is trivial on purpose — seats times published price times
+ * twelve — so these tests are mostly about the two ways it can be wrong in a way
+ * that discredits the report: counting one subscription several times, and
+ * presenting a partial figure as a total.
+ */
+describe("subscription exposure", () => {
+  it("prices declared seats at the vendor's published list price", () => {
+    const exposure = run({
+      categories: ["office_docs"],
+      totalSeats: 180,
+      categorySeats: 180,
+    }).savings.subscriptionExposure;
+
+    // Microsoft 365 Apps for Business, 11,00 € net per seat per month.
+    expect(exposure?.annualCents).toBe(180 * 1100 * 12);
+    expect(exposure?.currency).toBe("EUR");
+    expect(exposure?.basis).toHaveLength(1);
+    expect(exposure?.basis[0]?.planName).toBe("Microsoft 365 Apps for Business");
+    expect(exposure?.basis[0]?.source).toMatch(/^https:\/\/www\.microsoft\.com\//);
+    expect(exposure?.basis[0]?.observedOn).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  /**
+   * The error worth an entire test on its own.
+   *
+   * Office, files and chat here are all Microsoft 365. If the engine summed them
+   * it would report three times one invoice, and a reader who knows their real
+   * contract would stop reading at that line — taking the rest of the plan with
+   * it.
+   */
+  it("counts one subscription once, however many categories it covers", () => {
+    const spread = run({
+      categories: ["office_docs", "file_sharing", "chat_video"],
+      totalSeats: 180,
+      categorySeats: 180,
+    }).savings.subscriptionExposure;
+
+    expect(spread?.basis).toHaveLength(1);
+    expect(spread?.annualCents).toBe(180 * 1100 * 12);
+    expect(spread?.categoriesPriced).toBe(3);
+    // The dearest plan in the bundle sets the line, not the cheapest.
+    expect(spread?.basis[0]?.amountCents).toBe(1100);
+    expect(spread?.basis[0]?.categories).toEqual([
+      "chat_video",
+      "file_sharing",
+      "office_docs",
+    ]);
+  });
+
+  it("reports coverage so a partial figure is never read as a total", () => {
+    const exposure = run({
+      // helpdesk is a shared mailbox and crm a spreadsheet: no vendor publishes
+      // a per-seat price for either, so neither can be priced.
+      categories: ["office_docs", "helpdesk", "crm"],
+    }).savings.subscriptionExposure;
+
+    expect(exposure?.categoriesPriced).toBe(1);
+    expect(exposure?.categoriesAssessed).toBe(3);
+    expect(exposure?.notes.map((n) => n.code)).toContain(
+      "savings.priced_exposure_partial",
+    );
+  });
+
+  it("prices nothing when no incumbent has a citable published price", () => {
+    const exposure = run({ categories: ["helpdesk", "crm"] }).savings
+      .subscriptionExposure;
+    expect(exposure).toBeNull();
+  });
+
+  /**
+   * A subscription ends when the last service on it is replaced, not when the
+   * first one is. Saying otherwise would overstate the case for migrating, and
+   * this is also the more useful planning statement: it names what is standing
+   * between the organization and a cancelled contract.
+   */
+  it("counts a subscription as avoided only once nothing is left on it", () => {
+    // Office moves; file sharing is low-pain and not urgent, so the sequencer
+    // parks it under "keep for now". Both sit on the same Microsoft 365
+    // subscription, so the invoice does not end — and reporting a saving here
+    // would be the most tempting way to overstate the whole section.
+    const base = assessment({
+      categories: ["office_docs", "file_sharing"],
+      totalSeats: 180,
+      categorySeats: 180,
+    });
+    const result = runEngine(
+      {
+        ...base,
+        stack: base.stack.map((entry) =>
+          entry.category === "file_sharing"
+            ? {
+                ...entry,
+                pain: "low" as const,
+                urgency: "later" as const,
+                criticality: "low" as const,
+              }
+            : entry,
+        ),
+      },
+      pack,
+    );
+
+    expect(result.sequencing.keepForNow.map((k) => k.category)).toEqual([
+      "file_sharing",
+    ]);
+
+    const exposure = result.savings.subscriptionExposure;
+    const line = exposure?.basis[0];
+
+    expect(line?.remainingCategories).toEqual(["file_sharing"]);
+    expect(line?.fallsAway).toBe(false);
+    expect(exposure?.annualCents).toBe(180 * 1100 * 12);
+    expect(exposure?.avoidedAnnualCents).toBe(0);
+    expect(exposure?.notes.map((n) => n.code)).toContain(
+      "savings.subscription_not_fully_replaced",
+    );
+  });
+
+  it("counts a subscription as avoided once the roadmap replaces all of it", () => {
+    const exposure = run({
+      categories: ["office_docs", "file_sharing", "chat_video"],
+      totalSeats: 180,
+      categorySeats: 180,
+    }).savings.subscriptionExposure;
+
+    expect(exposure?.basis[0]?.remainingCategories).toEqual([]);
+    expect(exposure?.basis[0]?.fallsAway).toBe(true);
+    expect(exposure?.avoidedAnnualCents).toBe(exposure?.annualCents);
+  });
+
+  it("never lowers exposure as seats rise", () => {
+    const at = (seats: number) =>
+      run({
+        categories: ["office_docs"],
+        totalSeats: seats,
+        categorySeats: seats,
+      }).savings.subscriptionExposure?.annualCents ?? 0;
+
+    const points = [20, 60, 180, 400, 900].map(at);
+    for (let i = 1; i < points.length; i += 1) {
+      expect(points[i]).toBeGreaterThanOrEqual(points[i - 1]!);
+    }
+  });
+
+  it("always states that these are list prices, not the real contract", () => {
+    const exposure = run({ categories: ["office_docs"] }).savings.subscriptionExposure;
+    expect(exposure?.notes.map((n) => n.code)).toContain(
+      "savings.prices_are_list_prices",
+    );
+  });
+
+  it("leaves the qualitative band untouched", () => {
+    const result = run({ categories: ["office_docs", "file_sharing"] });
+    expect(["low", "moderate", "strong"]).toContain(result.savings.band);
   });
 });

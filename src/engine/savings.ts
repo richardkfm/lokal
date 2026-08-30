@@ -2,19 +2,26 @@ import { levelToUnit, type OutlookBand } from "@/domain/enums";
 import { rationale, type RationaleItem } from "@/domain/rationale";
 import type { Rulepack } from "@/rulepack/schema";
 import type { CapacityAssessment } from "./capacity";
+import { assessExposure, type SubscriptionExposure } from "./exposure";
 import type { NormalizedAssessment } from "./normalize";
 import type { Sequencing } from "./sequencing";
 
 /**
  * Stage 7 — savings outlook.
  *
- * Qualitative only. lokal has no pricing model, so stating euro figures would be
- * inventing them, and an invented figure is the fastest way for a report to be
- * dismissed by the one person in the room who knows the real contract.
+ * The band is qualitative and stays that way. lokal has no pricing model, and an
+ * invented figure is still the fastest way for a report to be dismissed by the
+ * one person in the room who knows the real contract.
  *
- * What lokal can say honestly: which cost drivers shrink, which grow, and how
- * strong the overall picture looks. The report states the model's own limits in
- * one line so a treasurer can see exactly what it does and does not account for.
+ * What changed with ADR-0003 is that lokal now also states what the current
+ * subscriptions cost — not as a model output, but as the organization's own
+ * declared seat counts multiplied by prices their vendors publish. That figure
+ * is computed in `./exposure` and carried here alongside the band, never in
+ * place of it, and it is deliberately gross exposure rather than a saving:
+ * hosting, support, training and staff time are real costs lokal does not price.
+ *
+ * So the section reads as three things in order: how strong the picture looks,
+ * what is driving it and eating into it, and what the current invoices come to.
  */
 
 export type SavingsOutlook = {
@@ -27,6 +34,12 @@ export type SavingsOutlook = {
   parallelRunPhases: number;
   /** Stated in the report so the band is never mistaken for a calculation. */
   modelLimitations: RationaleItem[];
+  /**
+   * Today's priced subscription exposure, or `null` when nothing in the stack
+   * carries a citable published price. Never merged into the band: the band is
+   * about direction, this is about invoices.
+   */
+  subscriptionExposure: SubscriptionExposure | null;
 };
 
 export function assessSavings(
@@ -202,5 +215,12 @@ export function assessSavings(
     }),
   ];
 
-  return { band, drivers, offsets, parallelRunPhases, modelLimitations };
+  return {
+    band,
+    drivers,
+    offsets,
+    parallelRunPhases,
+    modelLimitations,
+    subscriptionExposure: assessExposure(assessment, sequencing, pack),
+  };
 }
