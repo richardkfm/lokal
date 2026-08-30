@@ -21,9 +21,34 @@
     --color-brand-soft: #eef2f7;
   }
 
+  /* A running head and a page number on every sheet.
+   *
+   * Thirteen loose A4 sheets with nothing identifying them is what makes a
+   * printout read as a webpage dump rather than a Vorlage, and a Sitzungsmappe
+   * separates pages routinely. Chromium honours `@page` margin boxes in
+   * `page.pdf()`, so this carries over to the server-side PDF in v0.3.0
+   * unchanged.
+   *
+   * The strings are literal rather than localized because a stylesheet cannot
+   * read the message catalogue. "Migrationsplan" is the document's own title in
+   * German and the word survives untranslated in the English edition's running
+   * head; `content: counter(page)` alone would be language-free but also
+   * unlabelled. Revisit if a third locale ever lands. */
   @page {
     size: A4;
-    margin: 18mm 16mm;
+    margin: 18mm 16mm 20mm;
+
+    @top-left {
+      content: "Migrationsplan";
+      font-size: 8pt;
+      color: #5a5a5a;
+    }
+
+    @bottom-right {
+      content: counter(page) " / " counter(pages);
+      font-size: 8pt;
+      color: #5a5a5a;
+    }
   }
 
   body {
@@ -65,8 +90,19 @@
     break-after: avoid;
   }
 
-  /* Never strand a heading or split a card across a page boundary. */
-  .report-print section,
+  /* Cards stay whole; sections flow.
+   *
+   * `break-inside: avoid` on every numbered section pushed each one that did
+   * not fit onto a fresh sheet and left nothing able to follow it in, so §2 —
+   * six short bullets — took a whole A4 page at about a quarter full, and the
+   * report ran thirteen sheets where nine would do. A section taller than a
+   * page cannot be kept whole anyway; the constraint only ever moved the
+   * whitespace around. Headings are protected by `break-after: avoid` above,
+   * which is the rule that actually prevents stranding. */
+  .report-print section {
+    break-inside: auto;
+  }
+
   .report-print .break-inside-avoid {
     break-inside: avoid;
   }
@@ -99,10 +135,24 @@
   }
 }
 
-/* Force the disclosure open when printing, so nothing is silently omitted. */
+/* Second line of defence for the disclosures.
+ *
+ * The mechanism is now `<details open={print}>` in `report-view.tsx`, because
+ * this rule alone did not work and nothing said so: it overrides `display` on
+ * the children, and Chromium hides closed content through `::details-content`,
+ * which `display` on a child cannot reach. A whole release printed the count
+ * with none of the candidates under it.
+ *
+ * Both rules stay, addressing both mechanisms, so a browser that hides closed
+ * content either way still prints the record. */
 @media print {
   .report-print details:not([open]) > *:not(summary) {
     display: revert !important;
+  }
+
+  .report-print details::details-content {
+    content-visibility: visible !important;
+    block-size: auto !important;
   }
 }
 

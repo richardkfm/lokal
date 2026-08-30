@@ -393,8 +393,19 @@ export async function ReportView({
                   </>
                 ) : null}
 
+                {/* The disclosure below is open on paper, where there is no one
+                 * to click it.
+                 *
+                 * That was CSS until it wasn't: `print.css` overrode `display`
+                 * on the children, and Chromium hides them through
+                 * `::details-content` instead, so a whole release printed
+                 * "2 geprüft und ausgeschieden" with nothing under it — one of
+                 * the four outputs CLAUDE.md says prove the thesis, missing
+                 * from the copy that reaches a council. The prop cannot be
+                 * defeated by the next change to how a browser hides closed
+                 * content. */}
                 {entry.ruledOut.length > 0 ? (
-                  <details className="mt-3">
+                  <details className="mt-3" open={print}>
                     <summary className="text-brand cursor-pointer text-xs">
                       {r("stack.ruledOut", { count: entry.ruledOut.length })}
                     </summary>
@@ -826,7 +837,8 @@ export async function ReportView({
               rulepackVersion: report.rulepackVersion,
             })}
           </p>
-          <p className="text-faint mt-2 text-xs leading-relaxed">
+          {/* A sentence about a URL, on a sheet of paper that has none. */}
+          <p className="text-faint mt-2 text-xs leading-relaxed print:hidden">
             {r("method.linkNotice")}
           </p>
         </section>
