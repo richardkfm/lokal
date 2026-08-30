@@ -26,14 +26,19 @@ snapshots.
 Vitest collects `*.test.ts`. Playwright collects `*.spec.ts`. The two suites
 share the `tests/` tree and cannot pick up each other's files.
 
-Two of the browser specs exist because of bugs that shipped rather than bugs
-that were imagined, which is worth knowing before deciding either is optional.
+Several suites exist because of bugs that shipped rather than bugs that were
+imagined, which is worth knowing before deciding any of them is optional.
 `print-and-motion.spec.ts` follows a scroll-driven animation that printed the
 landing page nearly blank; it asserts that every animated element rests on a
-legible frame under print media and reduced motion. `locale.spec.ts` follows two
-German accessible names that reached the English report — invisible on screen,
-and invisible to axe, which has no opinion about which language a valid
-accessible name is in.
+legible frame under print media and reduced motion, and — after a second
+shipped bug — that the step connectors are actually wide enough to show the dot
+travelling them. `locale.spec.ts` follows two German accessible names that
+reached the English report — invisible on screen, and invisible to axe, which
+has no opinion about which language a valid accessible name is in.
+`report/params.test.ts` follows "Hoher Aufwand (very_high)" reaching the printed
+brief: it renders every persona in German and fails on any enum value that
+survives as a bare word, which catches both a missing entry in the resolver
+table and a renderer that forgets to call it.
 
 ## What the smoke test covers
 
@@ -51,9 +56,14 @@ Three things it asserts that are product decisions rather than mechanics:
 - **The data-quality warning warns without blocking.** A category declaring more
   seats than the whole organization raises a notice and still submits — the
   respondent may well be right, and lokal is not in a position to overrule them.
-- **No euro amounts anywhere.** Screen, Markdown and print output are each
-  scanned. This is item 6 of the v0.1.0 definition of done, and the ESLint rule
-  that guards it only sees source, not rendered text.
+- **The priced figures the intake earns, with their basis.** Screen, Markdown
+  and print output are each scanned for a euro amount, for the calculation basis
+  beside it, and for the claims ADR-0003 forbids (ROI, Amortisation). This
+  assertion used to be its own opposite — "no euro amounts anywhere", item 6 of
+  the original definition of done — and it stayed green for a whole release
+  after ADR-0003 replaced that rule, because no report the wizard could produce
+  ever reached the priced path. Naming a real product in the intake is what
+  makes the assertion mean something.
 
 The print route is checked in a context with **JavaScript disabled**. It has to
 render whole without it, because it has no client components by design

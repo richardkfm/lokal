@@ -45,7 +45,8 @@ const CATEGORIES = ["office_docs", "file_sharing", "intranet_wiki"] as const;
 const DETAIL: Record<
   (typeof CATEGORIES)[number],
   {
-    currentTool: string;
+    /** A rulepack product by its option label, or free text under "other". */
+    currentTool: { known: string } | { other: string };
     seats: number;
     criticality: string;
     pain: string;
@@ -55,7 +56,7 @@ const DETAIL: Record<
   }
 > = {
   office_docs: {
-    currentTool: "Microsoft 365",
+    currentTool: { known: "Microsoft 365 (Word, Excel, PowerPoint)" },
     seats: 175,
     criticality: "high",
     pain: "medium",
@@ -64,7 +65,7 @@ const DETAIL: Record<
     urgency: "this_year",
   },
   file_sharing: {
-    currentTool: "Windows-Dateiserver",
+    currentTool: { known: "SharePoint / OneDrive" },
     seats: 160,
     criticality: "high",
     pain: "high",
@@ -73,7 +74,7 @@ const DETAIL: Record<
     urgency: "now",
   },
   intranet_wiki: {
-    currentTool: "Netzlaufwerk",
+    currentTool: { other: "Netzlaufwerk" },
     seats: 40,
     criticality: "low",
     pain: "low",
@@ -190,7 +191,15 @@ test("a full intake produces a report", async ({ page }) => {
     const block = categoryBlock(page, category);
     const answers = DETAIL[category];
 
-    await block.getByLabel("Derzeit eingesetzt").fill(answers.currentTool);
+    const currentTool = block.getByLabel("Derzeit eingesetzt");
+    if ("known" in answers.currentTool) {
+      await currentTool.selectOption({ label: answers.currentTool.known });
+    } else {
+      // "Anderes System" reveals a free-text field, and choosing it without
+      // filling that field is deliberately not a valid entry.
+      await currentTool.selectOption({ label: "Anderes System …" });
+      await block.getByLabel("Welches System?").fill(answers.currentTool.other);
+    }
     await block.getByLabel("Betroffene Arbeitsplätze").fill(String(answers.seats));
     await option(block, `${category}-criticality`, answers.criticality).click();
     await option(block, `${category}-pain`, answers.pain).click();
@@ -284,9 +293,23 @@ test("the report answers the questions the landing page promised", async ({ page
   ).toBeVisible();
   await expect(page.locator("#roadmap")).toContainText("Intranet und Wissen");
 
-  // No euro figures anywhere in generated output — definition of done, item 6.
+  // The figures the questionnaire earns.
+  //
+  // This assertion used to be the opposite — "no euro figures anywhere" — and it
+  // stayed green after ADR-0003 introduced them, because no report the wizard
+  // could produce ever reached the priced path: the intake only ever recorded
+  // free text, and a price needs a named product. Naming one in the journey
+  // above is the fix; asserting the figure arrives is what stops it rotting
+  // back. Two of the three categories name a Microsoft product, so this intake
+  // has a published list price behind it.
   const text = await page.locator("article").innerText();
-  expect(text).not.toMatch(/€|\bEUR\b/);
+  expect(text).toMatch(/€/);
+  await expect(page.getByRole("heading", { name: "Rechengrundlage" })).toBeVisible();
+
+  // What ADR-0003 forbids in exchange: gross exposure only, never a modelled
+  // return. A report that starts promising payback has stopped being honest
+  // about what it knows.
+  expect(text).not.toMatch(/\bROI\b|Amortisation|Kapitalrendite/i);
 });
 
 test("the Markdown export downloads as a file", async ({ page }) => {
@@ -302,7 +325,10 @@ test("the Markdown export downloads as a file", async ({ page }) => {
   expect(markdown.startsWith("# ")).toBe(true);
   expect(markdown).toContain("Empfohlener Zielaufbau");
   expect(markdown).toContain("Migrationsfahrplan");
-  expect(markdown).not.toMatch(/€|\bEUR\b/);
+  // Same document, same rule: a figure travels with its basis or not at all.
+  expect(markdown).toContain("€");
+  expect(markdown).toContain("Listenpreise");
+  expect(markdown).not.toMatch(/\bROI\b|Amortisation|Kapitalrendite/i);
 });
 
 test.describe("the print route", () => {
@@ -326,6 +352,8 @@ test.describe("the print route", () => {
     }
 
     const text = await page.locator("article").innerText();
-    expect(text).not.toMatch(/€|\bEUR\b/);
+    expect(text).toMatch(/€/);
+    expect(text).toContain("Listenpreise");
+    expect(text).not.toMatch(/\bROI\b|Amortisation|Kapitalrendite/i);
   });
 });

@@ -22,11 +22,13 @@ import {
   NumberField,
   RadioCards,
   RadioGroup,
+  SelectField,
   TagField,
   TextField,
   Toggle,
 } from "@/components/ui/field";
 import type { CategoryId, Level } from "@/domain/enums";
+import type { SourceToolOptions } from "@/lib/source-tool-options";
 import { stackEntrySchema } from "@/domain/intake";
 import { copyEntryValues, selectCategories } from "./state";
 import type { Draft, StepIssues } from "./state";
@@ -273,7 +275,21 @@ export function StackStep({ draft, update, issues }: StepProps) {
   );
 }
 
-export function DetailStep({ draft, update, issues }: StepProps) {
+/**
+ * Sentinel select values.
+ *
+ * Namespaced so they cannot collide with a rulepack tool id, which is what they
+ * share an option list with.
+ */
+const TOOL_NONE = "__none__";
+const TOOL_OTHER = "__other__";
+
+export function DetailStep({
+  draft,
+  update,
+  issues,
+  tools,
+}: StepProps & { tools: SourceToolOptions }) {
   const t = useTranslations("wizard.detail");
   const vocabulary = useTranslations("vocabulary");
   const choices = useChoices();
@@ -366,21 +382,50 @@ export function DetailStep({ draft, update, issues }: StepProps) {
             </div>
 
             <div className="mt-4 space-y-5">
-              <TextField
+              <SelectField
                 label={t("currentToolLabel")}
                 hint={t("currentToolHint")}
                 value={
-                  entry.currentTool?.kind === "other" ? entry.currentTool.label : ""
+                  entry.currentTool?.kind === "known"
+                    ? entry.currentTool.id
+                    : entry.currentTool?.kind === "other"
+                      ? TOOL_OTHER
+                      : TOOL_NONE
                 }
                 onChange={(value) =>
                   setEntry(category, {
-                    currentTool: value.trim()
-                      ? { kind: "other", label: value }
-                      : { kind: "none" },
+                    currentTool:
+                      value === TOOL_NONE
+                        ? { kind: "none" }
+                        : value === TOOL_OTHER
+                          ? // Kept as free text with an empty label until the
+                            // field below is filled, so choosing "something
+                            // else" never silently records a nameless system.
+                            { kind: "other", label: "" }
+                          : { kind: "known", id: value },
                   })
                 }
-                placeholder={t("currentToolPlaceholder")}
+                options={[
+                  { value: TOOL_NONE, label: t("currentToolNone") },
+                  ...(tools[category] ?? []).map((tool) => ({
+                    value: tool.id,
+                    label: tool.name,
+                  })),
+                  { value: TOOL_OTHER, label: t("currentToolOther") },
+                ]}
               />
+
+              {entry.currentTool?.kind === "other" ? (
+                <TextField
+                  label={t("currentToolOtherLabel")}
+                  value={entry.currentTool.label}
+                  onChange={(value) =>
+                    setEntry(category, { currentTool: { kind: "other", label: value } })
+                  }
+                  placeholder={t("currentToolPlaceholder")}
+                  error={issueFor("currentTool.label")}
+                />
+              ) : null}
 
               <NumberField
                 label={t("seatsLabel")}

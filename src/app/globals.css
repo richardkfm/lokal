@@ -397,14 +397,24 @@ body {
   background: var(--color-line);
 }
 
+/* Only the thin axis is set here. The long axis belongs to the caller, and that
+ * split is not stylistic.
+ *
+ * These rules are unlayered and Tailwind's utilities sit in `@layer utilities`,
+ * so an unlayered `width: 100%` here silently beats a `w-10` on the element no
+ * matter what the class attribute says. A percentage length then resolves
+ * against an indefinite grid track as zero, and the result is a rail of no width
+ * with a dot dutifully animating across nothing — visible in no screenshot and
+ * caught by no test, because everything involved reports itself as working.
+ *
+ * So the caller sizes the rail and the shipped one is asserted to be wider than
+ * a few pixels in `tests/e2e/print-and-motion.spec.ts`. */
 .path-rail-h {
   height: 1px;
-  width: 100%;
 }
 
 .path-rail-v {
   width: 1px;
-  height: 100%;
 }
 
 /* The travelling element spans the whole rail and draws the visible dot at one

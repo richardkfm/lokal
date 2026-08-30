@@ -184,7 +184,9 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     if (entry.ruledOut.length > 0) {
       push(`_${r("stack.ruledOut", { count: entry.ruledOut.length })}_`, "");
       for (const { tool, reason } of entry.ruledOut) {
-        push(`- **${tool.name}**: ${t(`rationale.${reason.code}`, reason.params)}`);
+        push(
+          `- **${tool.name}**: ${t(`rationale.${reason.code}`, localizeParams(reason.params, t))}`,
+        );
       }
       blank();
     }
@@ -229,7 +231,7 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     push(`### ${r("roadmap.keepForNow")}`, "", r("roadmap.keepForNowLead"), "");
     for (const deferred of report.roadmap.keepForNow) {
       push(
-        `- **${category(deferred.category)}**${deferred.currentToolName ? ` (${deferred.currentToolName})` : ""}: ${t(`rationale.${deferred.reason.code}`, deferred.reason.params)} ${t(`rationale.${deferred.revisitWhen}`)}`,
+        `- **${category(deferred.category)}**${deferred.currentToolName ? ` (${deferred.currentToolName})` : ""}: ${t(`rationale.${deferred.reason.code}`, localizeParams(deferred.reason.params, t))} ${t(`rationale.${deferred.revisitWhen}`)}`,
       );
     }
     blank();

@@ -11,6 +11,7 @@ import {
   OrganizationStep,
   StackStep,
 } from "./steps";
+import type { SourceToolOptions } from "@/lib/source-tool-options";
 import {
   STEPS,
   toAssessment,
@@ -206,7 +207,7 @@ function ReviewStep({
   );
 }
 
-function WizardForm() {
+function WizardForm({ tools }: { tools: SourceToolOptions }) {
   const t = useTranslations("wizard");
   const locale = useLocale() as "de" | "en";
   const router = useRouter();
@@ -273,7 +274,7 @@ function WizardForm() {
       {wizard.step === "organization" ? <OrganizationStep {...stepProps} /> : null}
       {wizard.step === "operating" ? <OperatingStep {...stepProps} /> : null}
       {wizard.step === "stack" ? <StackStep {...stepProps} /> : null}
-      {wizard.step === "detail" ? <DetailStep {...stepProps} /> : null}
+      {wizard.step === "detail" ? <DetailStep {...stepProps} tools={tools} /> : null}
       {wizard.step === "ai" ? <AiStep {...stepProps} /> : null}
       {isReview ? (
         <ReviewStep draft={wizard.draft} onEdit={wizard.setStepIndex} />
@@ -338,7 +339,7 @@ function WizardForm() {
  * empty fields over answers the user already gave would be worse than a brief
  * placeholder.
  */
-export function Wizard() {
+export function Wizard({ tools }: { tools: SourceToolOptions }) {
   const t = useTranslations("wizard");
   const hydrated = useHydrated();
 
@@ -346,5 +347,5 @@ export function Wizard() {
     return <div className="text-faint py-16 text-sm">{t("loading")}</div>;
   }
 
-  return <WizardForm />;
+  return <WizardForm tools={tools} />;
 }

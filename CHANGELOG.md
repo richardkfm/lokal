@@ -8,6 +8,29 @@ Dates are ISO 8601.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The intake can name a product.** The "currently in use" field was free text
+  only, so every assessment recorded `{ kind: "other" }` and no report produced
+  through the questionnaire ever reached a source tool in the rulepack. Vendor
+  lock-in ratings, origin-specific migration edges and the whole priced-exposure
+  section of 0.1.0 were unreachable outside test fixtures. The field is now a
+  select over the rulepack's products for that category, with "Anderes System"
+  keeping free text for anything not listed. Typed text is deliberately not
+  matched against product names: attributing a euro figure to an organization
+  that never named the product is what ADR-0003 exists to prevent.
+- **Enum values reaching the reader.** "Hoher Aufwand (very_high)" and "Wartet
+  auf file_sharing" were printed verbatim in the roadmap, on screen and on
+  paper. `localizeParams` resolved only the `category` parameter; it now covers
+  every parameter any stage passes an enum through, and the two renderer call
+  sites that bypassed it entirely go through it. A new test renders each persona
+  in German and fails on any enum value that survives as a bare word.
+- **The step connectors on the landing page.** They animated correctly while
+  painting nothing: an unlayered `width: 100%` in `globals.css` beat the `w-10`
+  utility meant to size them, and a percentage width in an indefinite grid track
+  is zero. The stylesheet now sets only the 1px axis, `PathRail` requires the
+  caller to size the other, and the rendered width is asserted in the browser.
+
 ## [0.1.0] – 2026-08-30
 
 First working release: intake, engine, rulepack, report, Markdown export and a

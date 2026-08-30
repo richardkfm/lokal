@@ -77,6 +77,32 @@ test("the landing page prints with nothing hidden", async ({ page }) => {
   await expectLegibleAtRest(page);
 });
 
+/**
+ * A rail with no length.
+ *
+ * The connectors between the three steps animated correctly for a whole release
+ * while painting nothing: an unlayered `width: 100%` in `globals.css` beat the
+ * `w-10` utility that was meant to size them, and a percentage width in an
+ * indefinite grid track is zero. Every signal said the feature worked —
+ * `getAnimations()` reported the dot running, no test failed, no error was
+ * logged — because everything except the geometry was fine.
+ *
+ * So the geometry is what gets asserted. Not that the rail exists, and not that
+ * it animates: that it is wide enough for a 5px dot to travel.
+ */
+test("the step connectors have a rail to travel", async ({ page }) => {
+  await page.goto("/de");
+
+  const rails = page.locator(".path-rail-h");
+  const count = await rails.count();
+  expect(count).toBeGreaterThan(0);
+
+  for (let index = 0; index < count; index += 1) {
+    const box = await rails.nth(index).boundingBox();
+    expect(box?.width ?? 0).toBeGreaterThan(20);
+  }
+});
+
 test("the landing page is legible under reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/de");

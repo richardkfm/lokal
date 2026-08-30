@@ -18,13 +18,20 @@ import type { ReactNode } from "react";
  * The rail draws its own static line, so the connection is visible with no
  * animation at all. The dot is an accent and never carries meaning — nothing in
  * the page depends on a reader seeing it move.
+ *
+ * `className` is required and must size the long axis — `w-10` here, `h-full`
+ * for a vertical rail. The stylesheet sets only the 1px axis, because it is
+ * unlayered and would otherwise beat the utility that was meant to size it. A
+ * rail with no length still animates and still passes every check; it simply
+ * paints nothing. Requiring the prop is the cheapest place to make that a
+ * decision rather than an omission.
  */
 export function PathRail({
   orientation = "horizontal",
-  className = "",
+  className,
 }: {
   orientation?: "horizontal" | "vertical";
-  className?: string;
+  className: string;
 }) {
   const horizontal = orientation === "horizontal";
 

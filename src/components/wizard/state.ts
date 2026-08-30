@@ -79,11 +79,11 @@ export type StepIssues = Record<string, string>;
 /**
  * The stack entries a draft describes.
  *
- * `currentTool` defaults to "nothing in use". The detail step invites leaving
- * that field empty — "leer lassen, wenn bislang nichts im Einsatz ist" — and an
- * untouched field has to mean the same thing as one that was typed into and
- * cleared. Without the default the step silently refuses to advance: the entry
- * fails validation on a field that has nowhere to show an error.
+ * `currentTool` defaults to "nothing in use", which is also what the detail
+ * step's select rests on, so an untouched category means the same thing as one
+ * the respondent deliberately left at "Nichts im Einsatz". Without the default
+ * the step silently refuses to advance: the entry fails validation on a field
+ * that has nowhere to show an error.
  *
  * `seats` falls back to the organization's total seat count. Most categories
  * affect everyone, so retyping the same number per category is pure friction;
