@@ -59,7 +59,10 @@ Grouped as they will be committed, in dependency order.
 ## Out of scope
 
 - **Writing Impressum, Datenschutzerklärung or Barrierefreiheitserklärung
-  text.** These are legal declarations about a specific operator: their name,
+  text, or hosting it.** They ship as `LOKAL_LEGAL_*_URL` links to pages the
+  operator already publishes, not as internal routes rendering operator-supplied
+  markup — which was the other option and needs a content pipeline for three
+  pages that every Kommune and Stadtwerk in the audience already has. These are legal declarations about a specific operator: their name,
   address, data-protection officer, and their own conformance assessment. lokal
   cannot author them and a placeholder is worse than an absence, because a
   placeholder looks discharged. What ships is the structure — routes, footer
@@ -106,6 +109,13 @@ empty slot explicitly — "Phase 1 — Schnelle Vorhaben: für diese Organisatio
 nicht belegt" — is better than renumbering, because for this audience an empty
 phase is itself a finding.
 
+**Fit criteria common to every recommendation are stated once, not tabulated.**
+A matrix of criteria against categories was the reviewer's suggestion and is the
+better artefact on screen; on A4 portrait with up to nine categories it is a
+ten-column table that has to be rotated or abbreviated to fit, and this document
+is judged on paper. Stating the shared criteria once above the cards and leaving
+each card only what distinguishes it removes the same repetition and prints.
+
 **The document gets its own type scale.** Today the report is `text-sm` and
 `text-xs` throughout, with two points of size separating a numbered section from
 a card title inside it. That is an app-shell scale applied to a twelve-page
@@ -114,7 +124,11 @@ keeps its scale; `.report-print` and the report view get a larger one, with the
 section number set as a hanging figure rather than inline — which also fixes the
 accessible name reading "1Zusammenfassung".
 
-**Seeded answers are marked or not seeded at all.** The wizard pre-fills
+**Nothing is seeded.** (Decided as "marked or not seeded at all"; the second
+half won, because marking a fabricated answer still leaves it in the payload
+unless the respondent notices the mark, and the two mitigations the seeding was
+guarding against — a wall of errors on arrival, and a category with nowhere to
+show one — were both already solved elsewhere.) The wizard pre-fills
 `criticality`, `pain` and `urgency` on every newly ticked category, and
 `urgency: "later"` demotes that category in the roadmap. A tool that refuses to
 fabricate a savings figure should not silently fabricate a Dringlichkeit — and

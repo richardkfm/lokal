@@ -152,18 +152,24 @@ driving the app rather than reading the tests. See
 | #   | Chunk                                                                | Verify                                                          | Status |
 | --- | -------------------------------------------------------------------- | --------------------------------------------------------------- | ------ |
 | 7.0 | Intake names a product; identifiers resolved; connectors have a rail | Wizard-built report carries a euro figure; no raw ids           | done   |
-| 7.1 | Print: ruled-out content on paper, pagination, page numbers          | Ruled-out candidates present in extracted PDF text              | todo   |
-| 7.2 | Request locale drives rulepack prose and dates; ICU plurals          | `/en` report contains no German                                 | todo   |
-| 7.3 | One exposure figure, honest seat count, contiguous phase numbers     | No two tiles show the same amount; no gap in phase numbering    | todo   |
-| 7.4 | Document type scale; §4 criteria matrix; §2 earns its place          | Section boundaries legible while scrolling; no repeated bullets | todo   |
-| 7.5 | Seeded answers marked; full review step; error summary with focus    | Every seeded answer is visibly seeded; step 6 lists all         | todo   |
-| 7.6 | Landing tail layout; legal page structure; copy duplication          | No crushed column at 1280 and 1600                              | todo   |
-| 7.7 | Severity not by colour alone; indicator contrast; target sizes       | Axe green; greyscale print still distinguishes severity         | todo   |
+| 7.1 | Print: ruled-out content on paper, pagination, page numbers          | Ruled-out candidates present in extracted PDF text              | done   |
+| 7.2 | Request locale drives rulepack prose and dates; ICU plurals          | `/en` report contains no German                                 | done   |
+| 7.3 | One exposure figure, honest seat count, every phase named            | No two tiles show the same amount; no gap in phase numbering    | done   |
+| 7.4 | Document type scale; shared §4 criteria stated once; §2 earns it     | Section boundaries legible while scrolling; no repeated bullets | done   |
+| 7.5 | Nothing pre-filled; full review step; error summary with focus       | A new category answers nothing; step 6 lists every answer       | done   |
+| 7.6 | Landing tail layout; legal page links; copy duplication              | No crushed column at 1280 and 1600                              | done   |
+| 7.7 | Severity not by colour alone; indicator contrast; target sizes       | Axe green; greyscale print still distinguishes severity         | done   |
 
 Item 4 of the v0.1.0 definition of done — "the printed PDF is presentable to
-management without editing" — is what this phase is for. 7.1 is a precondition
-for it: today the printed brief silently omits one of the four outputs CLAUDE.md
+management without editing" — is what this phase was for. 7.1 was a precondition
+for it: the printed brief silently omitted one of the four outputs CLAUDE.md
 names as proving the thesis.
+
+The judgement itself is still open, and still a person's. What changed is that
+the document is now worth judging: the ruled-out candidates are on paper, every
+sheet carries a number, the type scale is a document's rather than an app's, no
+figure states a saving lokal will not stand behind, and no machine identifier
+reaches the reader.
 
 ## Before the tag
 
