@@ -172,7 +172,7 @@ test("every printed euro figure carries its basis", async ({ page }) => {
 
   expect(body).toMatch(/Rechengrundlage/i);
   expect(body).toMatch(/je Arbeitsplatz und Monat/);
-  expect(body).toMatch(/erhoben am \d{4}-\d{2}-\d{2}/);
+  expect(body).toMatch(/erhoben am \d{1,2}\. \p{L}+ \d{4}/u);
   expect(body).toMatch(/Belegt für \d+ von \d+ betrachteten Bereichen/);
   expect(body).toMatch(/https:\/\/\S+/);
 

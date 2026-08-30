@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import de from "../../messages/de.json";
 import {
   AI_DEPLOYMENTS,
   AI_INTERESTS,
@@ -25,6 +24,7 @@ import { localizeParams, prerequisiteLabels } from "@/report/params";
 import { toMarkdown } from "@/report/to-markdown";
 import { currentRulepack } from "@/rulepack";
 import { PERSONAS, persona } from "../fixtures/personas";
+import { strictTranslator } from "../fixtures/translator";
 import type { RationaleItem } from "@/domain/rationale";
 
 /**
@@ -45,6 +45,7 @@ import type { RationaleItem } from "@/domain/rationale";
  */
 
 const pack = currentRulepack();
+const translate = strictTranslator("de");
 
 const ENUM_VALUES = new Set<string>([
   ...AI_DEPLOYMENTS,
@@ -65,22 +66,6 @@ const ENUM_VALUES = new Set<string>([
   ...SUPPORT_MODELS,
   ...URGENCIES,
 ]);
-
-/** The strict translator from `to-markdown.test.ts`, minus the placeholder check. */
-function translate(key: string, values?: Record<string, string | number | boolean>) {
-  const resolved = key
-    .split(".")
-    .reduce<unknown>(
-      (node, part) => (node as Record<string, unknown> | undefined)?.[part],
-      de as Record<string, unknown>,
-    );
-
-  if (typeof resolved !== "string") throw new Error(`Missing message: ${key}`);
-
-  return resolved.replace(/\{(\w+)\}/g, (_match, name: string) =>
-    String(values?.[name] ?? `{${name}}`),
-  );
-}
 
 /**
  * Prose only.

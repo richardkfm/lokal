@@ -1,49 +1,14 @@
 import { describe, expect, it } from "vitest";
-import de from "../../messages/de.json";
-import en from "../../messages/en.json";
 import { runEngine } from "@/engine";
 import { buildReport } from "@/report/build-report";
 import { toMarkdown } from "@/report/to-markdown";
 import { currentRulepack } from "@/rulepack";
 import { PERSONAS, persona } from "../fixtures/personas";
+import { strictTranslator } from "../fixtures/translator";
 import type { PlanningReport } from "@/report/schema";
 
 const pack = currentRulepack();
 const GENERATED_AT = "2026-08-12T00:00:00.000Z";
-
-type Catalog = Record<string, unknown>;
-const CATALOGS: Record<string, Catalog> = { de, en };
-
-/**
- * A deliberately strict stand-in for next-intl.
- *
- * It throws on a missing key and on an unresolved placeholder, rather than
- * silently emitting the raw key the way a lenient renderer would. That is
- * exactly the failure this catches: a report handed to management with
- * "rationale.next.verify_recommendations_against_current_releases" in the middle
- * of it, because a rationale item carried evidence but no params.
- */
-function strictTranslator(locale: string) {
-  const catalog = CATALOGS[locale]!;
-
-  return (key: string, values?: Record<string, string | number | boolean>) => {
-    const resolved = key
-      .split(".")
-      .reduce<unknown>((node, part) => (node as Catalog | undefined)?.[part], catalog);
-
-    if (typeof resolved !== "string") {
-      throw new Error(`Missing message: ${key}`);
-    }
-
-    return resolved.replace(/\{(\w+)\}/g, (_match, name: string) => {
-      const value = values?.[name];
-      if (value === undefined) {
-        throw new Error(`Unresolved placeholder {${name}} in ${key}`);
-      }
-      return String(value);
-    });
-  };
-}
 
 function markdownFor(id: string, locale: "de" | "en" = "de"): string {
   const input = { ...persona(id).input, locale };
@@ -67,6 +32,21 @@ describe("markdown export", () => {
       expect(() => markdownFor(id, "en")).not.toThrow();
     },
   );
+
+  /**
+   * Counts agree with their nouns.
+   *
+   * "1 Bereiche sollten vorerst unverändert bleiben" shipped in v0.1.0, in both
+   * languages, because the test translator could not evaluate an ICU plural and
+   * so the catalogue never used one. The translator is the real one now, which
+   * is what makes this assertion possible at all.
+   */
+  it("agrees number and noun", () => {
+    for (const { id } of PERSONAS) {
+      expect(markdownFor(id, "de")).not.toMatch(/\b1 (Bereiche|Migrationen)\b/);
+      expect(markdownFor(id, "en")).not.toMatch(/\b1 (areas|migrations)\b/);
+    }
+  });
 
   it("never leaks a raw message key into the output", () => {
     for (const { id } of PERSONAS) {
@@ -115,7 +95,9 @@ describe("markdown export", () => {
       expect(markdown).toContain("Rechengrundlage");
       expect(markdown).toMatch(/je Arbeitsplatz und Monat/);
       expect(markdown).toMatch(/Quelle: https:\/\//);
-      expect(markdown).toMatch(/erhoben am \d{4}-\d{2}-\d{2}/);
+      // A date in the reader's convention, not the rulepack's ISO storage form.
+      expect(markdown).toMatch(/erhoben am \d{1,2}\. \p{L}+ \d{4}/u);
+      expect(markdown).not.toMatch(/erhoben am \d{4}-\d{2}-\d{2}/);
       // Coverage is stated wherever a sum is.
       expect(markdown).toMatch(/Belegt für \d+ von \d+ betrachteten Bereichen/);
     }

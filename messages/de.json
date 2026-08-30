@@ -262,7 +262,7 @@
       "urgencyLabel": "Dringlichkeit",
       "urgencyHint": "Wann soll sich etwas ändern?",
       "keyboardHint": "Tipp: Innerhalb einer Auswahl wählen die Zifferntasten 1–3 die jeweilige Option.",
-      "progress": "{done} von {total} Bereichen vollständig",
+      "progress": "{done} von {total, plural, one {einem Bereich} other {# Bereichen}} vollständig",
       "applyToAllLabel": "Werte des ersten Bereichs für alle übernehmen",
       "copyFromFirstLabel": "Werte von „{category}“ übernehmen"
     },
@@ -555,14 +555,14 @@
   "rationale": {
     "advantage": {
       "aligns_with_public_sector_expectations": "Passt zu den Erwartungen an öffentliche Stellen: nachvollziehbare Beschaffung, offene Formate, prüfbare Verfahren.",
-      "data_stays_under_own_control": "Die Daten bleiben unter eigener Kontrolle ({count} empfohlene Systeme mit hoher Datenhoheit).",
+      "data_stays_under_own_control": "Die Daten bleiben unter eigener Kontrolle ({count, plural, one {ein empfohlenes System} other {# empfohlene Systeme}} mit hoher Datenhoheit).",
       "hosting_location_is_a_choice": "Der Betriebsort wird zur Entscheidung statt zur Vorgabe des Anbieters.",
       "open_formats_and_exit_options": "Offene Formate halten einen späteren Wechsel offen.",
       "ready_for_local_ai": "Der Zielaufbau lässt sich mit selbst betriebener KI verbinden.",
-      "reduced_lock_in": "Geringere Abhängigkeit in {count} Bereichen, in denen Sie diese ausdrücklich als Problem benannt haben."
+      "reduced_lock_in": "Geringere Abhängigkeit in {count, plural, one {einem Bereich} other {# Bereichen}}, in {count, plural, one {dem} other {denen}} Sie diese ausdrücklich als Problem benannt haben."
     },
     "ai": {
-      "address_prerequisites_first": "Alle {count} gewünschten Anwendungsfälle setzen zunächst Vorarbeiten voraus.",
+      "address_prerequisites_first": "{count, plural, one {Der gewünschte Anwendungsfall setzt} other {Alle # gewünschten Anwendungsfälle setzen}} zunächst Vorarbeiten voraus.",
       "fits_today": "Technisch und organisatorisch heute tragfähig.",
       "hardware_below_requirement": "Die vorhandene Hardware ({available}) reicht für diesen Anwendungsfall nicht aus; erforderlich wäre mindestens {required}.",
       "needs_a_document_store_first": "Ohne erschlossenen Dokumentenbestand gibt es nichts, worauf sich Fragen beziehen könnten. Erst die Ablage, dann dieser Anwendungsfall.",
@@ -588,7 +588,7 @@
       "pilot_before_rollout": "{category}: zunächst Pilotbetrieb statt Einführung für alle {seats} Arbeitsplätze.",
       "plan_exceeds_annual_capacity": "Der Plan erfordert mindestens {minDays} Administrationstage, verfügbar sind etwa {availableDays} pro Jahr. Der Zeitraum ist zu strecken oder Unterstützung einzuplanen.",
       "plan_may_exceed_annual_capacity": "Im ungünstigen Fall ({maxDays} Tage) übersteigt der Plan die verfügbaren {availableDays} Tage pro Jahr.",
-      "significant_training_load": "{count} Migrationen betreffen zusammen {seats} Arbeitsplätze mit hoher Schulungsempfindlichkeit."
+      "significant_training_load": "{count, plural, one {Eine Migration betrifft} other {# Migrationen betreffen zusammen}} {seats} Arbeitsplätze mit hoher Schulungsempfindlichkeit."
     },
     "caution": {
       "approaching_seat_ceiling": "{tool} nähert sich bei dieser Größe seiner üblichen Grenze.",
@@ -639,10 +639,10 @@
     "gap": {
       "ai_ambition_without_hardware": "KI ist ausdrücklich gewünscht, es fehlt jedoch geeignete Hardware. Ohne Beschaffung bleibt lokale KI eine Absicht.",
       "identity_foundation_missing_at_scale": "Bei {totalSeats} Arbeitsplätzen ohne zentrale Benutzerverwaltung entsteht bei jeder Einführung eine eigene Kontenliste.",
-      "many_migrations_with_low_admin_capacity": "{categories} Bereiche stehen zur Migration an, bei geringer verfügbarer Administrationszeit.",
+      "many_migrations_with_low_admin_capacity": "{categories, plural, one {Ein Bereich steht} other {# Bereiche stehen}} zur Migration an, bei geringer verfügbarer Administrationszeit.",
       "self_hosting_without_linux_capability": "Selbstbetrieb ist gewünscht, es fehlen jedoch die Betriebskenntnisse. Entweder Kompetenz aufbauen oder zunächst betreuten Betrieb wählen.",
       "sensitive_data_with_external_inference": "Hoch vertrauliche Inhalte sollen bei einem externen Anbieter verarbeitet werden. Das widerspricht der angegebenen Schutzbedürftigkeit.",
-      "several_urgent_critical_migrations_at_once": "{count} betriebskritische Vorhaben sollen gleichzeitig und sofort beginnen. Das übersteigt die Aufnahmefähigkeit der Organisation."
+      "several_urgent_critical_migrations_at_once": "{count, plural, one {Ein betriebskritisches Vorhaben soll} other {# betriebskritische Vorhaben sollen gleichzeitig und}} sofort beginnen. Das übersteigt die Aufnahmefähigkeit der Organisation."
     },
     "gotcha": {
       "attachment_links": "Verweise auf Anhänge brechen und müssen nachgezogen werden.",
@@ -688,23 +688,23 @@
     "next": {
       "address_prerequisite": "Voraussetzung schaffen: {prerequisite}",
       "pilot_ai_use_case": "Pilotbetrieb für den KI-Anwendungsfall {useCase} aufsetzen.",
-      "plan_first_phase": "Die erste Phase mit {count} Vorhaben konkret planen.",
+      "plan_first_phase": "Die erste Phase mit {count, plural, one {einem Vorhaben} other {# Vorhaben}} konkret planen.",
       "run_pilot": "Pilotbetrieb für {category} aufsetzen.",
       "verify_recommendations_against_current_releases": "Die Empfehlungen gegen den aktuellen Stand der Produkte prüfen (Regelwerk {rulepackVersion})."
     },
     "note": {
-      "categories_not_assessed": "{count} Bereiche wurden nicht erhoben und sind in diesem Plan nicht bewertet.",
+      "categories_not_assessed": "{count, plural, one {Ein Bereich wurde} other {# Bereiche wurden}} nicht erhoben und {count, plural, one {ist} other {sind}} in diesem Plan nicht bewertet.",
       "category_seats_exceed_organization": "{category} weist {seats} Arbeitsplätze aus, die Organisation insgesamt {totalSeats}. Bitte prüfen.",
-      "no_candidate_survived_constraints": "Für {category} blieb unter den genannten Bedingungen keine der {considered} geprüften Optionen übrig.",
+      "no_candidate_survived_constraints": "Für {category} blieb unter den genannten Bedingungen {considered, plural, one {die eine geprüfte Option} other {keine der # geprüften Optionen}} übrig.",
       "no_departments_named": "Bei {totalSeats} Arbeitsplätzen wurden keine Bereiche benannt; der Abstimmungsaufwand ist dadurch schwerer einzuschätzen.",
       "public_sector_implied_by_org_type": "Als {orgType} gelten öffentlich-rechtliche Erwartungen unabhängig von der Angabe."
     },
     "phase": {
       "complex_or_cannot_run_in_parallel": "Hoher Aufwand ({difficulty}) oder kein Parallelbetrieb möglich.",
-      "deferred_to_spread_critical_change": "Verschoben, um höchstens {limit} betriebskritische Umstellung(en) gleichzeitig zu führen.",
+      "deferred_to_spread_critical_change": "Verschoben, um höchstens {limit, plural, one {eine betriebskritische Umstellung} other {# betriebskritische Umstellungen}} gleichzeitig zu führen.",
       "moderate_effort_or_business_critical": "Mittlerer Aufwand oder betriebskritisch.",
       "optimization_and_local_ai": "Optimierung und lokale KI, sobald der Unterbau steht.",
-      "prerequisites_before_anything_else": "{count} Voraussetzungen sind vor allen Migrationen zu schaffen.",
+      "prerequisites_before_anything_else": "{count, plural, one {Eine Voraussetzung ist} other {# Voraussetzungen sind}} vor allen Migrationen zu schaffen.",
       "quick_win": "Geringer Aufwand bei spürbarem Nutzen.",
       "waits_for_dependency": "Wartet auf {dependsOn}, worauf dieses System aufsetzt."
     },
@@ -715,11 +715,11 @@
     "savings": {
       "excludes_internal_time_costs": "Interne Arbeitszeit ist in dieser Betrachtung nicht bewertet.",
       "exit_options_improve": "{category}: bessere Ausstiegsmöglichkeiten.",
-      "external_support_cost": "Für {count} Vorhaben ist externe Unterstützung einzuplanen.",
+      "external_support_cost": "Für {count, plural, one {ein Vorhaben} other {# Vorhaben}} ist externe Unterstützung einzuplanen.",
       "hosting_under_own_control": "Betriebskosten werden gestaltbar statt vom Anbieter vorgegeben.",
       "migration_effort_upfront": "Der Umstellungsaufwand von {minDays} bis {maxDays} Administrationstagen fällt zuerst an.",
       "model_is_qualitative": "Die Gesamteinschätzung ist qualitativ. Genannte Beträge sind keine Prognose, sondern Ihre Angaben multipliziert mit veröffentlichten Listenpreisen.",
-      "parallel_running_costs": "Über {phases} Phasen laufen alte und neue Systeme zeitweise nebeneinander.",
+      "parallel_running_costs": "Über {phases, plural, one {eine Phase} other {# Phasen}} laufen alte und neue Systeme zeitweise nebeneinander.",
       "priced_exposure_partial": "Nur {priced} von {assessed} betrachteten Bereichen haben einen belegbaren Listenpreis. Die genannte Summe ist damit eine Teilsumme, keine Gesamtsumme.",
       "prices_are_list_prices": "Grundlage sind die veröffentlichten Listenpreise der Anbieter. Ihre tatsächlichen Vertragskonditionen können abweichen; bitte gegen Ihre Rechnungen prüfen.",
       "procurement_flexibility": "Mehr Spielraum in der Beschaffung.",
@@ -817,8 +817,8 @@
     },
     "summary": {
       "title": "Zusammenfassung",
-      "context": "{orgType} mit {seats} Arbeitsplätzen (Größenklasse {bucket}), {categories} erhobene Bereiche.",
-      "target": "Der Plan sieht {planned} Migrationen vor. {keep} Bereiche sollten vorerst unverändert bleiben."
+      "context": "{orgType} mit {seats} Arbeitsplätzen (Größenklasse {bucket}), {categories, plural, one {ein erhobener Bereich} other {# erhobene Bereiche}}.",
+      "target": "Der Plan sieht {planned, plural, =0 {keine Migration} one {eine Migration} other {# Migrationen}} vor. {keep, plural, =0 {Kein Bereich bleibt} one {Ein Bereich bleibt} other {# Bereiche bleiben}} vorerst unverändert."
     },
     "advantages": {
       "title": "Wesentliche Vorteile"

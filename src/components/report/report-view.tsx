@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { ExpertContactBlock } from "@/components/shell/expert-contact";
 import {
   Badge,
@@ -87,7 +87,23 @@ export async function ReportView({
   const t = await getTranslations();
   const r = await getTranslations("report");
   const v = await getTranslations("vocabulary");
-  const locale = report.locale;
+
+  /**
+   * The reader's locale, not the respondent's.
+   *
+   * `report.locale` records the language the intake was answered in, which is
+   * worth storing and is not a statement about who reads the result. Using it
+   * here meant `/en/report/<id>` returned German tool summaries, prerequisite
+   * labels, AI descriptions and "30. August 2026" — every string that comes
+   * from the rulepack rather than the message catalogue, which is most of the
+   * document's substance. The catalogue is at full parity; this was the last
+   * mile undoing it.
+   *
+   * The Markdown export keeps the stored locale on purpose: its route carries
+   * no locale segment, so the language the report was created in is the only
+   * signal it has.
+   */
+  const locale = (await getLocale()) as PlanningReport["locale"];
   // Prerequisite ids are interpolated into section 9's next steps, and their
   // labels live in the document rather than the message catalogue.
   const labels = prerequisiteLabels(report.roadmap.phases, locale);

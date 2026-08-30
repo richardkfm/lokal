@@ -46,6 +46,28 @@ export function formatUnitPrice(
 }
 
 /**
+ * An observation date, in the reader's own convention.
+ *
+ * The rulepack stores ISO dates because that is what a diff-reviewable source
+ * file should carry. A German report that says "erhoben am 2026-08-30" three
+ * lines under a header reading "30. August 2026" has two date formats on one
+ * page, and the ISO one reads as machine output — which is the wrong signal
+ * beside the only figures in the document a reader will check against an
+ * invoice.
+ */
+export function formatObservedOn(iso: string, locale: Locale): string {
+  const date = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(date.getTime())) return iso;
+
+  return new Intl.DateTimeFormat(BCP47[locale], {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(date);
+}
+
+/**
  * The basis line that must travel with every figure (ADR-0003 guardrail 3).
  *
  * A euro amount without its plan name, billing term, tax basis and observation
@@ -64,6 +86,6 @@ export function basisLine(
     seats: basis.seats,
     term: t(`report.savings.term.${basis.billingTerm}`),
     tax: t(`report.savings.tax.${basis.taxBasis}`),
-    observed: basis.observedOn,
+    observed: formatObservedOn(basis.observedOn, locale),
   });
 }
