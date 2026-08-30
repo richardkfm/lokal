@@ -540,7 +540,8 @@
       "beyond_comfortable_seat_range": "{tool} ist für diese Zahl an Arbeitsplätzen nicht ausgelegt.",
       "community_support_but_vendor_expected": "{tool} wird nur von einer Community getragen; Sie haben einen Vertragspartner als Voraussetzung genannt.",
       "insufficient_german_interface": "{tool} bietet keine belastbare deutschsprachige Oberfläche.",
-      "self_host_without_linux_capability": "{tool} ist nur im Selbstbetrieb verfügbar und verlangt Betriebskenntnisse, die derzeit nicht vorhanden sind."
+      "self_host_without_linux_capability": "{tool} ist nur im Selbstbetrieb verfügbar und verlangt Betriebskenntnisse, die derzeit nicht vorhanden sind.",
+      "young_release_pilot_first": "{tool} ist erst seit kurzem in einer stabilen Fassung verfügbar. Vor einer flächendeckenden Einführung ist ein begrenzter Pilotbetrieb angeraten."
     },
     "capacity": {
       "budget_for_external_support": "Für externe Unterstützung sollte ein Budget eingeplant werden.",

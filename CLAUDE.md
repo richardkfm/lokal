@@ -40,7 +40,7 @@ Enforced in `eslint.config.mjs`, not by convention:
    client components in the content tree. This single constraint is what makes
    server-side PDF (v0.3.0) a bolt-on instead of a rewrite. Do not break it.
 4. Euro figures are allowed only as `declared seats × a vendor's own published
-   list price`, shown with plan, source and observation date, with coverage
+list price`, shown with plan, source and observation date, with coverage
    stated (ADR-0003). Never a net saving, ROI or payback figure. The qualitative
    band stays primary. Pure layers carry `{ amountCents, currency }`; the `€`
    glyph belongs to renderers. Fabricated precision is still the fastest way to

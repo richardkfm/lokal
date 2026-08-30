@@ -92,16 +92,16 @@ Each chunk is one reviewable commit, roughly 30 minutes of work.
 Added to v0.1.0 on explicit request; see the note under "Deferred" and
 `plans/phase-06-engagement.md`.
 
-| #   | Chunk                                                     | Verify                                                          |
-| --- | --------------------------------------------------------- | --------------------------------------------------------------- |
-| 6.1 | Phase plan, ADR-0003, roadmap amendments                  | Docs read coherently; DoD 6 restated                            |
-| 6.2 | Rulepack `v2026-09`: Euro-Office, list prices             | Integrity passes; `v2026-08` still registered                   |
-| 6.3 | Engine: subscription exposure in stage 7                  | Arithmetic tests; coverage gap reported; band unchanged         |
-| 6.4 | Report: figures with their basis, in all three renderers  | No euro figure without plan, source and date                    |
-| 6.5 | Motion: path dots, rotating seal, cycling hero word       | Axe green; print preview shows no opacity-0 block               |
-| 6.6 | Expert contact from `LOKAL_EXPERT_*`                      | Absent unset, present set, non-fatal when malformed             |
-| 6.7 | Shorter German and English copy; e2e specs realigned      | No missing keys in either locale; smoke green                   |
-| 6.8 | Landing numbers section; docs and screenshots             | Landing states a sourced figure; README no longer contradicts it |
+| #   | Chunk                                                    | Verify                                                           |
+| --- | -------------------------------------------------------- | ---------------------------------------------------------------- |
+| 6.1 | Phase plan, ADR-0003, roadmap amendments                 | Docs read coherently; DoD 6 restated                             |
+| 6.2 | Rulepack `v2026-09`: Euro-Office, list prices            | Integrity passes; `v2026-08` still registered                    |
+| 6.3 | Engine: subscription exposure in stage 7                 | Arithmetic tests; coverage gap reported; band unchanged          |
+| 6.4 | Report: figures with their basis, in all three renderers | No euro figure without plan, source and date                     |
+| 6.5 | Motion: path dots, rotating seal, cycling hero word      | Axe green; print preview shows no opacity-0 block                |
+| 6.6 | Expert contact from `LOKAL_EXPERT_*`                     | Absent unset, present set, non-fatal when malformed              |
+| 6.7 | Shorter German and English copy; e2e specs realigned     | No missing keys in either locale; smoke green                    |
+| 6.8 | Landing numbers section; docs and screenshots            | Landing states a sourced figure; README no longer contradicts it |
 
 ## Deferred
 
