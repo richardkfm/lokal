@@ -52,7 +52,7 @@ function RationaleList({
   if (items.length === 0) return null;
 
   return (
-    <ul className={`space-y-1.5 ${dense ? "text-xs" : "text-sm"}`}>
+    <ul className={`max-w-[68ch] space-y-1.5 ${dense ? "text-sm" : "text-base"}`}>
       {items.map((item, index) => (
         <li key={`${item.code}-${index}`} className="flex gap-2">
           <span
@@ -115,6 +115,34 @@ export async function ReportView({
   // citable published price (ADR-0003). Formatting lives in `@/report/money` so
   // this view, the Markdown export and the print route cannot disagree about a
   // figure someone is going to check against an invoice.
+  /**
+   * Fit criteria that hold for every recommendation, stated once.
+   *
+   * Six category cards each listed the same five reasons — "Hohe Datenhoheit",
+   * "Dienstleister in Deutschland verfügbar", "Belastbare deutschsprachige
+   * Oberfläche" and the rest — which is roughly thirty bullets carrying about
+   * five facts. Repetition at that density is the texture of generated text,
+   * and this audience is primed to look for it; worse, it buried the lines that
+   * *are* per-category analysis inside a wall of sameness.
+   *
+   * Keyed on code plus parameters, so `fits_chosen_ecosystem` counts as shared
+   * only when it names the same ecosystem everywhere.
+   */
+  const recommendations = report.targetStack.filter((entry) => entry.recommended);
+  const fitKey = (item: RationaleItem) =>
+    `${item.code}::${JSON.stringify(item.params)}`;
+  const sharedFit =
+    recommendations.length > 1
+      ? (recommendations[0]!.recommended!.fitReasons.filter((item) =>
+          recommendations.every((entry) =>
+            entry.recommended!.fitReasons.some(
+              (other) => fitKey(other) === fitKey(item),
+            ),
+          ),
+        ) ?? [])
+      : [];
+  const sharedFitKeys = new Set(sharedFit.map(fitKey));
+
   const exposure = report.savings.subscriptionExposure;
   const money = (cents: number) => formatAmount(cents, "EUR", locale);
 
@@ -188,7 +216,7 @@ export async function ReportView({
       <div className="mt-12 space-y-12">
         {/* 1 Executive summary */}
         <Section id="summary" number={1} title={r("summary.title")}>
-          <div className="text-muted space-y-3 text-sm leading-relaxed">
+          <div className="text-ink max-w-[68ch] space-y-3 text-base leading-relaxed">
             <p>
               {r("summary.context", {
                 orgType: v(`orgType.${report.organization.orgType}.label` as never),
@@ -357,6 +385,17 @@ export async function ReportView({
           lead={r("stack.lead")}
           breakBefore
         >
+          {sharedFit.length > 0 ? (
+            <div className="border-line bg-sunken mb-5 rounded-lg border p-4">
+              <h3 className="text-ink text-base font-semibold">
+                {r("stack.sharedFit", { count: recommendations.length })}
+              </h3>
+              <div className="mt-2">
+                <RationaleList items={sharedFit} t={t} labels={labels} dense />
+              </div>
+            </div>
+          ) : null}
+
           <div className="space-y-5">
             {report.targetStack.map((entry) => (
               <div
@@ -390,14 +429,16 @@ export async function ReportView({
                       {localized(entry.recommended.tool.summary, locale)}
                     </p>
 
-                    <div className="mt-3">
-                      <RationaleList
-                        items={entry.recommended.fitReasons}
-                        t={t}
-                        labels={labels}
-                        dense
-                      />
-                    </div>
+                    {(() => {
+                      const distinct = entry.recommended.fitReasons.filter(
+                        (item) => !sharedFitKeys.has(fitKey(item)),
+                      );
+                      return distinct.length > 0 ? (
+                        <div className="mt-3">
+                          <RationaleList items={distinct} t={t} labels={labels} dense />
+                        </div>
+                      ) : null;
+                    })()}
 
                     {entry.recommended.cautions.length > 0 ? (
                       <div className="mt-3 rounded-md border border-[var(--color-caution)] bg-[var(--color-caution-soft)] p-3">

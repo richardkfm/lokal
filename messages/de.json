@@ -554,11 +554,11 @@
   },
   "rationale": {
     "advantage": {
-      "aligns_with_public_sector_expectations": "Passt zu den Erwartungen an öffentliche Stellen: nachvollziehbare Beschaffung, offene Formate, prüfbare Verfahren.",
+      "aligns_with_public_sector_expectations": "Als öffentliche Stelle profitieren Sie dreifach: nachvollziehbare Beschaffung, offene Formate, prüfbare Verfahren.",
       "data_stays_under_own_control": "Die Daten bleiben unter eigener Kontrolle ({count, plural, one {ein empfohlenes System} other {# empfohlene Systeme}} mit hoher Datenhoheit).",
-      "hosting_location_is_a_choice": "Der Betriebsort wird zur Entscheidung statt zur Vorgabe des Anbieters.",
-      "open_formats_and_exit_options": "Offene Formate halten einen späteren Wechsel offen.",
-      "ready_for_local_ai": "Der Zielaufbau lässt sich mit selbst betriebener KI verbinden.",
+      "hosting_location_is_a_choice": "Der Betriebsort wird zur Entscheidung statt zur Vorgabe: mindestens ein empfohlenes System lässt sich selbst betreiben.",
+      "open_formats_and_exit_options": "{count, plural, one {Das empfohlene System speichert} other {Alle # empfohlenen Systeme speichern}} in offenen Formaten — ein späterer Wechsel bleibt möglich.",
+      "ready_for_local_ai": "Mindestens ein empfohlenes System lässt sich mit selbst betriebener KI verbinden, statt an einen externen Anbieter gebunden zu sein.",
       "reduced_lock_in": "Geringere Abhängigkeit in {count, plural, one {einem Bereich} other {# Bereichen}}, in {count, plural, one {dem} other {denen}} Sie diese ausdrücklich als Problem benannt haben."
     },
     "ai": {
@@ -852,6 +852,7 @@
     "stack": {
       "title": "Empfohlener Zielaufbau",
       "lead": "Je Bereich eine begründete Empfehlung, Ausweichoptionen und die ausgeschiedenen Alternativen.",
+      "sharedFit": "Für {count, plural, one {das empfohlene System} other {alle # empfohlenen Systeme}} gilt",
       "current": "Heute",
       "seats": "{seats} Arbeitsplätze",
       "backups": "Ausweichoptionen",

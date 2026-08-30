@@ -36,6 +36,39 @@ All of them are pure CSS. No charting library: canvas does not print reliably,
 and six bar meters do not justify the weight. Every indicator also carries a text
 label, so meaning survives greyscale printing and never depends on colour alone.
 
+## Type scale
+
+The report has its own scale, distinct from the app shell's. The shell is a
+tool; the report is a twelve-page document that people print and forward, and
+the two need different typographic authority.
+
+Section headings are `text-2xl`, section leads and body prose `text-base` in
+`--color-ink`, and `--color-faint` at `text-xs` is reserved for what it is for:
+basis lines, sources, captions. Prose is capped at `68ch`.
+
+This is a correction, not a preference. The whole report used to be `text-sm`
+and `text-xs` in `--color-muted`, with `text-lg` section headings above
+`text-base` card titles — two points of size between a numbered section of the
+document and a subheading inside it. Scrolling it, the section boundaries were
+invisible; the summary paragraph a Bürgermeister actually reads was the report's
+least contrasty text.
+
+The section number is a text node followed by a real space, not a flex child.
+A flex gap is not a space, and the accessible name read "1Zusammenfassung".
+
+## Saying a thing once
+
+Fit criteria common to every recommendation are stated once, above the category
+cards, and each card carries only what distinguishes it. Six cards repeating the
+same five reasons is about thirty bullets carrying about five facts, and
+repetition at that density is the specific texture of generated text — which
+this audience is primed to look for. It also buried the lines that _are_
+per-category analysis.
+
+The same computation runs in `report-view.tsx` and `to-markdown.ts`, keyed on
+rationale code plus parameters so `fits_chosen_ecosystem` counts as shared only
+when it names the same ecosystem everywhere.
+
 ## Rendering rationale codes
 
 The engine emits codes with parameters; the report translates them. Two things

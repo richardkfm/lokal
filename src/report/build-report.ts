@@ -128,9 +128,13 @@ function advantages(result: EngineResult): RationaleItem[] {
     );
   }
 
+  // The one advantage that holds for any recommended stack. It still carries
+  // the count, because "offene Formate" said of nothing in particular is the
+  // sort of sentence this section was criticized for.
   items.push(
     rationale({
       code: "advantage.open_formats_and_exit_options",
+      params: { count: chosen.length },
       evidence: [{ field: "targetStack", value: chosen.map((tool) => tool.id) }],
     }),
   );

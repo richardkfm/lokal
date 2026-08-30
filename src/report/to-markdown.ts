@@ -181,6 +181,35 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
   }
   blank();
 
+  /**
+   * Fit criteria common to every recommendation, stated once rather than on
+   * each of six cards. See the same computation in `report-view.tsx`, and the
+   * reason it exists: about thirty bullets were carrying about five facts.
+   */
+  const recommendations = report.targetStack.filter((entry) => entry.recommended);
+  const fitKey = (item: RationaleItem) =>
+    `${item.code}::${JSON.stringify(item.params)}`;
+  const sharedFit =
+    recommendations.length > 1
+      ? recommendations[0]!.recommended!.fitReasons.filter((item) =>
+          recommendations.every((entry) =>
+            entry.recommended!.fitReasons.some(
+              (other) => fitKey(other) === fitKey(item),
+            ),
+          ),
+        )
+      : [];
+  const sharedFitKeys = new Set(sharedFit.map(fitKey));
+
+  if (sharedFit.length > 0) {
+    push(
+      `### ${r("stack.sharedFit", { count: recommendations.length })}`,
+      "",
+      ...list(sharedFit, ctx),
+      "",
+    );
+  }
+
   for (const entry of report.targetStack) {
     push(`### ${category(entry.category)}`, "");
     if (entry.coverageDepth === "focused") {
@@ -191,7 +220,10 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
         `**${entry.recommended.tool.name}** — ${localized(entry.recommended.tool.summary, locale)}`,
         "",
       );
-      push(...list(entry.recommended.fitReasons, ctx), "");
+      const distinct = entry.recommended.fitReasons.filter(
+        (item) => !sharedFitKeys.has(fitKey(item)),
+      );
+      if (distinct.length > 0) push(...list(distinct, ctx), "");
       if (entry.recommended.cautions.length > 0) {
         push(...list(entry.recommended.cautions, ctx), "");
       }

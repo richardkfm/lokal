@@ -554,11 +554,11 @@
   },
   "rationale": {
     "advantage": {
-      "aligns_with_public_sector_expectations": "Aligns with public-sector expectations: traceable procurement, open formats, auditable processes.",
+      "aligns_with_public_sector_expectations": "As a public body you gain on three counts: traceable procurement, open formats, auditable processes.",
       "data_stays_under_own_control": "Data stays under your own control ({count, plural, one {one recommended system} other {# recommended systems}} with strong data sovereignty).",
-      "hosting_location_is_a_choice": "Where the systems run becomes your decision rather than the vendor's.",
-      "open_formats_and_exit_options": "Open formats keep a later change of course possible.",
-      "ready_for_local_ai": "The target stack can be combined with self-hosted AI.",
+      "hosting_location_is_a_choice": "Where the systems run becomes your decision rather than the vendor's: at least one recommended system can be self-hosted.",
+      "open_formats_and_exit_options": "{count, plural, one {The recommended system stores} other {All # recommended systems store}} data in open formats — a later move stays possible.",
+      "ready_for_local_ai": "At least one recommended system can be pointed at self-hosted AI rather than tied to an external provider.",
       "reduced_lock_in": "Reduced lock-in in {count, plural, one {one area} other {# areas}} you explicitly named as a concern."
     },
     "ai": {
@@ -852,6 +852,7 @@
     "stack": {
       "title": "Recommended target stack",
       "lead": "One reasoned recommendation per area, with fallbacks and the candidates ruled out.",
+      "sharedFit": "True of {count, plural, one {the recommended system} other {all # recommended systems}}",
       "current": "Today",
       "seats": "{seats} seats",
       "backups": "Backup options",
