@@ -135,7 +135,27 @@
     "headingWord2": "Google Workspace",
     "headingWord3": "SharePoint",
     "headingWord4": "Slack und Zoom",
-    "sealText": "souverän · offen · nachvollziehbar"
+    "sealText": "souverän · offen · nachvollziehbar",
+    "numbers": {
+      "title": "Was Sie heute zahlen, und was daran hängt",
+      "lead": "lokal erfindet keine Zahlen. Es multipliziert Ihre Arbeitsplätze mit den Listenpreisen, die die Anbieter selbst veröffentlichen — mit Quelle und Datum.",
+      "priceTitle": "Veröffentlichte Listenpreise",
+      "priceColPlan": "Tarif",
+      "priceColUnit": "Je Arbeitsplatz/Monat",
+      "priceNote": "Listenpreise laut Anbieterseite, {observed}. Jahresabonnement, zzgl. MwSt. Ihre Vertragskonditionen können abweichen.",
+      "exampleTitle": "Rechenbeispiel",
+      "exampleBody": "Eine Kommune mit {seats} Arbeitsplätzen auf {plan}:",
+      "examplePerYear": "pro Jahr",
+      "exampleCaveat": "Das ist der Bruttoaufwand für Abonnements — nicht die Ersparnis. Betrieb, Support und Schulung kosten ebenfalls, und lokal beziffert sie nicht.",
+      "factsTitle": "Was Sie dafür zurückbekommen",
+      "fact1Value": "0",
+      "fact1Label": "Konten, API-Schlüssel und externe Dienste",
+      "fact2Value": "{tools}",
+      "fact2Label": "geprüfte Zielwerkzeuge in {categories} Bereichen, alle quellenbelegt",
+      "fact3Value": "AGPL",
+      "fact3Label": "Sie können lokal selbst betreiben, ändern und weitergeben",
+      "euroOffice": "Neu im Regelwerk: Euro-Office, die europäische Office-Suite von Nextcloud, IONOS und Partnern — bewertet wie alles andere, einschließlich ihrer Jugend."
+    }
   },
   "wizard": {
     "title": "Erhebung",

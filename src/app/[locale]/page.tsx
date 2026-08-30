@@ -4,6 +4,8 @@ import { Badge, KpiCard, Meter } from "@/components/report/indicators";
 import { ExpertContactBlock } from "@/components/shell/expert-contact";
 import { PathRail, SpinSeal, WordCycle } from "@/components/ui/motion";
 import { Terminal } from "@/components/ui/terminal";
+import { formatAmount, formatUnitPrice } from "@/report/money";
+import { currentRulepack } from "@/rulepack";
 import { Link } from "@/i18n/navigation";
 
 /**
@@ -29,11 +31,35 @@ const INSTALL = [
   "docker compose up --build",
 ];
 
+/** The seat count the worked example is stated at. Named, never implied. */
+const EXAMPLE_SEATS = 180;
+
 export default async function LandingPage(props: PageProps<"/[locale]">) {
   const { locale } = await props.params;
   setRequestLocale(locale);
 
   const t = await getTranslations("landing");
+  // `locale` off the route params is a plain string; the money formatters take
+  // the same union the report document uses.
+  const money = locale === "en" ? ("en" as const) : ("de" as const);
+
+  // Prices, tool counts and the observation date all come from the rulepack.
+  // Writing any of them into this page would let the sales copy and the plan
+  // disagree, which is the one thing a tool arguing for verifiable claims
+  // cannot afford.
+  const pack = currentRulepack();
+  const prices = [
+    ...new Map(
+      pack.sourceTools
+        .flatMap((tool) => (tool.listPrice ? [tool.listPrice] : []))
+        .map((price) => [price.planName, price]),
+    ).values(),
+  ].sort((a, b) => b.amountCents - a.amountCents);
+
+  const example = prices[0];
+  const observedOn = example?.observedOn ?? "";
+  const targetToolCount = pack.targetTools.length;
+  const categoryCount = pack.categories.length;
 
   const answers = ["first", "fit", "seats", "gaps", "ai", "risks"] as const;
   const trust = ["account", "noLlm", "license", "selfHost"] as const;
@@ -337,6 +363,115 @@ export default async function LandingPage(props: PageProps<"/[locale]">) {
             {t("audience")}
           </p>
         </div>
+      </section>
+
+      {/* Numbers.
+          Every figure here is read from the rulepack rather than written into
+          the page, so the landing page and the report cannot drift apart — and
+          so a price that goes stale goes stale in exactly one place, next to the
+          date it was read (ADR-0003). */}
+      <section className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
+        <div className="reveal max-w-2xl">
+          <h2 className="text-ink display text-3xl font-semibold">
+            {t("numbers.title")}
+          </h2>
+          <p className="text-muted mt-4 leading-relaxed">{t("numbers.lead")}</p>
+        </div>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+          <div className="reveal border-line bg-surface shadow-card rounded-xl border p-6">
+            <h3 className="text-ink text-sm font-semibold">
+              {t("numbers.priceTitle")}
+            </h3>
+            <table className="mt-4 w-full text-sm">
+              <thead>
+                <tr className="text-faint border-line border-b text-xs">
+                  <th scope="col" className="pb-2 text-left font-normal">
+                    {t("numbers.priceColPlan")}
+                  </th>
+                  <th scope="col" className="pb-2 text-right font-normal">
+                    {t("numbers.priceColUnit")}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-line divide-y">
+                {prices.map((price) => (
+                  <tr key={price.planName}>
+                    <th scope="row" className="text-ink py-2.5 text-left font-normal">
+                      <a
+                        href={price.source}
+                        rel="noopener noreferrer"
+                        className="underline decoration-dotted underline-offset-2"
+                      >
+                        {price.planName}
+                      </a>
+                    </th>
+                    <td className="text-ink tabular py-2.5 text-right font-medium">
+                      {formatUnitPrice(price.amountCents, "EUR", money)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="text-faint mt-4 text-xs leading-relaxed">
+              {t("numbers.priceNote", { observed: observedOn })}
+            </p>
+          </div>
+
+          <div className="reveal border-brand/30 bg-brand-soft/40 rounded-xl border p-6">
+            <h3 className="text-ink text-sm font-semibold">
+              {t("numbers.exampleTitle")}
+            </h3>
+            <p className="text-muted mt-3 text-sm leading-relaxed">
+              {t("numbers.exampleBody", {
+                seats: EXAMPLE_SEATS,
+                plan: example?.planName ?? "",
+              })}
+            </p>
+            <p className="text-ink display tabular mt-4 text-4xl leading-none font-semibold">
+              {formatAmount(
+                EXAMPLE_SEATS * (example?.amountCents ?? 0) * 12,
+                "EUR",
+                money,
+              )}
+            </p>
+            <p className="text-muted mt-1 text-xs">{t("numbers.examplePerYear")}</p>
+            {/* The sentence that keeps this from being a savings claim. */}
+            <p className="text-muted mt-5 text-xs leading-relaxed">
+              {t("numbers.exampleCaveat")}
+            </p>
+          </div>
+        </div>
+
+        <h3 className="text-ink reveal mt-14 text-sm font-semibold">
+          {t("numbers.factsTitle")}
+        </h3>
+        <dl className="reveal mt-4 grid gap-6 sm:grid-cols-3">
+          {(
+            [
+              [t("numbers.fact1Value"), t("numbers.fact1Label")],
+              [
+                t("numbers.fact2Value", { tools: targetToolCount }),
+                t("numbers.fact2Label", {
+                  tools: targetToolCount,
+                  categories: categoryCount,
+                }),
+              ],
+              [t("numbers.fact3Value"), t("numbers.fact3Label")],
+            ] as const
+          ).map(([value, label]) => (
+            <div key={label} className="border-line border-t pt-4">
+              <dt className="text-ink display tabular text-3xl font-semibold">
+                {value}
+              </dt>
+              <dd className="text-muted mt-2 text-sm leading-relaxed">{label}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <p className="border-brand text-ink reveal mt-12 max-w-2xl border-l-2 pl-5 text-sm leading-relaxed">
+          {t("numbers.euroOffice")}
+        </p>
       </section>
 
       {/* Sovereignty */}

@@ -106,12 +106,35 @@ All figures are ranges, labelled as planning estimates. They are not quotes.
 
 ### 7 — Savings outlook
 
-Qualitative only: low, moderate or strong, derived from license exposure removed,
-hosting-model change and support-model change — offset by migration effort and
-training load, including the window where costs temporarily rise.
+Two things, in this order.
 
-**No euro amounts, ever** (enforced by lint). The report states the model in one
-line so a reader can see what it does and does not account for.
+**The band** — low, moderate or strong — derived from licence exposure removed,
+hosting-model change and support-model change, offset by migration effort and
+training load, including the window where costs temporarily rise. Qualitative,
+and unchanged by anything below.
+
+**Priced subscription exposure** (`exposure.ts`), the only place lokal turns
+anything into money. The arithmetic is deliberately trivial: seats the user
+declared, times a price the vendor published, times twelve. There is no pricing
+model and no way to express one — see
+[ADR-0003](adr/0003-priced-exposure-from-published-list-prices.md).
+
+Three rules make the figure trustworthy rather than merely present:
+
+- **One subscription is counted once.** Source tools sold together share a
+  `bundleId`, and the stage takes the dearest plan and the largest seat count in
+  the group. Without this, an organization listing Microsoft 365 under office,
+  files, chat, intranet and forms would have one invoice counted five times.
+- **A subscription is only "avoided" once the roadmap replaces everything on
+  it.** Migrating office documents while chat stays on the same contract does
+  not end the contract. This is also the more useful planning output: it names
+  the remaining service standing between the organization and a cancellation.
+- **Coverage is always reported.** A stack of tools that publish no citable euro
+  price returns `null`; a partly-priced one says how partial it is.
+
+Amounts are integers in minor units with a currency code. The `€` glyph in
+engine, rulepack or report code is a lint error, because a hand-formatted amount
+is one that has escaped the plan name, source and date that make it checkable.
 
 ### 8 — AI lane
 

@@ -8,6 +8,49 @@ Dates are ISO 8601.
 
 ## [Unreleased]
 
+### Added (phase 6 — engagement)
+
+- **Priced subscription exposure.** The report now states what the current
+  subscriptions cost and what the roadmap removes, computed as declared seats
+  times a price the vendor publishes. Every figure carries its plan name,
+  billing term, tax basis, source link and the date the price was read, and the
+  report always states how many assessed areas carry a citable price. Never a
+  net saving, an ROI or a payback figure. Reverses the euro half of CLAUDE.md
+  rule 4 under six guardrails; see
+  `docs/adr/0003-priced-exposure-from-published-list-prices.md`.
+- **Rulepack `v2026-09`.** Adds Euro-Office — the AGPL office suite from the
+  Nextcloud/IONOS-led European consortium, released 2026-06-09 — with its
+  migration edges and a caution rule that keeps any young suite out of a large
+  or business-critical rollout without a pilot. Also adds published list prices
+  on source tools, grouped by subscription bundle so one Microsoft 365 contract
+  is counted once rather than once per category. `v2026-08` stays registered and
+  unchanged: released packs are immutable.
+- **Motion.** A dot travelling the connectors between steps (landing, wizard
+  progress, roadmap spine), a slowly rotating seal, and a headline word that
+  cycles through the products organizations are actually leaving. CSS only, no
+  library, no client component.
+- **Expert contact.** Optional `LOKAL_EXPERT_*` environment variables put a named
+  human on the landing page and at the end of every report, including the printed
+  copy. Links only — no form, no stored enquiry, no mail server, no account.
+- **`tests/e2e/print-and-motion.spec.ts`.** Asserts that nothing animated rests
+  invisible under print media or reduced motion, and that no euro figure reaches
+  the printed page without its basis.
+
+### Changed (phase 6)
+
+- The ESLint `no-currency-in-output` rule narrows from banning `€` and `EUR` to
+  banning the glyph. Pure layers carry `{ amountCents, currency }`; formatting is
+  a renderer's job.
+- German and English copy shortened across the landing page, the wizard and the
+  report, without weakening any caveat.
+- Rationale parameters holding enum values are now resolved to labels in every
+  renderer — the savings section previously printed `office_docs:` verbatim.
+- `method.not_modelled.licence_prices` replaced by `negotiated_contract_terms`:
+  lokal now models list prices, but still cannot see discounts or framework
+  agreements.
+- `/[locale]` renders dynamically rather than being statically prerendered, so
+  `LOKAL_EXPERT_*` can be set at container start rather than at build time.
+
 ### Fixed (detail step)
 
 - The detail step ("Angaben je Bereich") no longer shows raw Zod validation

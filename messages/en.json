@@ -135,7 +135,27 @@
     "headingWord2": "Google Workspace",
     "headingWord3": "SharePoint",
     "headingWord4": "Slack and Zoom",
-    "sealText": "sovereign · open · accountable"
+    "sealText": "sovereign · open · accountable",
+    "numbers": {
+      "title": "What you pay today, and what hangs on it",
+      "lead": "lokal invents no figures. It multiplies your seat count by the list prices vendors publish themselves — with the source and the date.",
+      "priceTitle": "Published list prices",
+      "priceColPlan": "Plan",
+      "priceColUnit": "Per seat/month",
+      "priceNote": "List prices from the vendor's own page, {observed}. Annual subscription, excl. VAT. Your contract terms may differ.",
+      "exampleTitle": "Worked example",
+      "exampleBody": "A municipality with {seats} seats on {plan}:",
+      "examplePerYear": "per year",
+      "exampleCaveat": "That is gross subscription spend, not a saving. Hosting, support and training cost too, and lokal does not price them.",
+      "factsTitle": "What you get back",
+      "fact1Value": "0",
+      "fact1Label": "accounts, API keys and external services",
+      "fact2Value": "{tools}",
+      "fact2Label": "reviewed target tools across {categories} areas, every one sourced",
+      "fact3Value": "AGPL",
+      "fact3Label": "you can run, modify and redistribute lokal yourself",
+      "euroOffice": "New in the rulepack: Euro-Office, the European office suite from Nextcloud, IONOS and partners — rated like everything else, including how young it is."
+    }
   },
   "wizard": {
     "title": "Assessment",

@@ -47,7 +47,13 @@ This section is deliberately near the top.
   Recommendations come from explicit, versioned rules over structured input. The
   same answers always produce the same report.
 - **Not a cost calculator.** lokal states savings as qualitative bands with named
-  drivers and offsets. It does not invent euro figures or ROI percentages.
+  drivers and offsets. It also states what your current subscriptions cost — but
+  only as your own declared seat count times a price the vendor publishes, shown
+  with the plan, the source link and the date it was read, and only for the areas
+  where such a price exists. It invents no figures, and it never states a net
+  saving, an ROI or a payback period, because hosting, support and staff time are
+  real costs it does not price. See
+  [ADR-0003](docs/adr/0003-priced-exposure-from-published-list-prices.md).
 - **Not a compliance tool.** Where legal duties apply (GoBD, retention, archival
   law), lokal flags them and tells you to verify with your own advisors.
 - **Not a procurement or migration execution system.** It plans; it does not
@@ -150,10 +156,37 @@ for the same variables in local, non-Docker development):
 | ---------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `DATABASE_URL`         | `file:/data/lokal.db`             | Path inside the container, on the `data` volume. Change together in both the `migrate` and `app` services if you change it.                                          |
 | `NEXT_PUBLIC_BASE_URL` | `http://localhost:3000`           | Used for absolute links in shared reports. Set this to your real domain (e.g. `https://lokal.example.org`) before handing out report links from a deployed instance. |
+| `LOKAL_EXPERT_*`       | unset                             | Optional contact block — see "Offering help" below. Unset means no block is shown.                                                                                   |
 
 To override a value, edit `docker-compose.yml` directly, or add a
 `docker-compose.override.yml` alongside it (Compose merges it automatically)
 so your changes don't conflict with future `git pull`s of this repo.
+
+### Offering help
+
+lokal produces a plan and then stops, and its capacity section frequently tells
+an organization they will need outside help. If you run an instance and can be
+that help, set these and a contact block appears on the landing page and at the
+end of every report — including the printed copy that gets forwarded to a council
+or a board:
+
+| Variable             | Notes                             |
+| -------------------- | --------------------------------- |
+| `LOKAL_EXPERT_NAME`  | Required for the block to appear. |
+| `LOKAL_EXPERT_ORG`   | Optional organization name.       |
+| `LOKAL_EXPERT_EMAIL` | Rendered as a `mailto:` link.     |
+| `LOKAL_EXPERT_PHONE` | Rendered as a `tel:` link.        |
+| `LOKAL_EXPERT_URL`   | Rendered as a link.               |
+| `LOKAL_EXPERT_NOTE`  | One sentence on what you do.      |
+
+A name plus at least one of email, phone or URL is the minimum; with less than
+that nothing is shown. These are read per request, so changing them needs a
+restart, not a rebuild.
+
+Nothing is stored or sent: the block renders links, not a form, so no enquiry
+data is collected and no mail server is required. The block says plainly that
+the contact was configured by the instance operator and that lokal does not vet
+or endorse anyone.
 
 ### Updating
 
@@ -259,7 +292,8 @@ See [`docs/architecture.md`](docs/architecture.md) for the full picture, and
 - Six-step intake wizard (organization, operating model, current stack, migration
   detail, AI posture, review)
 - Deterministic planning engine with full rationale traceability
-- Rulepack covering nine categories plus an AI use-case catalog
+- Rulepack covering nine categories plus an AI use-case catalog, including
+  Euro-Office and published vendor list prices
 - Polished report view with an at-a-glance summary and nine sections
 - Markdown export
 - Print-optimized report route
@@ -301,6 +335,11 @@ none:
   stated date. Verify current facts before making a procurement decision.
 - **Effort figures are planning estimates,** expressed as ranges and bands. They
   are not quotes and not commitments.
+- **Euro figures are list prices, not your contract.** They are published vendor
+  prices times the seats you declared, and they cover only the areas where such a
+  price could be cited — the report states how many. Negotiated terms, framework
+  agreements and discounts are invisible to lokal, so check the figure against
+  your own invoices.
 - **No compliance guarantees.** Legal and archival duties need your own advisors.
 - **Reports are not access-controlled in v0.1.0.** Report links are unguessable but
   not secret. Treat them as internal documents.
