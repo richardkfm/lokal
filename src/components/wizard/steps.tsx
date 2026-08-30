@@ -270,6 +270,18 @@ export function StackStep({ draft, update, issues }: StepProps) {
           onChange={(values) => update((d) => selectCategories(d, values))}
         />
       </Fieldset>
+      {/* What ticking a box actually commits you to.
+          Six categories is forty-two follow-up questions, and the step that
+          asks them is the longest page in the wizard. Saying so here is
+          cheaper than discovering it there. */}
+      {draft.selectedCategories.length > 0 ? (
+        <p className="text-muted text-sm">
+          {t("questionCount", {
+            questions: draft.selectedCategories.length * 7,
+            areas: draft.selectedCategories.length,
+          })}
+        </p>
+      ) : null}
       <p className="text-faint text-xs">{t("notAssessedNote")}</p>
     </div>
   );

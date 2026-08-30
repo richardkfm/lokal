@@ -113,15 +113,23 @@ describe("draft assembly", () => {
 });
 
 describe("selectCategories", () => {
-  it("seeds neutral starting values for a newly added category", () => {
+  /**
+   * A newly ticked category answers nothing on the respondent's behalf.
+   *
+   * This test asserted the opposite until v0.1.0's design review: criticality,
+   * Leidensdruck and Dringlichkeit arrived pre-chosen and visually identical to
+   * a real answer, and `urgency: "later"` is not a neutral middle — it demotes
+   * the category in the roadmap. The "Angaben prüfen" step then showed six of
+   * roughly thirty-five answers, so the substitution could not be caught there
+   * either. A tool that will not state a savings figure it cannot support must
+   * not state a Dringlichkeit nobody gave.
+   */
+  it("answers nothing on the respondent's behalf for a new category", () => {
     const draft = emptyDraft();
     const next = selectCategories(draft, ["office_docs"]);
 
-    expect(next.stack.office_docs).toEqual({
-      criticality: "medium",
-      pain: "medium",
-      urgency: "later",
-    });
+    expect(next.stack.office_docs).toEqual({});
+    expect(next.selectedCategories).toEqual(["office_docs"]);
   });
 
   it("never overwrites an already-answered category, even if re-selected", () => {

@@ -167,6 +167,7 @@
     "submitting": "Wird erstellt …",
     "submitFailed": "Der Plan konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
     "completeStep": "Bitte füllen Sie diesen Schritt aus.",
+    "errorSummaryTitle": "Diese Angaben fehlen noch",
     "startOver": "Von vorn beginnen",
     "errors": {
       "required": "Pflichtfeld.",
@@ -238,7 +239,8 @@
     "stack": {
       "legend": "Bereiche in Betrachtung",
       "hint": "Wählen Sie mindestens einen Bereich.",
-      "notAssessedNote": "Nicht gewählte Bereiche stehen im Bericht als nicht erhoben — nicht als unproblematisch."
+      "notAssessedNote": "Nicht gewählte Bereiche stehen im Bericht als nicht erhoben — nicht als unproblematisch.",
+      "questionCount": "Im nächsten Schritt beantworten Sie {questions} Fragen: sieben je Bereich, aktuell {areas, plural, one {ein Bereich} other {# Bereiche}}."
     },
     "detail": {
       "intro": "Diese Angaben bestimmen die Reihenfolge. Schätzungen genügen.",
@@ -279,8 +281,10 @@
       "useCasesHint": "Wählen Sie, was Sie tatsächlich vorhaben."
     },
     "review": {
-      "intro": "Ihre Angaben in Kurzform. Der Plan wird ausschließlich hieraus berechnet.",
+      "intro": "Alle Ihre Angaben, nach Schritten geordnet. Der Plan wird ausschließlich hieraus berechnet.",
       "edit": "Ändern",
+      "yes": "Ja",
+      "no": "Nein",
       "orgType": "Art",
       "seats": "Arbeitsplätze",
       "departments": "Bereiche",
@@ -293,7 +297,8 @@
       "warnNoDepartments": "Es wurden keine Bereiche benannt, obwohl die Organisation größer ist.",
       "warnNoAiUseCases": "Es wurde Interesse an KI angegeben, aber kein Anwendungsfall gewählt."
     },
-    "progressLabel": "Fortschritt"
+    "progressLabel": "Fortschritt",
+    "startOverConfirm": "Alle Angaben verwerfen und neu beginnen?"
   },
   "vocabulary": {
     "orgType": {
@@ -524,31 +529,40 @@
     },
     "category": {
       "office_docs": {
-        "label": "Office und Dokumente"
+        "label": "Office und Dokumente",
+        "hint": "Texte, Tabellen, Präsentationen. Z. B. Microsoft 365, LibreOffice."
       },
       "file_sharing": {
-        "label": "Dateiablage"
+        "label": "Dateiablage",
+        "hint": "Wo Dateien liegen und geteilt werden. Z. B. Netzlaufwerk, SharePoint, Dropbox."
       },
       "chat_video": {
-        "label": "Chat und Video"
+        "label": "Chat und Video",
+        "hint": "Kurznachrichten und Besprechungen. Z. B. Teams, Zoom, WhatsApp."
       },
       "intranet_wiki": {
-        "label": "Intranet und Wissen"
+        "label": "Intranet und Wissen",
+        "hint": "Interne Seiten und Wissen, das nicht in Dateien steht. Z. B. Confluence, SharePoint-Intranet."
       },
       "project_management": {
-        "label": "Projekte und Aufgaben"
+        "label": "Projekte und Aufgaben",
+        "hint": "Aufgaben, Termine, Zuständigkeiten. Z. B. Jira, Trello, Excel-Listen."
       },
       "helpdesk": {
-        "label": "Helpdesk"
+        "label": "Helpdesk",
+        "hint": "Anfragen von Bürgerinnen oder Beschäftigten mit Nachverfolgung. Z. B. Sammelpostfach, Jira Service Management."
       },
       "forms_surveys": {
-        "label": "Formulare und Umfragen"
+        "label": "Formulare und Umfragen",
+        "hint": "Antragsformulare und Umfragen. Z. B. Microsoft Forms, Google Forms, PDF zum Ausdrucken."
       },
       "crm": {
-        "label": "Kontaktverwaltung"
+        "label": "Kontaktverwaltung",
+        "hint": "Kontakte zu Externen mit Verlauf. Z. B. Salesforce, HubSpot, Adresslisten."
       },
       "dms_archive": {
-        "label": "Dokumentenmanagement"
+        "label": "Dokumentenmanagement",
+        "hint": "Rechtssichere Ablage mit Aufbewahrungsfristen — nicht dasselbe wie eine Dateiablage. Z. B. d.velop, Papierarchiv."
       }
     }
   },

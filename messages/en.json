@@ -167,6 +167,7 @@
     "submitting": "Creating …",
     "submitFailed": "The plan could not be created. Please try again.",
     "completeStep": "Please complete this step.",
+    "errorSummaryTitle": "These answers are still missing",
     "startOver": "Start over",
     "errors": {
       "required": "Required.",
@@ -238,7 +239,8 @@
     "stack": {
       "legend": "Areas in scope",
       "hint": "Choose at least one area.",
-      "notAssessedNote": "Unselected areas appear in the report as not assessed — not as unproblematic."
+      "notAssessedNote": "Unselected areas appear in the report as not assessed — not as unproblematic.",
+      "questionCount": "The next step asks {questions} questions: seven per area, currently {areas, plural, one {one area} other {# areas}}."
     },
     "detail": {
       "intro": "These answers set the sequence. Estimates are enough.",
@@ -279,8 +281,10 @@
       "useCasesHint": "Choose what you actually intend to do."
     },
     "review": {
-      "intro": "Your answers in brief. The plan is calculated from these alone.",
+      "intro": "Every answer you gave, grouped by step. The plan is computed from these and nothing else.",
       "edit": "Change",
+      "yes": "Yes",
+      "no": "No",
       "orgType": "Type",
       "seats": "Seats",
       "departments": "Areas",
@@ -293,7 +297,8 @@
       "warnNoDepartments": "No areas were named, although the organization is larger.",
       "warnNoAiUseCases": "Interest in AI was indicated, but no use case was chosen."
     },
-    "progressLabel": "Progress"
+    "progressLabel": "Progress",
+    "startOverConfirm": "Discard every answer and start again?"
   },
   "vocabulary": {
     "orgType": {
@@ -524,31 +529,40 @@
     },
     "category": {
       "office_docs": {
-        "label": "Office and documents"
+        "label": "Office and documents",
+        "hint": "Text, spreadsheets, presentations. E.g. Microsoft 365, LibreOffice."
       },
       "file_sharing": {
-        "label": "File storage"
+        "label": "File storage",
+        "hint": "Where files live and get shared. E.g. a network drive, SharePoint, Dropbox."
       },
       "chat_video": {
-        "label": "Chat and video"
+        "label": "Chat and video",
+        "hint": "Short messages and meetings. E.g. Teams, Zoom, WhatsApp."
       },
       "intranet_wiki": {
-        "label": "Intranet and knowledge"
+        "label": "Intranet and knowledge",
+        "hint": "Internal pages and knowledge that is not in files. E.g. Confluence, a SharePoint intranet."
       },
       "project_management": {
-        "label": "Projects and tasks"
+        "label": "Projects and tasks",
+        "hint": "Tasks, dates, who is responsible. E.g. Jira, Trello, spreadsheets."
       },
       "helpdesk": {
-        "label": "Helpdesk"
+        "label": "Helpdesk",
+        "hint": "Requests from citizens or staff, tracked to a close. E.g. a shared mailbox, Jira Service Management."
       },
       "forms_surveys": {
-        "label": "Forms and surveys"
+        "label": "Forms and surveys",
+        "hint": "Application forms and surveys. E.g. Microsoft Forms, Google Forms, a printable PDF."
       },
       "crm": {
-        "label": "Contact management"
+        "label": "Contact management",
+        "hint": "External contacts with a history. E.g. Salesforce, HubSpot, address lists."
       },
       "dms_archive": {
-        "label": "Document management"
+        "label": "Document management",
+        "hint": "Records management with retention periods — not the same as a file platform. E.g. d.velop, a paper archive."
       }
     }
   },

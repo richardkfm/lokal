@@ -130,14 +130,11 @@ export function copyEntryValues(
 }
 
 /**
- * Applies the categories chosen on the stack step, seeding a neutral
- * starting point for any category that is newly selected.
+ * Applies the categories chosen on the stack step.
  *
- * The seed is deliberately unopinionated — a scale midpoint/floor, not a
- * claim about any organization or product — so it never masquerades as a
- * sourced recommendation. `lockInConcern` and `trainingSensitivity` are left
- * unset: those are the judgment calls this tool exists to surface, not to
- * default away.
+ * A newly selected category starts empty. Every rating in it is a judgment call
+ * this tool exists to surface, and the reasoning that once applied to
+ * `lockInConcern` and `trainingSensitivity` applies to the other three as well.
  */
 export function selectCategories(draft: Draft, values: string[]): Draft {
   const selectedCategories = CATEGORY_IDS.filter((id) => values.includes(id));
@@ -145,8 +142,21 @@ export function selectCategories(draft: Draft, values: string[]): Draft {
 
   for (const category of selectedCategories) {
     const isNew = !draft.selectedCategories.includes(category);
+    // Nothing is pre-filled.
+    //
+    // A newly ticked category used to arrive with criticality, Leidensdruck and
+    // Dringlichkeit already chosen — visually indistinguishable from a real
+    // answer, and `urgency: "later"` is not a neutral middle: it demotes the
+    // category in the roadmap. A tool that refuses to state a savings figure it
+    // cannot support should not quietly state a Dringlichkeit the respondent
+    // never gave, and the review step then made the substitution uncheckable.
+    //
+    // The wall of unset fields this was guarding against is handled where it
+    // belongs: errors stay quiet until the step is actually attempted, each
+    // unanswered question names itself, and "Werte übernehmen" fills a whole
+    // category from one already answered.
     if (isNew && !stack[category]) {
-      stack[category] = { criticality: "medium", pain: "medium", urgency: "later" };
+      stack[category] = {};
     }
   }
 
@@ -312,6 +322,15 @@ export function useWizard() {
     setAttempted({});
   }, []);
 
+  /**
+   * Whether the last attempt to leave this step failed.
+   *
+   * Drives the error summary. Clicking "Weiter" on an incomplete step used to
+   * do nothing visible: focus stayed on the button, the page did not move, and
+   * the first error could be seven hundred pixels above.
+   */
+  const blocked = Boolean(attempted[step]) && !canAdvance;
+
   const next = useCallback(() => {
     setAttempted((current) => ({ ...current, [step]: true }));
     if (canAdvance) {
@@ -328,6 +347,7 @@ export function useWizard() {
     setStepIndex,
     issues,
     canAdvance,
+    blocked,
     next,
     back: () => setStepIndex((index) => Math.max(index - 1, 0)),
   };

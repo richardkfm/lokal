@@ -64,6 +64,35 @@ Dates are ISO 8601.
   gains a rule against the real mechanism, and the test asserts on rendered text
   rather than on the DOM. Also on paper: a running head and page numbers, and
   sections may now flow across a page boundary instead of being pushed whole.
+- **The questionnaire answered three questions on the respondent's behalf.**
+  Ticking a category pre-filled Betriebskritikalität, Leidensdruck and
+  Dringlichkeit, visually identical to a real answer — and `urgency: "later"` is
+  not a neutral middle, it demotes the category in the roadmap. The "Angaben
+  prüfen" step then showed six of roughly thirty-five answers under copy saying
+  the plan is computed solely from them, so the substitution could not be caught
+  there either. Nothing is pre-filled now, and the review step lists every
+  answer, grouped by the step that asked for it, each group editable.
+- **Failed validation left the user nowhere to go.** Clicking "Weiter" on an
+  incomplete step kept focus on the button, did not scroll, and showed two
+  adjacent fields both reading "Pflichtfeld." with nothing naming them. There is
+  now an error summary that takes focus and names each open question in the
+  form's own words rather than the schema's. "Bitte füllen Sie diesen Schritt
+  aus" appears only after an attempt, not on arrival.
+- **The review step showed a tool id.** "microsoft-365-apps" where the form had
+  said "Microsoft 365 (Word, Excel, PowerPoint)".
+
+### Added
+
+- Hints on all nine categories in step 3, with examples. "Dateiablage" versus
+  "Dokumentenmanagement" versus "Intranet und Wissen" is a genuine question, and
+  that step decides the shape of everything downstream.
+- Step 3 states how many follow-up questions the selection commits to. Six
+  categories is forty-two.
+- "Von vorn beginnen" now confirms before discarding fifteen minutes of answers,
+  and meets the 24px WCAG 2.5.8 target minimum.
+
+### Fixed
+
 - **The step connectors on the landing page.** They animated correctly while
   painting nothing: an unlayered `width: 100%` in `globals.css` beat the `w-10`
   utility meant to size them, and a percentage width in an indefinite grid track
