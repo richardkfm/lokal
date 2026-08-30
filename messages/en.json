@@ -726,7 +726,7 @@
       "recurring_licence_exposure_reduced": "Recurring licence exposure for {tool} across {seats} seats falls away.",
       "subscription_not_fully_replaced": "{plan} does not fall away yet: {remaining} area(s) still run on this subscription. The contract ends only once the last of them is replaced.",
       "support_contracts_still_needed": "Support contracts remain necessary and offset part of the saving.",
-      "training_cost": "Training effort for {seats} seats."
+      "training_cost": "Training effort for {seats} seats, summed across the affected areas."
     },
     "scale": {
       "additional_departments_manageable": "Additional areas can be taken on without rebuilding.",
@@ -756,8 +756,8 @@
       "savingsDetail": "band plus evidenced amounts",
       "ai": "AI",
       "aiDetail": "Recommended stance",
-      "seats": "Seats affected",
-      "seatsDetail": "of {total} in total",
+      "seats": "Seats, summed",
+      "seatsDetail": "Summed across the assessed areas; a seat in several areas counts more than once. Organization: {total}.",
       "phases": "Phases",
       "phasesDetail": "carrying work",
       "meterScale": "{score} out of 100"
@@ -828,10 +828,10 @@
       "drivers": "Where cost falls away",
       "offsets": "What works against it",
       "exposureTitle": "Today's subscription cost",
-      "exposureFigure": "Figure",
-      "exposureAmount": "Amount",
       "exposureCurrent": "Current, per year",
-      "exposureAvoided": "Removed by this plan",
+      "exposureFallsAwayAll": "Migrating every evidenced area removes this amount. That is not a saving: hosting, support and training are not priced here.",
+      "exposureFallsAwayPart": "This plan removes {amount} per year of it; the rest continues, because not every subscription is fully replaced. The part that does fall away is not a saving either: hosting, support and training are not priced here.",
+      "exposureFallsAwayNone": "This plan removes none of it for now: no subscription is fully replaced.",
       "exposureCoverage": "Evidenced for {priced} of {assessed} assessed areas, across {seats} seats.",
       "exposureNote": "Your own figures multiplied by published list prices — not an estimate, not a forecast.",
       "basisTitle": "How this is calculated",
@@ -863,6 +863,7 @@
     "roadmap": {
       "title": "Migration roadmap",
       "lead": "Sequence, effort and affected seats per phase. Effort is a planning estimate in admin days.",
+      "phaseEmpty": "Not occupied for this organization.",
       "effort": "{min}–{max} days",
       "seatsAffected": "Seats affected",
       "pilot": "pilot recommended",

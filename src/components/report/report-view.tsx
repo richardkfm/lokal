@@ -261,7 +261,19 @@ export async function ReportView({
                 {r("savings.exposureTitle")}
               </h3>
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              {/* One figure, not two.
+               *
+               * This was a pair of tiles — "Aktuell pro Jahr" and "Entfällt mit
+               * diesem Plan" — usually carrying the *same* amount, the second
+               * in green. ADR-0003 forbids a net saving, and a green number
+               * labelled "entfällt", set larger than the four caveats beneath
+               * it, is a net saving in everything but the noun. It is also the
+               * number that would be quoted, without its basis, in a Vorlage.
+               *
+               * What the second tile actually knew — how much of the exposure
+               * the roadmap removes — is a sentence, not a headline, and it is
+               * only interesting when it differs from the whole. */}
+              <div className="max-w-md">
                 <FigureCard
                   label={r("savings.exposureCurrent")}
                   value={money(exposure.annualCents)}
@@ -271,13 +283,18 @@ export async function ReportView({
                     seats: exposure.seatsPriced,
                   })}
                 />
-                <FigureCard
-                  label={r("savings.exposureAvoided")}
-                  value={money(exposure.avoidedAnnualCents)}
-                  tone={exposure.avoidedAnnualCents > 0 ? "good" : "neutral"}
-                  basis={r("savings.exposureNote")}
-                />
               </div>
+
+              <p className="text-muted mt-3 text-sm leading-relaxed">
+                {exposure.avoidedAnnualCents === 0
+                  ? r("savings.exposureFallsAwayNone")
+                  : exposure.avoidedAnnualCents >= exposure.annualCents
+                    ? r("savings.exposureFallsAwayAll")
+                    : r("savings.exposureFallsAwayPart", {
+                        amount: money(exposure.avoidedAnnualCents),
+                      })}{" "}
+                {r("savings.exposureNote")}
+              </p>
 
               {/* The audit trail. Every figure above traces to a line here, and
                   every line names a page the reader can open. */}
@@ -291,11 +308,8 @@ export async function ReportView({
                     className="border-line bg-sunken break-inside-avoid rounded-md border p-3 text-xs"
                   >
                     <p className="text-ink">
-                      {basisLine(
-                        basis,
-                        exposure.currency,
-                        report.locale,
-                        (key, values) => t(key as never, values as never),
+                      {basisLine(basis, exposure.currency, locale, (key, values) =>
+                        t(key as never, values as never),
                       )}
                     </p>
                     <p className="text-muted mt-1">
@@ -461,12 +475,30 @@ export async function ReportView({
             >
               <span className="path-dot" />
             </div>
-            {report.roadmap.phases
-              .filter(
-                (phase) =>
-                  phase.migrations.length > 0 || phase.prerequisites.length > 0,
-              )
-              .map((phase) => (
+            {/* Empty phases are shown, not filtered away.
+             *
+             * Filtering left the printed headings reading "Phase 0", "Phase 2",
+             * "Phase 3" — and a reader who notices the gap has no way to
+             * resolve it, because the numbering is a property of the rulepack
+             * they cannot see. Renumbering contiguously would hide the same
+             * fact more neatly. For this audience an unoccupied phase is
+             * itself a finding: it says the plan has nothing quick to offer,
+             * or nothing left to optimize, and that is worth a line. */}
+            {report.roadmap.phases.map((phase) =>
+              phase.migrations.length === 0 && phase.prerequisites.length === 0 ? (
+                <div
+                  key={phase.id}
+                  className="border-line break-inside-avoid rounded-lg border border-dashed p-3"
+                >
+                  <p className="text-muted text-sm">
+                    <span className="text-ink font-medium">
+                      {r(`phase.${phase.id}.title` as never)}
+                    </span>
+                    {": "}
+                    {r("roadmap.phaseEmpty")}
+                  </p>
+                </div>
+              ) : (
                 <div
                   key={phase.id}
                   className="border-line bg-surface break-inside-avoid rounded-lg border p-4"
@@ -576,7 +608,8 @@ export async function ReportView({
 
                   <RationaleList items={phase.notes} t={t} labels={labels} dense />
                 </div>
-              ))}
+              ),
+            )}
           </div>
 
           {report.roadmap.keepForNow.length > 0 ? (

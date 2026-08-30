@@ -123,14 +123,11 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
   if (exposure) {
     const money = (cents: number) => formatAmount(cents, exposure.currency, locale);
 
+    // One figure, and a sentence for what the roadmap removes from it. A second
+    // amount in a second row — the same number, labelled "entfällt" — is a net
+    // saving in everything but the noun, and ADR-0003 forbids stating one.
     push(`### ${r("savings.exposureTitle")}`, "");
-    push(
-      `| ${r("savings.exposureFigure")} | ${r("savings.exposureAmount")} |`,
-      `| --- | --- |`,
-      `| ${r("savings.exposureCurrent")} | ${money(exposure.annualCents)} |`,
-      `| ${r("savings.exposureAvoided")} | ${money(exposure.avoidedAnnualCents)} |`,
-      "",
-    );
+    push(`**${r("savings.exposureCurrent")}: ${money(exposure.annualCents)}**`, "");
     push(
       r("savings.exposureCoverage", {
         priced: exposure.categoriesPriced,
@@ -139,6 +136,15 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
       }),
       "",
     );
+    const fallsAway =
+      exposure.avoidedAnnualCents === 0
+        ? r("savings.exposureFallsAwayNone")
+        : exposure.avoidedAnnualCents >= exposure.annualCents
+          ? r("savings.exposureFallsAwayAll")
+          : r("savings.exposureFallsAwayPart", {
+              amount: money(exposure.avoidedAnnualCents),
+            });
+    push(`${fallsAway} ${r("savings.exposureNote")}`, "");
 
     push(`#### ${r("savings.basisTitle")}`, "");
     for (const basis of exposure.basis) {
@@ -205,7 +211,12 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
   // --- 5 Roadmap -----------------------------------------------------------
   push(`## 5. ${r("roadmap.title")}`, "", r("roadmap.lead"), "");
   for (const phase of report.roadmap.phases) {
-    if (phase.migrations.length === 0 && phase.prerequisites.length === 0) continue;
+    // An unoccupied phase is named rather than skipped: skipping left the
+    // headings reading 0, 2, 3 with no way for a reader to resolve the gap.
+    if (phase.migrations.length === 0 && phase.prerequisites.length === 0) {
+      push(`### ${r(`phase.${phase.id}.title`)}`, "", r("roadmap.phaseEmpty"), "");
+      continue;
+    }
 
     push(`### ${r(`phase.${phase.id}.title`)}`, "");
     push(r(`phase.${phase.id}.goal`), "");

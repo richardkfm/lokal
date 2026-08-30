@@ -48,6 +48,53 @@ describe("markdown export", () => {
     }
   });
 
+  /**
+   * Three numbers a sceptical reader stops at.
+   *
+   * All three shipped in v0.1.0 and none had a test, because each is a
+   * presentation decision rather than a computation — the engine was right
+   * every time and the document still said something a Kämmerer would query.
+   */
+  describe("the figures a reader will check", () => {
+    it("states the exposure once, never as a saving", () => {
+      for (const { id } of PERSONAS) {
+        const markdown = markdownFor(id, "de");
+        if (!markdown.includes("Heutige Abonnementkosten")) continue;
+
+        // The section used to carry two amounts, usually identical, the second
+        // labelled "Entfällt mit diesem Plan" and set in green. ADR-0003
+        // forbids stating a net saving, and that is what it read as.
+        const section = markdown.slice(markdown.indexOf("Heutige Abonnementkosten"));
+        // `Intl.NumberFormat` puts a non-breaking space before the glyph.
+        const amounts = section
+          .slice(0, section.indexOf("####"))
+          .match(/\d[\d.,]*\s?€/gu);
+        expect(amounts, `amounts in the exposure block of ${id}`).toHaveLength(1);
+      }
+    });
+
+    it("says how a summed seat count was summed", () => {
+      // "735 von 180 insgesamt" was the third-largest number on the first page
+      // and arithmetically impossible on its face: it is a sum over categories,
+      // so a person in six of them is counted six times.
+      expect(markdownFor("municipality-180", "de")).not.toMatch(/von \d+ insgesamt/);
+    });
+
+    it("names every phase, including the ones with nothing in them", () => {
+      for (const { id } of PERSONAS) {
+        const markdown = markdownFor(id, "de");
+        const numbers = [...markdown.matchAll(/^### Phase (\d)/gm)].map((m) =>
+          Number(m[1]),
+        );
+
+        // A gap between "Phase 0" and "Phase 2" is a question the document
+        // cannot answer: the numbering belongs to a rulepack the reader has
+        // never seen.
+        expect(numbers).toEqual(numbers.map((_, index) => index));
+      }
+    });
+  });
+
   it("never leaks a raw message key into the output", () => {
     for (const { id } of PERSONAS) {
       const markdown = markdownFor(id);

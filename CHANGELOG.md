@@ -33,6 +33,37 @@ Dates are ISO 8601.
   `ecosystem` has no label anywhere in the rulepack, so it renders as
   "Verbund (nextcloud)"; giving ecosystems a name means a new rulepack version
   and is recorded in the test rather than fixed silently.
+- **Three numbers a reader stops at.** The savings section stated the exposure
+  twice — the same amount, the second labelled "Entfällt mit diesem Plan" and
+  set in green, which is a net saving in everything but the noun and is what
+  ADR-0003 exists to forbid. It now states one figure, with what the roadmap
+  removes from it as a sentence beneath. The at-a-glance card read "735 von 180
+  insgesamt", a sum over categories in which a person in six areas is counted
+  six times, and now says so. And the roadmap numbered its phases from the
+  rulepack while filtering empty ones out, so the printed headings read 0, 2, 3
+  with no way for a reader to resolve the gap; an unoccupied phase is now named,
+  because for this audience it is itself a finding.
+- **Counts agree with their nouns.** Fourteen messages interpolated a number
+  beside a plural noun, so every report said "1 Bereiche sollten vorerst
+  unverändert bleiben" in both languages. The cause was in the tests: they used
+  a hand-written stand-in for next-intl that could not evaluate an ICU plural,
+  so a message using one would have failed the suite. The stand-in is replaced
+  by next-intl's own `createTranslator` with a throwing `onError`.
+- **English reports served German prose.** The report view took its locale from
+  the stored intake rather than the request, so `/en/report/<id>` returned
+  German tool summaries, prerequisite labels, AI descriptions and scaling notes
+  — every string sourced from the rulepack rather than the catalogue. The
+  Markdown export keeps the stored locale, whose route carries no locale
+  segment. Price observation dates now also render in the reader's convention
+  rather than the rulepack's ISO storage form.
+- **The printed brief omitted the candidates it ruled out.** The disclosure
+  printed as a bare count: `print.css` overrode `display` on its children, and
+  Chromium hides them through `::details-content`, which that cannot reach.
+  "Considered and ruled out" is one of the four outputs CLAUDE.md names as
+  proving the thesis. The print tree now opens the disclosure itself, the CSS
+  gains a rule against the real mechanism, and the test asserts on rendered text
+  rather than on the DOM. Also on paper: a running head and page numbers, and
+  sections may now flow across a page boundary instead of being pushed whole.
 - **The step connectors on the landing page.** They animated correctly while
   painting nothing: an unlayered `width: 100%` in `globals.css` beat the `w-10`
   utility meant to size them, and a percentage width in an indefinite grid track
