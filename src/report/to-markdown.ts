@@ -1,5 +1,6 @@
 import { basisLine, formatAmount } from "./money";
-import { localizeParams } from "./params";
+import { localizeParams, prerequisiteLabels } from "./params";
+import type { DocumentLabels } from "./params";
 import type { PlanningReport } from "./schema";
 import type { RationaleItem } from "@/domain/rationale";
 
@@ -22,9 +23,16 @@ function escapeCell(value: string): string {
   return value.replace(/\|/g, "\\|").replace(/\n/g, " ");
 }
 
-function list(items: RationaleItem[], { t }: MarkdownContext): string[] {
+/**
+ * The context plus the labels only the document can supply — prerequisite ids
+ * among them. Internal, so the caller's `MarkdownContext` stays a translator.
+ */
+type ListContext = MarkdownContext & { labels: DocumentLabels };
+
+function list(items: RationaleItem[], { t, labels }: ListContext): string[] {
   return items.map(
-    (item) => `- ${t(`rationale.${item.code}`, localizeParams(item.params, t))}`,
+    (item) =>
+      `- ${t(`rationale.${item.code}`, localizeParams(item.params, t, labels))}`,
   );
 }
 
@@ -39,6 +47,8 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
   const v = (key: string) => t(`vocabulary.${key}`);
   const category = (id: string) => v(`category.${id}.label`);
   const locale = report.locale;
+  const labels = prerequisiteLabels(report.roadmap.phases, locale);
+  const ctx: ListContext = { ...context, labels };
 
   const out: string[] = [];
   const push = (...lines: string[]) => out.push(...lines);
@@ -98,14 +108,14 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
   blank();
 
   // --- 2 Advantages --------------------------------------------------------
-  push(`## 2. ${r("advantages.title")}`, "", ...list(report.advantages, context));
+  push(`## 2. ${r("advantages.title")}`, "", ...list(report.advantages, ctx));
   blank();
 
   // --- 3 Savings -----------------------------------------------------------
   push(`## 3. ${r("savings.title")}`, "");
   push(`**${r(`outlook.${report.savings.band}`)}**`, "");
-  push(`### ${r("savings.drivers")}`, "", ...list(report.savings.drivers, context), "");
-  push(`### ${r("savings.offsets")}`, "", ...list(report.savings.offsets, context), "");
+  push(`### ${r("savings.drivers")}`, "", ...list(report.savings.drivers, ctx), "");
+  push(`### ${r("savings.offsets")}`, "", ...list(report.savings.offsets, ctx), "");
 
   // The figures come after the band, never instead of it, and every one of them
   // is followed by the line that says where it came from (ADR-0003).
@@ -113,14 +123,11 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
   if (exposure) {
     const money = (cents: number) => formatAmount(cents, exposure.currency, locale);
 
+    // One figure, and a sentence for what the roadmap removes from it. A second
+    // amount in a second row — the same number, labelled "entfällt" — is a net
+    // saving in everything but the noun, and ADR-0003 forbids stating one.
     push(`### ${r("savings.exposureTitle")}`, "");
-    push(
-      `| ${r("savings.exposureFigure")} | ${r("savings.exposureAmount")} |`,
-      `| --- | --- |`,
-      `| ${r("savings.exposureCurrent")} | ${money(exposure.annualCents)} |`,
-      `| ${r("savings.exposureAvoided")} | ${money(exposure.avoidedAnnualCents)} |`,
-      "",
-    );
+    push(`**${r("savings.exposureCurrent")}: ${money(exposure.annualCents)}**`, "");
     push(
       r("savings.exposureCoverage", {
         priced: exposure.categoriesPriced,
@@ -129,6 +136,15 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
       }),
       "",
     );
+    const fallsAway =
+      exposure.avoidedAnnualCents === 0
+        ? r("savings.exposureFallsAwayNone")
+        : exposure.avoidedAnnualCents >= exposure.annualCents
+          ? r("savings.exposureFallsAwayAll")
+          : r("savings.exposureFallsAwayPart", {
+              amount: money(exposure.avoidedAnnualCents),
+            });
+    push(`${fallsAway} ${r("savings.exposureNote")}`, "");
 
     push(`#### ${r("savings.basisTitle")}`, "");
     for (const basis of exposure.basis) {
@@ -146,10 +162,10 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
       }
       push(`  - ${r("savings.basisSource")}: ${basis.source}`);
     }
-    push("", ...list(exposure.notes, context), "");
+    push("", ...list(exposure.notes, ctx), "");
   }
 
-  push(...list(report.savings.modelLimitations, context));
+  push(...list(report.savings.modelLimitations, ctx));
   blank();
 
   // --- 4 Target stack ------------------------------------------------------
@@ -165,6 +181,35 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
   }
   blank();
 
+  /**
+   * Fit criteria common to every recommendation, stated once rather than on
+   * each of six cards. See the same computation in `report-view.tsx`, and the
+   * reason it exists: about thirty bullets were carrying about five facts.
+   */
+  const recommendations = report.targetStack.filter((entry) => entry.recommended);
+  const fitKey = (item: RationaleItem) =>
+    `${item.code}::${JSON.stringify(item.params)}`;
+  const sharedFit =
+    recommendations.length > 1
+      ? recommendations[0]!.recommended!.fitReasons.filter((item) =>
+          recommendations.every((entry) =>
+            entry.recommended!.fitReasons.some(
+              (other) => fitKey(other) === fitKey(item),
+            ),
+          ),
+        )
+      : [];
+  const sharedFitKeys = new Set(sharedFit.map(fitKey));
+
+  if (sharedFit.length > 0) {
+    push(
+      `### ${r("stack.sharedFit", { count: recommendations.length })}`,
+      "",
+      ...list(sharedFit, ctx),
+      "",
+    );
+  }
+
   for (const entry of report.targetStack) {
     push(`### ${category(entry.category)}`, "");
     if (entry.coverageDepth === "focused") {
@@ -175,16 +220,21 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
         `**${entry.recommended.tool.name}** — ${localized(entry.recommended.tool.summary, locale)}`,
         "",
       );
-      push(...list(entry.recommended.fitReasons, context), "");
+      const distinct = entry.recommended.fitReasons.filter(
+        (item) => !sharedFitKeys.has(fitKey(item)),
+      );
+      if (distinct.length > 0) push(...list(distinct, ctx), "");
       if (entry.recommended.cautions.length > 0) {
-        push(...list(entry.recommended.cautions, context), "");
+        push(...list(entry.recommended.cautions, ctx), "");
       }
       push(localized(entry.recommended.tool.scalabilityNotes, locale), "");
     }
     if (entry.ruledOut.length > 0) {
       push(`_${r("stack.ruledOut", { count: entry.ruledOut.length })}_`, "");
       for (const { tool, reason } of entry.ruledOut) {
-        push(`- **${tool.name}**: ${t(`rationale.${reason.code}`, reason.params)}`);
+        push(
+          `- **${tool.name}**: ${t(`rationale.${reason.code}`, localizeParams(reason.params, t, labels))}`,
+        );
       }
       blank();
     }
@@ -193,7 +243,12 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
   // --- 5 Roadmap -----------------------------------------------------------
   push(`## 5. ${r("roadmap.title")}`, "", r("roadmap.lead"), "");
   for (const phase of report.roadmap.phases) {
-    if (phase.migrations.length === 0 && phase.prerequisites.length === 0) continue;
+    // An unoccupied phase is named rather than skipped: skipping left the
+    // headings reading 0, 2, 3 with no way for a reader to resolve the gap.
+    if (phase.migrations.length === 0 && phase.prerequisites.length === 0) {
+      push(`### ${r(`phase.${phase.id}.title`)}`, "", r("roadmap.phaseEmpty"), "");
+      continue;
+    }
 
     push(`### ${r(`phase.${phase.id}.title`)}`, "");
     push(r(`phase.${phase.id}.goal`), "");
@@ -215,7 +270,7 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
         "",
         `${r(`difficulty.${migration.difficulty.label}`)} · ${r("roadmap.effort", { min: migration.effort.days.min, max: migration.effort.days.max })} · ${migration.seats} ${r("glance.seats")}${migration.pilotRecommended ? ` · ${r("roadmap.pilot")}` : ""}${migration.externalSupportLikely ? ` · ${r("roadmap.externalSupport")}` : ""}`,
         "",
-        ...list(migration.reasons, context),
+        ...list(migration.reasons, ctx),
       );
       if (migration.gotchas.length > 0) {
         push("", `${r("roadmap.watchOutFor")}`, "");
@@ -229,7 +284,7 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     push(`### ${r("roadmap.keepForNow")}`, "", r("roadmap.keepForNowLead"), "");
     for (const deferred of report.roadmap.keepForNow) {
       push(
-        `- **${category(deferred.category)}**${deferred.currentToolName ? ` (${deferred.currentToolName})` : ""}: ${t(`rationale.${deferred.reason.code}`, deferred.reason.params)} ${t(`rationale.${deferred.revisitWhen}`)}`,
+        `- **${category(deferred.category)}**${deferred.currentToolName ? ` (${deferred.currentToolName})` : ""}: ${t(`rationale.${deferred.reason.code}`, localizeParams(deferred.reason.params, t, labels))} ${t(`rationale.${deferred.revisitWhen}`)}`,
       );
     }
     blank();
@@ -261,10 +316,10 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     "",
   );
   if (report.readiness.gaps.length > 0) {
-    push(`### ${r("capacity.gaps")}`, "", ...list(report.readiness.gaps, context), "");
+    push(`### ${r("capacity.gaps")}`, "", ...list(report.readiness.gaps, ctx), "");
   }
   if (report.capacity.gaps.length > 0) {
-    push(...list(report.capacity.gaps, context), "");
+    push(...list(report.capacity.gaps, ctx), "");
   }
 
   // --- 7 AI ----------------------------------------------------------------
@@ -279,11 +334,11 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     if (recommendation.deployment) {
       push(`**${localized(recommendation.deployment.label, locale)}**`, "");
     }
-    push(...list(recommendation.reasons, context), "");
+    push(...list(recommendation.reasons, ctx), "");
     push(localized(recommendation.governanceNotes, locale), "");
-    push(...list(recommendation.risks, context), "");
+    push(...list(recommendation.risks, ctx), "");
   }
-  push(...list(report.aiLane.notes, context));
+  push(...list(report.aiLane.notes, ctx));
   blank();
 
   // --- 8 Scalability -------------------------------------------------------
@@ -299,7 +354,7 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     push(
       `**${r(`scalability.${key}`)}**`,
       "",
-      ...list(report.scalability[key], context),
+      ...list(report.scalability[key], ctx),
       "",
     );
   }
@@ -313,7 +368,7 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     ["cautionFlags", report.nextSteps.cautionFlags],
   ] as const) {
     if (items.length === 0) continue;
-    push(`### ${r(`next.${key}`)}`, "", ...list(items, context), "");
+    push(`### ${r(`next.${key}`)}`, "", ...list(items, ctx), "");
   }
 
   // --- Method --------------------------------------------------------------
@@ -332,7 +387,7 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     push(
       `### ${r("method.dataQuality")}`,
       "",
-      ...list(report.method.dataQualityNotes, context),
+      ...list(report.method.dataQualityNotes, ctx),
       "",
     );
   }

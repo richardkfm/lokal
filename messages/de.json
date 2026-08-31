@@ -16,6 +16,12 @@
     "sourceLink": "Quellcode",
     "footerProductTitle": "Produkt",
     "footerProjectTitle": "Projekt",
+    "footerLegalTitle": "Rechtliches",
+    "footerLegal": {
+      "imprint": "Impressum",
+      "privacy": "Datenschutzerklärung",
+      "accessibility": "Barrierefreiheitserklärung"
+    },
     "footerLicense": "Lizenz (AGPL-3.0)",
     "footerRulepack": "Regelwerk {version}",
     "expert": {
@@ -41,7 +47,7 @@
       "risks": "Welche Risiken, Abhängigkeiten und Schulungsbedarfe kommen auf uns zu?"
     },
     "audienceTitle": "Für wen",
-    "audience": "Kommunen, Landkreise, Schulen, Stadtwerke, Vereine und Mittelstand.",
+    "audience": "Überall dort, wo ein Wechsel geplant und nicht nur diskutiert werden muss.",
     "outputTitle": "Was am Ende herauskommt",
     "ctaSecondary": "So entsteht der Plan",
     "trust": {
@@ -109,7 +115,7 @@
       "school": "Schulen",
       "utility": "Stadtwerke",
       "association": "Vereine",
-      "sme": "KMU"
+      "sme": "Mittelstand"
     },
     "sovereignty": {
       "title": "Souverän auch im Werkzeug selbst",
@@ -135,7 +141,8 @@
     "headingWord2": "Google Workspace",
     "headingWord3": "SharePoint",
     "headingWord4": "Slack und Zoom",
-    "sealText": "souverän · offen · nachvollziehbar",
+    "sealTop": "souverän · offen",
+    "sealBottom": "nachvollziehbar",
     "numbers": {
       "title": "Was Sie heute zahlen, und was daran hängt",
       "lead": "lokal erfindet keine Zahlen. Es multipliziert Ihre Arbeitsplätze mit den Listenpreisen, die die Anbieter selbst veröffentlichen — mit Quelle und Datum.",
@@ -154,7 +161,7 @@
       "fact2Label": "geprüfte Zielwerkzeuge in {categories} Bereichen, alle quellenbelegt",
       "fact3Value": "AGPL",
       "fact3Label": "Sie können lokal selbst betreiben, ändern und weitergeben",
-      "euroOffice": "Neu im Regelwerk: Euro-Office, die europäische Office-Suite von Nextcloud, IONOS und Partnern — bewertet wie alles andere, einschließlich ihrer Jugend."
+      "euroOffice": "Im Regelwerk enthalten: Euro-Office, die europäische Office-Suite von Nextcloud, IONOS und Partnern — nach denselben Kriterien bewertet wie jede andere, Reifegrad eingeschlossen."
     }
   },
   "wizard": {
@@ -167,6 +174,7 @@
     "submitting": "Wird erstellt …",
     "submitFailed": "Der Plan konnte nicht erstellt werden. Bitte versuchen Sie es erneut.",
     "completeStep": "Bitte füllen Sie diesen Schritt aus.",
+    "errorSummaryTitle": "Diese Angaben fehlen noch",
     "startOver": "Von vorn beginnen",
     "errors": {
       "required": "Pflichtfeld.",
@@ -238,13 +246,17 @@
     "stack": {
       "legend": "Bereiche in Betrachtung",
       "hint": "Wählen Sie mindestens einen Bereich.",
-      "notAssessedNote": "Nicht gewählte Bereiche stehen im Bericht als nicht erhoben — nicht als unproblematisch."
+      "notAssessedNote": "Nicht gewählte Bereiche stehen im Bericht als nicht erhoben — nicht als unproblematisch.",
+      "questionCount": "Im nächsten Schritt beantworten Sie {questions} Fragen: sieben je Bereich, aktuell {areas, plural, one {ein Bereich} other {# Bereiche}}."
     },
     "detail": {
       "intro": "Diese Angaben bestimmen die Reihenfolge. Schätzungen genügen.",
       "nothingSelected": "Es wurde noch kein Bereich ausgewählt.",
       "currentToolLabel": "Derzeit eingesetzt",
-      "currentToolHint": "Frei eintragen. Leer lassen, wenn bislang nichts im Einsatz ist.",
+      "currentToolHint": "Bekannte Produkte auswählen — das schärft Aufwand, Abhängigkeit und Kostenausweis. Sonst „Anderes System“.",
+      "currentToolNone": "Nichts im Einsatz",
+      "currentToolOther": "Anderes System …",
+      "currentToolOtherLabel": "Welches System?",
       "currentToolPlaceholder": "z. B. SharePoint",
       "seatsLabel": "Betroffene Arbeitsplätze",
       "seatsHint": "Kann von der Gesamtzahl abweichen — ein Ticketsystem betrifft oft wenige.",
@@ -259,7 +271,7 @@
       "urgencyLabel": "Dringlichkeit",
       "urgencyHint": "Wann soll sich etwas ändern?",
       "keyboardHint": "Tipp: Innerhalb einer Auswahl wählen die Zifferntasten 1–3 die jeweilige Option.",
-      "progress": "{done} von {total} Bereichen vollständig",
+      "progress": "{done} von {total, plural, one {einem Bereich} other {# Bereichen}} vollständig",
       "applyToAllLabel": "Werte des ersten Bereichs für alle übernehmen",
       "copyFromFirstLabel": "Werte von „{category}“ übernehmen"
     },
@@ -276,8 +288,10 @@
       "useCasesHint": "Wählen Sie, was Sie tatsächlich vorhaben."
     },
     "review": {
-      "intro": "Ihre Angaben in Kurzform. Der Plan wird ausschließlich hieraus berechnet.",
+      "intro": "Alle Ihre Angaben, nach Schritten geordnet. Der Plan wird ausschließlich hieraus berechnet.",
       "edit": "Ändern",
+      "yes": "Ja",
+      "no": "Nein",
       "orgType": "Art",
       "seats": "Arbeitsplätze",
       "departments": "Bereiche",
@@ -290,7 +304,8 @@
       "warnNoDepartments": "Es wurden keine Bereiche benannt, obwohl die Organisation größer ist.",
       "warnNoAiUseCases": "Es wurde Interesse an KI angegeben, aber kein Anwendungsfall gewählt."
     },
-    "progressLabel": "Fortschritt"
+    "progressLabel": "Fortschritt",
+    "startOverConfirm": "Alle Angaben verwerfen und neu beginnen?"
   },
   "vocabulary": {
     "orgType": {
@@ -521,45 +536,54 @@
     },
     "category": {
       "office_docs": {
-        "label": "Office und Dokumente"
+        "label": "Office und Dokumente",
+        "hint": "Texte, Tabellen, Präsentationen. Z. B. Microsoft 365, LibreOffice."
       },
       "file_sharing": {
-        "label": "Dateiablage"
+        "label": "Dateiablage",
+        "hint": "Wo Dateien liegen und geteilt werden. Z. B. Netzlaufwerk, SharePoint, Dropbox."
       },
       "chat_video": {
-        "label": "Chat und Video"
+        "label": "Chat und Video",
+        "hint": "Kurznachrichten und Besprechungen. Z. B. Teams, Zoom, WhatsApp."
       },
       "intranet_wiki": {
-        "label": "Intranet und Wissen"
+        "label": "Intranet und Wissen",
+        "hint": "Interne Seiten und Wissen, das nicht in Dateien steht. Z. B. Confluence, SharePoint-Intranet."
       },
       "project_management": {
-        "label": "Projekte und Aufgaben"
+        "label": "Projekte und Aufgaben",
+        "hint": "Aufgaben, Termine, Zuständigkeiten. Z. B. Jira, Trello, Excel-Listen."
       },
       "helpdesk": {
-        "label": "Helpdesk"
+        "label": "Helpdesk",
+        "hint": "Anfragen von Bürgerinnen oder Beschäftigten mit Nachverfolgung. Z. B. Sammelpostfach, Jira Service Management."
       },
       "forms_surveys": {
-        "label": "Formulare und Umfragen"
+        "label": "Formulare und Umfragen",
+        "hint": "Antragsformulare und Umfragen. Z. B. Microsoft Forms, Google Forms, PDF zum Ausdrucken."
       },
       "crm": {
-        "label": "Kontaktverwaltung"
+        "label": "Kontaktverwaltung",
+        "hint": "Kontakte zu Externen mit Verlauf. Z. B. Salesforce, HubSpot, Adresslisten."
       },
       "dms_archive": {
-        "label": "Dokumentenmanagement"
+        "label": "Dokumentenmanagement",
+        "hint": "Rechtssichere Ablage mit Aufbewahrungsfristen — nicht dasselbe wie eine Dateiablage. Z. B. d.velop, Papierarchiv."
       }
     }
   },
   "rationale": {
     "advantage": {
-      "aligns_with_public_sector_expectations": "Passt zu den Erwartungen an öffentliche Stellen: nachvollziehbare Beschaffung, offene Formate, prüfbare Verfahren.",
-      "data_stays_under_own_control": "Die Daten bleiben unter eigener Kontrolle ({count} empfohlene Systeme mit hoher Datenhoheit).",
-      "hosting_location_is_a_choice": "Der Betriebsort wird zur Entscheidung statt zur Vorgabe des Anbieters.",
-      "open_formats_and_exit_options": "Offene Formate halten einen späteren Wechsel offen.",
-      "ready_for_local_ai": "Der Zielaufbau lässt sich mit selbst betriebener KI verbinden.",
-      "reduced_lock_in": "Geringere Abhängigkeit in {count} Bereichen, in denen Sie diese ausdrücklich als Problem benannt haben."
+      "aligns_with_public_sector_expectations": "Als öffentliche Stelle profitieren Sie dreifach: nachvollziehbare Beschaffung, offene Formate, prüfbare Verfahren.",
+      "data_stays_under_own_control": "Die Daten bleiben unter eigener Kontrolle ({count, plural, one {ein empfohlenes System} other {# empfohlene Systeme}} mit hoher Datenhoheit).",
+      "hosting_location_is_a_choice": "Der Betriebsort wird zur Entscheidung statt zur Vorgabe: mindestens ein empfohlenes System lässt sich selbst betreiben.",
+      "open_formats_and_exit_options": "{count, plural, one {Das empfohlene System speichert} other {Alle # empfohlenen Systeme speichern}} in offenen Formaten — ein späterer Wechsel bleibt möglich.",
+      "ready_for_local_ai": "Mindestens ein empfohlenes System lässt sich mit selbst betriebener KI verbinden, statt an einen externen Anbieter gebunden zu sein.",
+      "reduced_lock_in": "Geringere Abhängigkeit in {count, plural, one {einem Bereich} other {# Bereichen}}, in {count, plural, one {dem} other {denen}} Sie diese ausdrücklich als Problem benannt haben."
     },
     "ai": {
-      "address_prerequisites_first": "Alle {count} gewünschten Anwendungsfälle setzen zunächst Vorarbeiten voraus.",
+      "address_prerequisites_first": "{count, plural, one {Der gewünschte Anwendungsfall setzt} other {Alle # gewünschten Anwendungsfälle setzen}} zunächst Vorarbeiten voraus.",
       "fits_today": "Technisch und organisatorisch heute tragfähig.",
       "hardware_below_requirement": "Die vorhandene Hardware ({available}) reicht für diesen Anwendungsfall nicht aus; erforderlich wäre mindestens {required}.",
       "needs_a_document_store_first": "Ohne erschlossenen Dokumentenbestand gibt es nichts, worauf sich Fragen beziehen könnten. Erst die Ablage, dann dieser Anwendungsfall.",
@@ -585,7 +609,7 @@
       "pilot_before_rollout": "{category}: zunächst Pilotbetrieb statt Einführung für alle {seats} Arbeitsplätze.",
       "plan_exceeds_annual_capacity": "Der Plan erfordert mindestens {minDays} Administrationstage, verfügbar sind etwa {availableDays} pro Jahr. Der Zeitraum ist zu strecken oder Unterstützung einzuplanen.",
       "plan_may_exceed_annual_capacity": "Im ungünstigen Fall ({maxDays} Tage) übersteigt der Plan die verfügbaren {availableDays} Tage pro Jahr.",
-      "significant_training_load": "{count} Migrationen betreffen zusammen {seats} Arbeitsplätze mit hoher Schulungsempfindlichkeit."
+      "significant_training_load": "{count, plural, one {Eine Migration betrifft} other {# Migrationen betreffen zusammen}} {seats} Arbeitsplätze mit hoher Schulungsempfindlichkeit."
     },
     "caution": {
       "approaching_seat_ceiling": "{tool} nähert sich bei dieser Größe seiner üblichen Grenze.",
@@ -636,10 +660,10 @@
     "gap": {
       "ai_ambition_without_hardware": "KI ist ausdrücklich gewünscht, es fehlt jedoch geeignete Hardware. Ohne Beschaffung bleibt lokale KI eine Absicht.",
       "identity_foundation_missing_at_scale": "Bei {totalSeats} Arbeitsplätzen ohne zentrale Benutzerverwaltung entsteht bei jeder Einführung eine eigene Kontenliste.",
-      "many_migrations_with_low_admin_capacity": "{categories} Bereiche stehen zur Migration an, bei geringer verfügbarer Administrationszeit.",
+      "many_migrations_with_low_admin_capacity": "{categories, plural, one {Ein Bereich steht} other {# Bereiche stehen}} zur Migration an, bei geringer verfügbarer Administrationszeit.",
       "self_hosting_without_linux_capability": "Selbstbetrieb ist gewünscht, es fehlen jedoch die Betriebskenntnisse. Entweder Kompetenz aufbauen oder zunächst betreuten Betrieb wählen.",
       "sensitive_data_with_external_inference": "Hoch vertrauliche Inhalte sollen bei einem externen Anbieter verarbeitet werden. Das widerspricht der angegebenen Schutzbedürftigkeit.",
-      "several_urgent_critical_migrations_at_once": "{count} betriebskritische Vorhaben sollen gleichzeitig und sofort beginnen. Das übersteigt die Aufnahmefähigkeit der Organisation."
+      "several_urgent_critical_migrations_at_once": "{count, plural, one {Ein betriebskritisches Vorhaben soll} other {# betriebskritische Vorhaben sollen gleichzeitig und}} sofort beginnen. Das übersteigt die Aufnahmefähigkeit der Organisation."
     },
     "gotcha": {
       "attachment_links": "Verweise auf Anhänge brechen und müssen nachgezogen werden.",
@@ -685,23 +709,23 @@
     "next": {
       "address_prerequisite": "Voraussetzung schaffen: {prerequisite}",
       "pilot_ai_use_case": "Pilotbetrieb für den KI-Anwendungsfall {useCase} aufsetzen.",
-      "plan_first_phase": "Die erste Phase mit {count} Vorhaben konkret planen.",
+      "plan_first_phase": "Die erste Phase mit {count, plural, one {einem Vorhaben} other {# Vorhaben}} konkret planen.",
       "run_pilot": "Pilotbetrieb für {category} aufsetzen.",
       "verify_recommendations_against_current_releases": "Die Empfehlungen gegen den aktuellen Stand der Produkte prüfen (Regelwerk {rulepackVersion})."
     },
     "note": {
-      "categories_not_assessed": "{count} Bereiche wurden nicht erhoben und sind in diesem Plan nicht bewertet.",
+      "categories_not_assessed": "{count, plural, one {Ein Bereich wurde} other {# Bereiche wurden}} nicht erhoben und {count, plural, one {ist} other {sind}} in diesem Plan nicht bewertet.",
       "category_seats_exceed_organization": "{category} weist {seats} Arbeitsplätze aus, die Organisation insgesamt {totalSeats}. Bitte prüfen.",
-      "no_candidate_survived_constraints": "Für {category} blieb unter den genannten Bedingungen keine der {considered} geprüften Optionen übrig.",
+      "no_candidate_survived_constraints": "Für {category} blieb unter den genannten Bedingungen {considered, plural, one {die eine geprüfte Option} other {keine der # geprüften Optionen}} übrig.",
       "no_departments_named": "Bei {totalSeats} Arbeitsplätzen wurden keine Bereiche benannt; der Abstimmungsaufwand ist dadurch schwerer einzuschätzen.",
       "public_sector_implied_by_org_type": "Als {orgType} gelten öffentlich-rechtliche Erwartungen unabhängig von der Angabe."
     },
     "phase": {
       "complex_or_cannot_run_in_parallel": "Hoher Aufwand ({difficulty}) oder kein Parallelbetrieb möglich.",
-      "deferred_to_spread_critical_change": "Verschoben, um höchstens {limit} betriebskritische Umstellung(en) gleichzeitig zu führen.",
+      "deferred_to_spread_critical_change": "Verschoben, um höchstens {limit, plural, one {eine betriebskritische Umstellung} other {# betriebskritische Umstellungen}} gleichzeitig zu führen.",
       "moderate_effort_or_business_critical": "Mittlerer Aufwand oder betriebskritisch.",
       "optimization_and_local_ai": "Optimierung und lokale KI, sobald der Unterbau steht.",
-      "prerequisites_before_anything_else": "{count} Voraussetzungen sind vor allen Migrationen zu schaffen.",
+      "prerequisites_before_anything_else": "{count, plural, one {Eine Voraussetzung ist} other {# Voraussetzungen sind}} vor allen Migrationen zu schaffen.",
       "quick_win": "Geringer Aufwand bei spürbarem Nutzen.",
       "waits_for_dependency": "Wartet auf {dependsOn}, worauf dieses System aufsetzt."
     },
@@ -712,18 +736,18 @@
     "savings": {
       "excludes_internal_time_costs": "Interne Arbeitszeit ist in dieser Betrachtung nicht bewertet.",
       "exit_options_improve": "{category}: bessere Ausstiegsmöglichkeiten.",
-      "external_support_cost": "Für {count} Vorhaben ist externe Unterstützung einzuplanen.",
+      "external_support_cost": "Für {count, plural, one {ein Vorhaben} other {# Vorhaben}} ist externe Unterstützung einzuplanen.",
       "hosting_under_own_control": "Betriebskosten werden gestaltbar statt vom Anbieter vorgegeben.",
       "migration_effort_upfront": "Der Umstellungsaufwand von {minDays} bis {maxDays} Administrationstagen fällt zuerst an.",
       "model_is_qualitative": "Die Gesamteinschätzung ist qualitativ. Genannte Beträge sind keine Prognose, sondern Ihre Angaben multipliziert mit veröffentlichten Listenpreisen.",
-      "parallel_running_costs": "Über {phases} Phasen laufen alte und neue Systeme zeitweise nebeneinander.",
+      "parallel_running_costs": "Über {phases, plural, one {eine Phase} other {# Phasen}} laufen alte und neue Systeme zeitweise nebeneinander.",
       "priced_exposure_partial": "Nur {priced} von {assessed} betrachteten Bereichen haben einen belegbaren Listenpreis. Die genannte Summe ist damit eine Teilsumme, keine Gesamtsumme.",
       "prices_are_list_prices": "Grundlage sind die veröffentlichten Listenpreise der Anbieter. Ihre tatsächlichen Vertragskonditionen können abweichen; bitte gegen Ihre Rechnungen prüfen.",
       "procurement_flexibility": "Mehr Spielraum in der Beschaffung.",
       "recurring_licence_exposure_reduced": "Wiederkehrende Lizenzbindung bei {tool} für {seats} Arbeitsplätze entfällt.",
       "subscription_not_fully_replaced": "{plan} entfällt noch nicht: {remaining} Bereich(e) laufen weiterhin über dieses Abonnement. Der Vertrag endet erst, wenn der letzte davon abgelöst ist.",
       "support_contracts_still_needed": "Unterstützungsverträge bleiben erforderlich und ersetzen einen Teil der Einsparung.",
-      "training_cost": "Schulungsaufwand für {seats} Arbeitsplätze."
+      "training_cost": "Schulungsaufwand für {seats} Arbeitsplätze, über die betroffenen Bereiche summiert."
     },
     "scale": {
       "additional_departments_manageable": "Weitere Bereiche lassen sich ohne Umbau aufnehmen.",
@@ -741,6 +765,7 @@
   },
   "report": {
     "documentKind": "Internes Planungsdokument",
+    "severityCaution": "Zu beachten:",
     "title": "Migrationsplan",
     "coverLine": "{orgType} · {seats} Arbeitsplätze · erstellt am {date}",
     "draftRulepackNotice": "Hinweis: Das Regelwerk ({version}) wurde noch nicht fachkundig gegen die aktuellen Produktstände geprüft. Die Bewertungen sind sorgfältig, aber unbestätigt — vor einer Beschaffungsentscheidung selbst prüfen.",
@@ -753,8 +778,8 @@
       "savingsDetail": "Band plus belegte Beträge",
       "ai": "KI",
       "aiDetail": "Empfohlene Haltung",
-      "seats": "Betroffene Arbeitsplätze",
-      "seatsDetail": "von {total} insgesamt",
+      "seats": "Arbeitsplätze, summiert",
+      "seatsDetail": "Summe über die betrachteten Bereiche; ein Arbeitsplatz in mehreren Bereichen zählt mehrfach. Organisation: {total}.",
       "phases": "Phasen",
       "phasesDetail": "mit Vorhaben belegt",
       "meterScale": "{score} von 100"
@@ -814,8 +839,8 @@
     },
     "summary": {
       "title": "Zusammenfassung",
-      "context": "{orgType} mit {seats} Arbeitsplätzen (Größenklasse {bucket}), {categories} erhobene Bereiche.",
-      "target": "Der Plan sieht {planned} Migrationen vor. {keep} Bereiche sollten vorerst unverändert bleiben."
+      "context": "{orgType} mit {seats} Arbeitsplätzen (Größenklasse {bucket}), {categories, plural, one {ein erhobener Bereich} other {# erhobene Bereiche}}.",
+      "target": "Der Plan sieht {planned, plural, =0 {keine Migration} one {eine Migration} other {# Migrationen}} vor. {keep, plural, =0 {Kein Bereich bleibt} one {Ein Bereich bleibt} other {# Bereiche bleiben}} vorerst unverändert."
     },
     "advantages": {
       "title": "Wesentliche Vorteile"
@@ -825,10 +850,10 @@
       "drivers": "Wo Aufwand entfällt",
       "offsets": "Was dagegen steht",
       "exposureTitle": "Heutige Abonnementkosten",
-      "exposureFigure": "Kennzahl",
-      "exposureAmount": "Betrag",
       "exposureCurrent": "Aktuell pro Jahr",
-      "exposureAvoided": "Entfällt mit diesem Plan",
+      "exposureFallsAwayAll": "Bei vollständiger Umstellung der belegten Bereiche entfällt dieser Betrag. Das ist keine Einsparung: Betrieb, Support und Schulung sind darin nicht bewertet.",
+      "exposureFallsAwayPart": "Mit diesem Plan entfallen davon {amount} pro Jahr; der Rest läuft weiter, weil nicht jedes Abonnement vollständig ersetzt wird. Auch der entfallende Teil ist keine Einsparung: Betrieb, Support und Schulung sind darin nicht bewertet.",
+      "exposureFallsAwayNone": "Mit diesem Plan entfällt davon zunächst nichts: kein Abonnement wird vollständig ersetzt.",
       "exposureCoverage": "Belegt für {priced} von {assessed} betrachteten Bereichen, gerechnet auf {seats} Arbeitsplätze.",
       "exposureNote": "Ihre Angaben multipliziert mit veröffentlichten Listenpreisen — keine Schätzung, keine Prognose.",
       "basisTitle": "Rechengrundlage",
@@ -849,6 +874,7 @@
     "stack": {
       "title": "Empfohlener Zielaufbau",
       "lead": "Je Bereich eine begründete Empfehlung, Ausweichoptionen und die ausgeschiedenen Alternativen.",
+      "sharedFit": "Für {count, plural, one {das empfohlene System} other {alle # empfohlenen Systeme}} gilt",
       "current": "Heute",
       "seats": "{seats} Arbeitsplätze",
       "backups": "Ausweichoptionen",
@@ -860,6 +886,7 @@
     "roadmap": {
       "title": "Migrationsfahrplan",
       "lead": "Reihenfolge, Aufwand und betroffene Arbeitsplätze je Phase. Aufwände sind Planungsschätzungen in Administrationstagen.",
+      "phaseEmpty": "Für diese Organisation nicht belegt.",
       "effort": "{min}–{max} Tage",
       "seatsAffected": "Betroffene Arbeitsplätze",
       "pilot": "Pilot empfohlen",

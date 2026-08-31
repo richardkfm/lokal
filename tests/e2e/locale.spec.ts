@@ -140,6 +140,38 @@ for (const index of [0, 1, 2, 3]) {
   });
 }
 
+/**
+ * A report taken in German, read in English.
+ *
+ * The suite's own fixture stores `locale: "en"`, which is why this passed
+ * throughout v0.1.0 while `/en/report/<id>` served German prose for every
+ * report a German respondent had actually produced: the view read the *stored*
+ * locale, so a fixture stored in English could never expose it. Any real
+ * English reader arrives at a German-taken report — that is what the locale
+ * switch in the header does.
+ *
+ * The free text is English so the only German that can appear is the kind that
+ * comes from the rulepack, which is precisely what was leaking.
+ */
+test("a German-taken report reads in English at /en", async ({ page, request }) => {
+  const response = await request.post("/api/assessments", {
+    data: { ...englishAssessment(), locale: "de" },
+  });
+  expect(response.status()).toBe(201);
+  const germanTaken = ((await response.json()) as { id: string }).id;
+
+  await page.goto(`/en/report/${germanTaken}`);
+  assertEnglish(await readableText(page), "report taken in German");
+
+  await page.goto(`/en/report/${germanTaken}/print`);
+  assertEnglish(await readableText(page), "printed report taken in German");
+
+  // And the same report still reads in German where German was asked for.
+  await page.goto(`/de/report/${germanTaken}`);
+  const german = await page.locator("body").innerText();
+  expect(german).toMatch(/Dateiablage mit Synchronisation/);
+});
+
 test("the English report reaches the reader in English", async ({ page }) => {
   await page.goto(`/en/report/${reportId}`);
 
@@ -155,7 +187,7 @@ test("the English report reaches the reader in English", async ({ page }) => {
   const body = (await page.locator("body").innerText()).replace(/\s+/g, " ");
   expect(body).toContain("€");
   expect(body).toMatch(/per seat per month/);
-  expect(body).toMatch(/observed \d{4}-\d{2}-\d{2}/);
+  expect(body).toMatch(/observed \d{1,2} \p{L}+ \d{4}/u);
   expect(body).toMatch(/Evidenced for \d+ of \d+ assessed areas/);
 });
 

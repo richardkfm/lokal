@@ -265,6 +265,59 @@ export function NumberField({
   );
 }
 
+/**
+ * A native select.
+ *
+ * Native rather than a custom listbox because this one is answered once per
+ * category by people who may be on a locked-down desktop browser or a phone,
+ * and the platform control already has keyboard support, type-ahead and a
+ * touch-sized picker that no reimplementation here would match.
+ */
+export function SelectField({
+  label,
+  hint,
+  value,
+  onChange,
+  options,
+  error,
+}: {
+  label: string;
+  hint?: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: readonly { value: string; label: string }[];
+  error?: string | undefined;
+}) {
+  const id = useId();
+
+  return (
+    <div>
+      <label htmlFor={id} className="text-ink block text-sm font-medium">
+        {label}
+      </label>
+      {hint ? <p className="text-muted mt-0.5 text-xs">{hint}</p> : null}
+      <select
+        id={id}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        aria-invalid={error ? true : undefined}
+        className="border-line bg-surface focus:border-brand focus:ring-brand mt-1.5 w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      {error ? (
+        <p role="alert" className="mt-1 text-sm text-[var(--color-risk)]">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 export function TextField({
   label,
   hint,
@@ -272,6 +325,7 @@ export function TextField({
   onChange,
   placeholder,
   maxLength = 200,
+  error,
 }: {
   label: string;
   hint?: string;
@@ -279,6 +333,7 @@ export function TextField({
   onChange: (value: string) => void;
   placeholder?: string;
   maxLength?: number;
+  error?: string | undefined;
 }) {
   const id = useId();
 
@@ -295,8 +350,14 @@ export function TextField({
         maxLength={maxLength}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
+        aria-invalid={error ? true : undefined}
         className="border-line bg-surface focus:border-brand focus:ring-brand mt-1.5 w-full rounded-md border px-3 py-2 text-sm focus:ring-1 focus:outline-none"
       />
+      {error ? (
+        <p role="alert" className="mt-1 text-sm text-[var(--color-risk)]">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

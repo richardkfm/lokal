@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { ExpertContactBlock } from "@/components/shell/expert-contact";
 import {
   Badge,
@@ -11,7 +11,8 @@ import {
   toneForScore,
 } from "./indicators";
 import { basisLine, formatAmount } from "@/report/money";
-import { localizeParams } from "@/report/params";
+import { localizeParams, prerequisiteLabels } from "@/report/params";
+import type { DocumentLabels } from "@/report/params";
 import type { PlanningReport } from "@/report/schema";
 import type { RationaleItem } from "@/domain/rationale";
 
@@ -28,36 +29,55 @@ import type { RationaleItem } from "@/domain/rationale";
 type Translate = Awaited<ReturnType<typeof getTranslations>>;
 
 /** Renders a rationale code with its parameters. */
-function rationaleText(t: Translate, item: RationaleItem): string {
-  const params = localizeParams(item.params, (key) => t(key as never));
+function rationaleText(
+  t: Translate,
+  item: RationaleItem,
+  labels: DocumentLabels,
+): string {
+  const params = localizeParams(item.params, (key) => t(key as never), labels);
   return t(`rationale.${item.code}` as never, params as never);
 }
 
 function RationaleList({
   items,
   t,
+  labels,
   dense,
 }: {
   items: RationaleItem[];
   t: Translate;
+  labels: DocumentLabels;
   dense?: boolean;
 }) {
   if (items.length === 0) return null;
 
   return (
-    <ul className={`space-y-1.5 ${dense ? "text-xs" : "text-sm"}`}>
+    <ul className={`max-w-[68ch] space-y-1.5 ${dense ? "text-sm" : "text-base"}`}>
       {items.map((item, index) => (
         <li key={`${item.code}-${index}`} className="flex gap-2">
+          {/* Severity by shape as well as colour.
+           *
+           * A 6px amber dot beside a 6px grey one is the difference between
+           * "note this" and "and also", encoded in hue alone at a size where
+           * hue barely registers. It survives the print palette by luck and a
+           * mono laser not at all. A rotated square costs nothing and reads in
+           * greyscale, and the screen-reader label is what a sighted reader
+           * gets from the colour. */}
           <span
             aria-hidden="true"
             className={[
-              "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full",
+              "mt-1.5 h-1.5 w-1.5 shrink-0",
               item.severity === "blocker" || item.severity === "caution"
-                ? "bg-[var(--color-caution)]"
-                : "bg-[var(--color-line-strong)]",
+                ? "rotate-45 bg-[var(--color-caution)]"
+                : "rounded-full bg-[var(--color-neutral)]",
             ].join(" ")}
           />
-          <span className="text-muted leading-relaxed">{rationaleText(t, item)}</span>
+          {item.severity === "blocker" || item.severity === "caution" ? (
+            <span className="sr-only">{t("report.severityCaution")} </span>
+          ) : null}
+          <span className="text-muted leading-relaxed">
+            {rationaleText(t, item, labels)}
+          </span>
         </li>
       ))}
     </ul>
@@ -78,7 +98,26 @@ export async function ReportView({
   const t = await getTranslations();
   const r = await getTranslations("report");
   const v = await getTranslations("vocabulary");
-  const locale = report.locale;
+
+  /**
+   * The reader's locale, not the respondent's.
+   *
+   * `report.locale` records the language the intake was answered in, which is
+   * worth storing and is not a statement about who reads the result. Using it
+   * here meant `/en/report/<id>` returned German tool summaries, prerequisite
+   * labels, AI descriptions and "30. August 2026" — every string that comes
+   * from the rulepack rather than the message catalogue, which is most of the
+   * document's substance. The catalogue is at full parity; this was the last
+   * mile undoing it.
+   *
+   * The Markdown export keeps the stored locale on purpose: its route carries
+   * no locale segment, so the language the report was created in is the only
+   * signal it has.
+   */
+  const locale = (await getLocale()) as PlanningReport["locale"];
+  // Prerequisite ids are interpolated into section 9's next steps, and their
+  // labels live in the document rather than the message catalogue.
+  const labels = prerequisiteLabels(report.roadmap.phases, locale);
 
   const categoryLabel = (id: string) => v(`category.${id}.label` as never);
   const glance = report.atAGlance;
@@ -87,6 +126,34 @@ export async function ReportView({
   // citable published price (ADR-0003). Formatting lives in `@/report/money` so
   // this view, the Markdown export and the print route cannot disagree about a
   // figure someone is going to check against an invoice.
+  /**
+   * Fit criteria that hold for every recommendation, stated once.
+   *
+   * Six category cards each listed the same five reasons — "Hohe Datenhoheit",
+   * "Dienstleister in Deutschland verfügbar", "Belastbare deutschsprachige
+   * Oberfläche" and the rest — which is roughly thirty bullets carrying about
+   * five facts. Repetition at that density is the texture of generated text,
+   * and this audience is primed to look for it; worse, it buried the lines that
+   * *are* per-category analysis inside a wall of sameness.
+   *
+   * Keyed on code plus parameters, so `fits_chosen_ecosystem` counts as shared
+   * only when it names the same ecosystem everywhere.
+   */
+  const recommendations = report.targetStack.filter((entry) => entry.recommended);
+  const fitKey = (item: RationaleItem) =>
+    `${item.code}::${JSON.stringify(item.params)}`;
+  const sharedFit =
+    recommendations.length > 1
+      ? (recommendations[0]!.recommended!.fitReasons.filter((item) =>
+          recommendations.every((entry) =>
+            entry.recommended!.fitReasons.some(
+              (other) => fitKey(other) === fitKey(item),
+            ),
+          ),
+        ) ?? [])
+      : [];
+  const sharedFitKeys = new Set(sharedFit.map(fitKey));
+
   const exposure = report.savings.subscriptionExposure;
   const money = (cents: number) => formatAmount(cents, "EUR", locale);
 
@@ -160,7 +227,7 @@ export async function ReportView({
       <div className="mt-12 space-y-12">
         {/* 1 Executive summary */}
         <Section id="summary" number={1} title={r("summary.title")}>
-          <div className="text-muted space-y-3 text-sm leading-relaxed">
+          <div className="text-ink max-w-[68ch] space-y-3 text-base leading-relaxed">
             <p>
               {r("summary.context", {
                 orgType: v(`orgType.${report.organization.orgType}.label` as never),
@@ -185,7 +252,7 @@ export async function ReportView({
 
         {/* 2 Advantages */}
         <Section id="advantages" number={2} title={r("advantages.title")}>
-          <RationaleList items={report.advantages} t={t} />
+          <RationaleList items={report.advantages} t={t} labels={labels} />
         </Section>
 
         {/* 3 Savings */}
@@ -208,13 +275,23 @@ export async function ReportView({
               <h3 className="text-ink mb-2 text-sm font-medium">
                 {r("savings.drivers")}
               </h3>
-              <RationaleList items={report.savings.drivers} t={t} dense />
+              <RationaleList
+                items={report.savings.drivers}
+                t={t}
+                labels={labels}
+                dense
+              />
             </div>
             <div>
               <h3 className="text-ink mb-2 text-sm font-medium">
                 {r("savings.offsets")}
               </h3>
-              <RationaleList items={report.savings.offsets} t={t} dense />
+              <RationaleList
+                items={report.savings.offsets}
+                t={t}
+                labels={labels}
+                dense
+              />
             </div>
           </div>
           {exposure ? (
@@ -223,7 +300,19 @@ export async function ReportView({
                 {r("savings.exposureTitle")}
               </h3>
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              {/* One figure, not two.
+               *
+               * This was a pair of tiles — "Aktuell pro Jahr" and "Entfällt mit
+               * diesem Plan" — usually carrying the *same* amount, the second
+               * in green. ADR-0003 forbids a net saving, and a green number
+               * labelled "entfällt", set larger than the four caveats beneath
+               * it, is a net saving in everything but the noun. It is also the
+               * number that would be quoted, without its basis, in a Vorlage.
+               *
+               * What the second tile actually knew — how much of the exposure
+               * the roadmap removes — is a sentence, not a headline, and it is
+               * only interesting when it differs from the whole. */}
+              <div className="max-w-md">
                 <FigureCard
                   label={r("savings.exposureCurrent")}
                   value={money(exposure.annualCents)}
@@ -233,13 +322,18 @@ export async function ReportView({
                     seats: exposure.seatsPriced,
                   })}
                 />
-                <FigureCard
-                  label={r("savings.exposureAvoided")}
-                  value={money(exposure.avoidedAnnualCents)}
-                  tone={exposure.avoidedAnnualCents > 0 ? "good" : "neutral"}
-                  basis={r("savings.exposureNote")}
-                />
               </div>
+
+              <p className="text-muted mt-3 text-sm leading-relaxed">
+                {exposure.avoidedAnnualCents === 0
+                  ? r("savings.exposureFallsAwayNone")
+                  : exposure.avoidedAnnualCents >= exposure.annualCents
+                    ? r("savings.exposureFallsAwayAll")
+                    : r("savings.exposureFallsAwayPart", {
+                        amount: money(exposure.avoidedAnnualCents),
+                      })}{" "}
+                {r("savings.exposureNote")}
+              </p>
 
               {/* The audit trail. Every figure above traces to a line here, and
                   every line names a page the reader can open. */}
@@ -253,11 +347,8 @@ export async function ReportView({
                     className="border-line bg-sunken break-inside-avoid rounded-md border p-3 text-xs"
                   >
                     <p className="text-ink">
-                      {basisLine(
-                        basis,
-                        exposure.currency,
-                        report.locale,
-                        (key, values) => t(key as never, values as never),
+                      {basisLine(basis, exposure.currency, locale, (key, values) =>
+                        t(key as never, values as never),
                       )}
                     </p>
                     <p className="text-muted mt-1">
@@ -282,13 +373,18 @@ export async function ReportView({
               </ul>
 
               <div className="mt-4">
-                <RationaleList items={exposure.notes} t={t} dense />
+                <RationaleList items={exposure.notes} t={t} labels={labels} dense />
               </div>
             </div>
           ) : null}
 
           <div className="border-line mt-5 border-t pt-3">
-            <RationaleList items={report.savings.modelLimitations} t={t} dense />
+            <RationaleList
+              items={report.savings.modelLimitations}
+              t={t}
+              labels={labels}
+              dense
+            />
           </div>
         </Section>
 
@@ -300,6 +396,17 @@ export async function ReportView({
           lead={r("stack.lead")}
           breakBefore
         >
+          {sharedFit.length > 0 ? (
+            <div className="border-line bg-sunken mb-5 rounded-lg border p-4">
+              <h3 className="text-ink text-base font-semibold">
+                {r("stack.sharedFit", { count: recommendations.length })}
+              </h3>
+              <div className="mt-2">
+                <RationaleList items={sharedFit} t={t} labels={labels} dense />
+              </div>
+            </div>
+          ) : null}
+
           <div className="space-y-5">
             {report.targetStack.map((entry) => (
               <div
@@ -333,13 +440,25 @@ export async function ReportView({
                       {localized(entry.recommended.tool.summary, locale)}
                     </p>
 
-                    <div className="mt-3">
-                      <RationaleList items={entry.recommended.fitReasons} t={t} dense />
-                    </div>
+                    {(() => {
+                      const distinct = entry.recommended.fitReasons.filter(
+                        (item) => !sharedFitKeys.has(fitKey(item)),
+                      );
+                      return distinct.length > 0 ? (
+                        <div className="mt-3">
+                          <RationaleList items={distinct} t={t} labels={labels} dense />
+                        </div>
+                      ) : null;
+                    })()}
 
                     {entry.recommended.cautions.length > 0 ? (
                       <div className="mt-3 rounded-md border border-[var(--color-caution)] bg-[var(--color-caution-soft)] p-3">
-                        <RationaleList items={entry.recommended.cautions} t={t} dense />
+                        <RationaleList
+                          items={entry.recommended.cautions}
+                          t={t}
+                          labels={labels}
+                          dense
+                        />
                       </div>
                     ) : null}
 
@@ -356,8 +475,19 @@ export async function ReportView({
                   </>
                 ) : null}
 
+                {/* The disclosure below is open on paper, where there is no one
+                 * to click it.
+                 *
+                 * That was CSS until it wasn't: `print.css` overrode `display`
+                 * on the children, and Chromium hides them through
+                 * `::details-content` instead, so a whole release printed
+                 * "2 geprüft und ausgeschieden" with nothing under it — one of
+                 * the four outputs CLAUDE.md says prove the thesis, missing
+                 * from the copy that reaches a council. The prop cannot be
+                 * defeated by the next change to how a browser hides closed
+                 * content. */}
                 {entry.ruledOut.length > 0 ? (
-                  <details className="mt-3">
+                  <details className="mt-3" open={print}>
                     <summary className="text-brand cursor-pointer text-xs">
                       {r("stack.ruledOut", { count: entry.ruledOut.length })}
                     </summary>
@@ -365,14 +495,14 @@ export async function ReportView({
                       {entry.ruledOut.map(({ tool, reason }) => (
                         <li key={tool.id} className="text-muted leading-relaxed">
                           <span className="text-ink font-medium">{tool.name}</span>:{" "}
-                          {rationaleText(t, reason)}
+                          {rationaleText(t, reason, labels)}
                         </li>
                       ))}
                     </ul>
                   </details>
                 ) : null}
 
-                <RationaleList items={entry.notes} t={t} dense />
+                <RationaleList items={entry.notes} t={t} labels={labels} dense />
               </div>
             ))}
           </div>
@@ -397,12 +527,30 @@ export async function ReportView({
             >
               <span className="path-dot" />
             </div>
-            {report.roadmap.phases
-              .filter(
-                (phase) =>
-                  phase.migrations.length > 0 || phase.prerequisites.length > 0,
-              )
-              .map((phase) => (
+            {/* Empty phases are shown, not filtered away.
+             *
+             * Filtering left the printed headings reading "Phase 0", "Phase 2",
+             * "Phase 3" — and a reader who notices the gap has no way to
+             * resolve it, because the numbering is a property of the rulepack
+             * they cannot see. Renumbering contiguously would hide the same
+             * fact more neatly. For this audience an unoccupied phase is
+             * itself a finding: it says the plan has nothing quick to offer,
+             * or nothing left to optimize, and that is worth a line. */}
+            {report.roadmap.phases.map((phase) =>
+              phase.migrations.length === 0 && phase.prerequisites.length === 0 ? (
+                <div
+                  key={phase.id}
+                  className="border-line break-inside-avoid rounded-lg border border-dashed p-3"
+                >
+                  <p className="text-muted text-sm">
+                    <span className="text-ink font-medium">
+                      {r(`phase.${phase.id}.title` as never)}
+                    </span>
+                    {": "}
+                    {r("roadmap.phaseEmpty")}
+                  </p>
+                </div>
+              ) : (
                 <div
                   key={phase.id}
                   className="border-line bg-surface break-inside-avoid rounded-lg border p-4"
@@ -480,7 +628,12 @@ export async function ReportView({
                           </p>
 
                           <div className="mt-2">
-                            <RationaleList items={migration.reasons} t={t} dense />
+                            <RationaleList
+                              items={migration.reasons}
+                              t={t}
+                              labels={labels}
+                              dense
+                            />
                           </div>
 
                           {migration.gotchas.length > 0 ? (
@@ -505,9 +658,10 @@ export async function ReportView({
                     </div>
                   ) : null}
 
-                  <RationaleList items={phase.notes} t={t} dense />
+                  <RationaleList items={phase.notes} t={t} labels={labels} dense />
                 </div>
-              ))}
+              ),
+            )}
           </div>
 
           {report.roadmap.keepForNow.length > 0 ? (
@@ -528,7 +682,7 @@ export async function ReportView({
                       <span className="text-faint"> ({deferred.currentToolName})</span>
                     ) : null}
                     <span className="text-muted block text-xs leading-relaxed">
-                      {rationaleText(t, deferred.reason)}{" "}
+                      {rationaleText(t, deferred.reason, labels)}{" "}
                       {t(`rationale.${deferred.revisitWhen}` as never)}
                     </span>
                   </li>
@@ -582,13 +736,13 @@ export async function ReportView({
               <h3 className="text-ink mb-2 text-sm font-medium">
                 {r("capacity.gaps")}
               </h3>
-              <RationaleList items={report.readiness.gaps} t={t} />
+              <RationaleList items={report.readiness.gaps} t={t} labels={labels} />
             </div>
           ) : null}
 
           {report.capacity.gaps.length > 0 ? (
             <div className="mt-4">
-              <RationaleList items={report.capacity.gaps} t={t} />
+              <RationaleList items={report.capacity.gaps} t={t} labels={labels} />
             </div>
           ) : null}
         </Section>
@@ -602,7 +756,7 @@ export async function ReportView({
           breakBefore
         >
           {report.aiLane.recommendations.length === 0 ? (
-            <RationaleList items={report.aiLane.notes} t={t} />
+            <RationaleList items={report.aiLane.notes} t={t} labels={labels} />
           ) : (
             <div className="space-y-4">
               {report.aiLane.recommendations.map((recommendation) => (
@@ -637,7 +791,12 @@ export async function ReportView({
                   </p>
 
                   <div className="mt-3">
-                    <RationaleList items={recommendation.reasons} t={t} dense />
+                    <RationaleList
+                      items={recommendation.reasons}
+                      t={t}
+                      labels={labels}
+                      dense
+                    />
                   </div>
 
                   <p className="text-faint mt-3 text-xs leading-relaxed">
@@ -645,11 +804,16 @@ export async function ReportView({
                   </p>
 
                   <div className="mt-2">
-                    <RationaleList items={recommendation.risks} t={t} dense />
+                    <RationaleList
+                      items={recommendation.risks}
+                      t={t}
+                      labels={labels}
+                      dense
+                    />
                   </div>
                 </div>
               ))}
-              <RationaleList items={report.aiLane.notes} t={t} dense />
+              <RationaleList items={report.aiLane.notes} t={t} labels={labels} dense />
             </div>
           )}
         </Section>
@@ -677,7 +841,12 @@ export async function ReportView({
                   {r(`scalability.${key}` as never)}
                 </dt>
                 <dd className="flex-1">
-                  <RationaleList items={report.scalability[key]} t={t} dense />
+                  <RationaleList
+                    items={report.scalability[key]}
+                    t={t}
+                    labels={labels}
+                    dense
+                  />
                 </dd>
               </div>
             ))}
@@ -700,7 +869,7 @@ export async function ReportView({
                   <h3 className="text-ink mb-2 text-sm font-medium">
                     {r(`next.${key}` as never)}
                   </h3>
-                  <RationaleList items={items} t={t} dense />
+                  <RationaleList items={items} t={t} labels={labels} dense />
                 </div>
               ) : null,
             )}
@@ -751,7 +920,12 @@ export async function ReportView({
                     {r("method.dataQuality")}
                   </h3>
                   <div className="mt-1.5">
-                    <RationaleList items={report.method.dataQualityNotes} t={t} dense />
+                    <RationaleList
+                      items={report.method.dataQualityNotes}
+                      t={t}
+                      labels={labels}
+                      dense
+                    />
                   </div>
                 </div>
               ) : null}
@@ -764,7 +938,8 @@ export async function ReportView({
               rulepackVersion: report.rulepackVersion,
             })}
           </p>
-          <p className="text-faint mt-2 text-xs leading-relaxed">
+          {/* A sentence about a URL, on a sheet of paper that has none. */}
+          <p className="text-faint mt-2 text-xs leading-relaxed print:hidden">
             {r("method.linkNotice")}
           </p>
         </section>

@@ -1,49 +1,14 @@
 import { describe, expect, it } from "vitest";
-import de from "../../messages/de.json";
-import en from "../../messages/en.json";
 import { runEngine } from "@/engine";
 import { buildReport } from "@/report/build-report";
 import { toMarkdown } from "@/report/to-markdown";
 import { currentRulepack } from "@/rulepack";
 import { PERSONAS, persona } from "../fixtures/personas";
+import { strictTranslator } from "../fixtures/translator";
 import type { PlanningReport } from "@/report/schema";
 
 const pack = currentRulepack();
 const GENERATED_AT = "2026-08-12T00:00:00.000Z";
-
-type Catalog = Record<string, unknown>;
-const CATALOGS: Record<string, Catalog> = { de, en };
-
-/**
- * A deliberately strict stand-in for next-intl.
- *
- * It throws on a missing key and on an unresolved placeholder, rather than
- * silently emitting the raw key the way a lenient renderer would. That is
- * exactly the failure this catches: a report handed to management with
- * "rationale.next.verify_recommendations_against_current_releases" in the middle
- * of it, because a rationale item carried evidence but no params.
- */
-function strictTranslator(locale: string) {
-  const catalog = CATALOGS[locale]!;
-
-  return (key: string, values?: Record<string, string | number | boolean>) => {
-    const resolved = key
-      .split(".")
-      .reduce<unknown>((node, part) => (node as Catalog | undefined)?.[part], catalog);
-
-    if (typeof resolved !== "string") {
-      throw new Error(`Missing message: ${key}`);
-    }
-
-    return resolved.replace(/\{(\w+)\}/g, (_match, name: string) => {
-      const value = values?.[name];
-      if (value === undefined) {
-        throw new Error(`Unresolved placeholder {${name}} in ${key}`);
-      }
-      return String(value);
-    });
-  };
-}
 
 function markdownFor(id: string, locale: "de" | "en" = "de"): string {
   const input = { ...persona(id).input, locale };
@@ -67,6 +32,68 @@ describe("markdown export", () => {
       expect(() => markdownFor(id, "en")).not.toThrow();
     },
   );
+
+  /**
+   * Counts agree with their nouns.
+   *
+   * "1 Bereiche sollten vorerst unverändert bleiben" shipped in v0.1.0, in both
+   * languages, because the test translator could not evaluate an ICU plural and
+   * so the catalogue never used one. The translator is the real one now, which
+   * is what makes this assertion possible at all.
+   */
+  it("agrees number and noun", () => {
+    for (const { id } of PERSONAS) {
+      expect(markdownFor(id, "de")).not.toMatch(/\b1 (Bereiche|Migrationen)\b/);
+      expect(markdownFor(id, "en")).not.toMatch(/\b1 (areas|migrations)\b/);
+    }
+  });
+
+  /**
+   * Three numbers a sceptical reader stops at.
+   *
+   * All three shipped in v0.1.0 and none had a test, because each is a
+   * presentation decision rather than a computation — the engine was right
+   * every time and the document still said something a Kämmerer would query.
+   */
+  describe("the figures a reader will check", () => {
+    it("states the exposure once, never as a saving", () => {
+      for (const { id } of PERSONAS) {
+        const markdown = markdownFor(id, "de");
+        if (!markdown.includes("Heutige Abonnementkosten")) continue;
+
+        // The section used to carry two amounts, usually identical, the second
+        // labelled "Entfällt mit diesem Plan" and set in green. ADR-0003
+        // forbids stating a net saving, and that is what it read as.
+        const section = markdown.slice(markdown.indexOf("Heutige Abonnementkosten"));
+        // `Intl.NumberFormat` puts a non-breaking space before the glyph.
+        const amounts = section
+          .slice(0, section.indexOf("####"))
+          .match(/\d[\d.,]*\s?€/gu);
+        expect(amounts, `amounts in the exposure block of ${id}`).toHaveLength(1);
+      }
+    });
+
+    it("says how a summed seat count was summed", () => {
+      // "735 von 180 insgesamt" was the third-largest number on the first page
+      // and arithmetically impossible on its face: it is a sum over categories,
+      // so a person in six of them is counted six times.
+      expect(markdownFor("municipality-180", "de")).not.toMatch(/von \d+ insgesamt/);
+    });
+
+    it("names every phase, including the ones with nothing in them", () => {
+      for (const { id } of PERSONAS) {
+        const markdown = markdownFor(id, "de");
+        const numbers = [...markdown.matchAll(/^### Phase (\d)/gm)].map((m) =>
+          Number(m[1]),
+        );
+
+        // A gap between "Phase 0" and "Phase 2" is a question the document
+        // cannot answer: the numbering belongs to a rulepack the reader has
+        // never seen.
+        expect(numbers).toEqual(numbers.map((_, index) => index));
+      }
+    });
+  });
 
   it("never leaks a raw message key into the output", () => {
     for (const { id } of PERSONAS) {
@@ -115,7 +142,9 @@ describe("markdown export", () => {
       expect(markdown).toContain("Rechengrundlage");
       expect(markdown).toMatch(/je Arbeitsplatz und Monat/);
       expect(markdown).toMatch(/Quelle: https:\/\//);
-      expect(markdown).toMatch(/erhoben am \d{4}-\d{2}-\d{2}/);
+      // A date in the reader's convention, not the rulepack's ISO storage form.
+      expect(markdown).toMatch(/erhoben am \d{1,2}\. \p{L}+ \d{4}/u);
+      expect(markdown).not.toMatch(/erhoben am \d{4}-\d{2}-\d{2}/);
       // Coverage is stated wherever a sum is.
       expect(markdown).toMatch(/Belegt für \d+ von \d+ betrachteten Bereichen/);
     }

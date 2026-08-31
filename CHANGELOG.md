@@ -8,6 +8,123 @@ Dates are ISO 8601.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The intake can name a product.** The "currently in use" field was free text
+  only, so every assessment recorded `{ kind: "other" }` and no report produced
+  through the questionnaire ever reached a source tool in the rulepack. Vendor
+  lock-in ratings, origin-specific migration edges and the whole priced-exposure
+  section of 0.1.0 were unreachable outside test fixtures. The field is now a
+  select over the rulepack's products for that category, with "Anderes System"
+  keeping free text for anything not listed. Typed text is deliberately not
+  matched against product names: attributing a euro figure to an organization
+  that never named the product is what ADR-0003 exists to prevent.
+- **Machine identifiers reaching the reader.** "Hoher Aufwand (very_high)",
+  "Wartet auf file_sharing" and "Voraussetzung schaffen: identity-directory"
+  were printed verbatim, on screen and on paper. Two separate families were
+  involved: enum values, whose labels live in the message catalogue, and
+  rulepack ids, whose labels live in the rulepack as `{ de, en }` objects and
+  are therefore unreachable by a catalogue lookup. `localizeParams` now covers
+  every parameter any stage passes an enum through, and takes the second family
+  as labels supplied by the renderer from the report document itself. The two
+  renderer call sites that bypassed it entirely go through it. A new test walks
+  every rationale item in every persona's report and fails on any identifier
+  that survives localization. One is knowingly left: a target tool's
+  `ecosystem` has no label anywhere in the rulepack, so it renders as
+  "Verbund (nextcloud)"; giving ecosystems a name means a new rulepack version
+  and is recorded in the test rather than fixed silently.
+- **Three numbers a reader stops at.** The savings section stated the exposure
+  twice — the same amount, the second labelled "Entfällt mit diesem Plan" and
+  set in green, which is a net saving in everything but the noun and is what
+  ADR-0003 exists to forbid. It now states one figure, with what the roadmap
+  removes from it as a sentence beneath. The at-a-glance card read "735 von 180
+  insgesamt", a sum over categories in which a person in six areas is counted
+  six times, and now says so. And the roadmap numbered its phases from the
+  rulepack while filtering empty ones out, so the printed headings read 0, 2, 3
+  with no way for a reader to resolve the gap; an unoccupied phase is now named,
+  because for this audience it is itself a finding.
+- **Counts agree with their nouns.** Fourteen messages interpolated a number
+  beside a plural noun, so every report said "1 Bereiche sollten vorerst
+  unverändert bleiben" in both languages. The cause was in the tests: they used
+  a hand-written stand-in for next-intl that could not evaluate an ICU plural,
+  so a message using one would have failed the suite. The stand-in is replaced
+  by next-intl's own `createTranslator` with a throwing `onError`.
+- **English reports served German prose.** The report view took its locale from
+  the stored intake rather than the request, so `/en/report/<id>` returned
+  German tool summaries, prerequisite labels, AI descriptions and scaling notes
+  — every string sourced from the rulepack rather than the catalogue. The
+  Markdown export keeps the stored locale, whose route carries no locale
+  segment. Price observation dates now also render in the reader's convention
+  rather than the rulepack's ISO storage form.
+- **The printed brief omitted the candidates it ruled out.** The disclosure
+  printed as a bare count: `print.css` overrode `display` on its children, and
+  Chromium hides them through `::details-content`, which that cannot reach.
+  "Considered and ruled out" is one of the four outputs CLAUDE.md names as
+  proving the thesis. The print tree now opens the disclosure itself, the CSS
+  gains a rule against the real mechanism, and the test asserts on rendered text
+  rather than on the DOM. Also on paper: a running head and page numbers, and
+  sections may now flow across a page boundary instead of being pushed whole.
+- **The questionnaire answered three questions on the respondent's behalf.**
+  Ticking a category pre-filled Betriebskritikalität, Leidensdruck and
+  Dringlichkeit, visually identical to a real answer — and `urgency: "later"` is
+  not a neutral middle, it demotes the category in the roadmap. The "Angaben
+  prüfen" step then showed six of roughly thirty-five answers under copy saying
+  the plan is computed solely from them, so the substitution could not be caught
+  there either. Nothing is pre-filled now, and the review step lists every
+  answer, grouped by the step that asked for it, each group editable.
+- **Failed validation left the user nowhere to go.** Clicking "Weiter" on an
+  incomplete step kept focus on the button, did not scroll, and showed two
+  adjacent fields both reading "Pflichtfeld." with nothing naming them. There is
+  now an error summary that takes focus and names each open question in the
+  form's own words rather than the schema's. "Bitte füllen Sie diesen Schritt
+  aus" appears only after an attempt, not on arrival.
+- **The review step showed a tool id.** "microsoft-365-apps" where the form had
+  said "Microsoft 365 (Word, Excel, PowerPoint)".
+
+### Added
+
+- Impressum, Datenschutzerklärung and Barrierefreiheitserklärung in the footer,
+  as `LOKAL_LEGAL_*_URL` links. Their absence was the most conspicuous omission
+  on a site whose pitch is sovereignty and compliance-consciousness, aimed at
+  people who check §5 DDG before reading the argument — and lokal stores intake
+  answers server-side, so a privacy notice is not merely formal. lokal cannot
+  write them: they are declarations about a specific operator, and a placeholder
+  looks discharged. Unset means absent, and the whole column disappears.
+- Hints on all nine categories in step 3, with examples. "Dateiablage" versus
+  "Dokumentenmanagement" versus "Intranet und Wissen" is a genuine question, and
+  that step decides the shape of everything downstream.
+- Step 3 states how many follow-up questions the selection commits to. Six
+  categories is forty-two.
+- "Von vorn beginnen" now confirms before discarding fifteen minutes of answers,
+  and meets the 24px WCAG 2.5.8 target minimum.
+
+### Fixed
+
+- **The landing page's closing section collapsed.** `flex-1` sets
+  `flex-basis: 0`, so the text column had no floor: beside the contact block the
+  headline was crushed to about 180px at 1280 and wider, setting as a four-line
+  ladder over copy wrapping at twenty-two characters, while the seal orphaned
+  itself onto a third row. It got worse the wider the screen, and it is the last
+  thing a visitor sees before deciding whether to spend fifteen minutes. Now a
+  grid with a real minimum.
+- **Severity was encoded in colour alone.** A 6px amber dot beside a 6px grey
+  one, at a size where hue barely registers and which a mono laser flattens
+  entirely. Caution and blocker items now use a rotated square as well, and
+  carry a screen-reader prefix — a sighted reader was getting information from
+  the colour that nobody else got at all. Unfilled complexity dots moved from
+  `line-strong` (1.63:1) to `neutral` (3.95:1), which is what a non-text
+  indicator needs.
+- **The rotating seal read upside down along its lower arc.** A single circular
+  path inverts the bottom half of any phrase set on it. Two arcs now, both
+  running left to right. It is the one purely decorative element on a page that
+  otherwise earns everything it shows, which is the wrong thing to be
+  unreadable.
+- **The step connectors on the landing page.** They animated correctly while
+  painting nothing: an unlayered `width: 100%` in `globals.css` beat the `w-10`
+  utility meant to size them, and a percentage width in an indefinite grid track
+  is zero. The stylesheet now sets only the 1px axis, `PathRail` requires the
+  caller to size the other, and the rendered width is asserted in the browser.
+
 ## [0.1.0] – 2026-08-30
 
 First working release: intake, engine, rulepack, report, Markdown export and a

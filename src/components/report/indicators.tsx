@@ -108,11 +108,14 @@ export function ComplexityDots({ score, label }: { score: number; label: string 
         {[1, 2, 3, 4, 5].map((step) => (
           <span
             key={step}
+            // An unfilled dot is a non-text indicator and needs 3:1 against
+            // the surface behind it. `line-strong` measures 1.63:1 — fine for a
+            // hairline separator, not for something carrying a rating.
             className={[
               "h-1.5 w-1.5 rounded-full border",
               step <= filled
                 ? "border-[var(--color-ink)] bg-[var(--color-ink)]"
-                : "border-[var(--color-line-strong)]",
+                : "border-[var(--color-neutral)]",
             ].join(" ")}
           />
         ))}
@@ -240,11 +243,23 @@ export function Section({
       id={id}
       className={`scroll-mt-24 ${breakBefore ? "print:break-before-page" : ""}`}
     >
-      <h2 className="text-ink border-line flex items-baseline gap-3 border-b pb-2 text-lg font-semibold tracking-tight">
-        <span className="text-faint tabular text-sm">{number}</span>
+      {/* Document scale, not app scale.
+       *
+       * These headings were `text-lg` while the card titles inside them were
+       * `text-base` — two points of size separating a numbered section of a
+       * twelve-page document from a subheading within it, which is why the
+       * section boundaries disappeared when scrolling.
+       *
+       * The number is a text node followed by a real space rather than a flex
+       * child, because a flex gap is not a space: the accessible name read
+       * "1Zusammenfassung", and a screen reader said so. */}
+      <h2 className="text-ink border-line border-b pb-2 text-2xl font-semibold tracking-tight">
+        <span className="text-faint tabular mr-1 text-base font-normal">{number}</span>{" "}
         {title}
       </h2>
-      {lead ? <p className="text-muted mt-3 text-sm leading-relaxed">{lead}</p> : null}
+      {lead ? (
+        <p className="text-muted mt-3 max-w-[68ch] text-base leading-relaxed">{lead}</p>
+      ) : null}
       <div className="mt-4">{children}</div>
     </section>
   );

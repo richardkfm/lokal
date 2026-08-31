@@ -36,6 +36,39 @@ All of them are pure CSS. No charting library: canvas does not print reliably,
 and six bar meters do not justify the weight. Every indicator also carries a text
 label, so meaning survives greyscale printing and never depends on colour alone.
 
+## Type scale
+
+The report has its own scale, distinct from the app shell's. The shell is a
+tool; the report is a twelve-page document that people print and forward, and
+the two need different typographic authority.
+
+Section headings are `text-2xl`, section leads and body prose `text-base` in
+`--color-ink`, and `--color-faint` at `text-xs` is reserved for what it is for:
+basis lines, sources, captions. Prose is capped at `68ch`.
+
+This is a correction, not a preference. The whole report used to be `text-sm`
+and `text-xs` in `--color-muted`, with `text-lg` section headings above
+`text-base` card titles — two points of size between a numbered section of the
+document and a subheading inside it. Scrolling it, the section boundaries were
+invisible; the summary paragraph a Bürgermeister actually reads was the report's
+least contrasty text.
+
+The section number is a text node followed by a real space, not a flex child.
+A flex gap is not a space, and the accessible name read "1Zusammenfassung".
+
+## Saying a thing once
+
+Fit criteria common to every recommendation are stated once, above the category
+cards, and each card carries only what distinguishes it. Six cards repeating the
+same five reasons is about thirty bullets carrying about five facts, and
+repetition at that density is the specific texture of generated text — which
+this audience is primed to look for. It also buried the lines that _are_
+per-category analysis.
+
+The same computation runs in `report-view.tsx` and `to-markdown.ts`, keyed on
+rationale code plus parameters so `fits_chosen_ecosystem` counts as shared only
+when it names the same ecosystem everywhere.
+
 ## Rendering rationale codes
 
 The engine emits codes with parameters; the report translates them. Two things
@@ -58,11 +91,30 @@ persona in both languages. That is the guard against both mistakes.
 - Print styles live in `src/styles/print.css` and override token **values** — an
   ink-safe palette, no large filled surfaces — rather than restyling components.
   One set of components, two renderings.
-- `@page { size: A4; margin: 18mm 16mm; }`.
-- `break-inside: avoid` on cards; `break-before: page` before sections 4, 5 and 7.
-- The "considered and ruled out" disclosure is forced open in print. Paper has no
-  `<details>`, and silently omitting the alternatives that were examined would
-  defeat the purpose of keeping them.
+- `@page { size: A4; margin: 18mm 16mm 20mm; }`, with a running head and
+  `counter(page) / counter(pages)` in the margin boxes. Chromium renders `@page`
+  margin boxes in `page.pdf()` — verified, not assumed — so this carries over to
+  server-side PDF unchanged. Loose A4 sheets with nothing identifying them is
+  what makes a printout read as a webpage dump rather than a Vorlage.
+- `break-inside: avoid` on **cards**, and explicitly `auto` on sections.
+  Sections are routinely taller than a page, so `avoid` never kept one whole; it
+  only pushed a section that did not fit onto a fresh sheet and left nothing
+  able to follow it in. `break-after: avoid` on headings is what actually
+  prevents stranding.
+- `break-before: page` before sections 4, 5 and 7. These stay: a major section
+  opening on a fresh sheet is a document convention, and it is why the reference
+  report is thirteen sheets rather than eleven. That is a deliberate cost.
+- **The "considered and ruled out" disclosure is opened by the print tree, not
+  by CSS** — `<details open={print}>`. It was CSS until v0.1.0 shipped a printed
+  brief carrying the count with none of the candidates under it: the rule
+  overrode `display` on the disclosure's children, and Chromium hides them
+  through `::details-content`, which `display` on a child cannot reach. Both
+  rules now exist, addressing both mechanisms, and
+  `tests/e2e/print-and-motion.spec.ts` asserts on rendered `innerText` rather
+  than on the DOM — the previous test passed either way, which is why this
+  survived a release.
+- Screen-only copy is hidden. `method.linkNotice` explains that the report's URL
+  is unguessable but unprotected, which means nothing on a sheet of paper.
 - Link targets are printed after their text, so a paper copy stays checkable.
 
 **The print route has zero client components in its content tree.** That is the

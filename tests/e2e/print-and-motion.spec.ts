@@ -77,6 +77,32 @@ test("the landing page prints with nothing hidden", async ({ page }) => {
   await expectLegibleAtRest(page);
 });
 
+/**
+ * A rail with no length.
+ *
+ * The connectors between the three steps animated correctly for a whole release
+ * while painting nothing: an unlayered `width: 100%` in `globals.css` beat the
+ * `w-10` utility that was meant to size them, and a percentage width in an
+ * indefinite grid track is zero. Every signal said the feature worked —
+ * `getAnimations()` reported the dot running, no test failed, no error was
+ * logged — because everything except the geometry was fine.
+ *
+ * So the geometry is what gets asserted. Not that the rail exists, and not that
+ * it animates: that it is wide enough for a 5px dot to travel.
+ */
+test("the step connectors have a rail to travel", async ({ page }) => {
+  await page.goto("/de");
+
+  const rails = page.locator(".path-rail-h");
+  const count = await rails.count();
+  expect(count).toBeGreaterThan(0);
+
+  for (let index = 0; index < count; index += 1) {
+    const box = await rails.nth(index).boundingBox();
+    expect(box?.width ?? 0).toBeGreaterThan(20);
+  }
+});
+
 test("the landing page is legible under reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/de");
@@ -97,6 +123,38 @@ test("the printed report shows no frozen-out content", async ({ page }) => {
 });
 
 /**
+ * The record that did not print.
+ *
+ * "Geprüft und ausgeschieden" is one of the four outputs CLAUDE.md names as
+ * proving this is a plan rather than a list, and for a whole release the printed
+ * brief carried the count with none of the candidates under it: `print.css`
+ * overrode `display` on the disclosure's children, and Chromium hides them
+ * through `::details-content`, which that cannot reach.
+ *
+ * The existing print test would have passed either way, because it asserted on
+ * the DOM. This asserts on `innerText` — what a reader actually sees, and what
+ * a PDF extractor actually gets.
+ */
+test("the printed brief carries the candidates it ruled out", async ({ page }) => {
+  await page.goto(`/de/report/${reportId}/print`);
+  await page.emulateMedia({ media: "print" });
+
+  const summary = page.locator("details summary", {
+    hasText: "geprüft und ausgeschieden",
+  });
+  expect(await summary.count()).toBeGreaterThan(0);
+
+  for (const details of await page.locator("details").all()) {
+    const text = await details.innerText();
+    const body = text.replace(/^.*geprüft und ausgeschieden/s, "").trim();
+
+    // A count with nothing under it is worse than no section at all: it tells
+    // the reader something is being withheld and does not say what.
+    expect(body.length).toBeGreaterThan(0);
+  }
+});
+
+/**
  * ADR-0003 guardrail 3, checked where it matters most.
  *
  * The printed brief is the copy that gets forwarded to a council or a management
@@ -114,7 +172,7 @@ test("every printed euro figure carries its basis", async ({ page }) => {
 
   expect(body).toMatch(/Rechengrundlage/i);
   expect(body).toMatch(/je Arbeitsplatz und Monat/);
-  expect(body).toMatch(/erhoben am \d{4}-\d{2}-\d{2}/);
+  expect(body).toMatch(/erhoben am \d{1,2}\. \p{L}+ \d{4}/u);
   expect(body).toMatch(/Belegt für \d+ von \d+ betrachteten Bereichen/);
   expect(body).toMatch(/https:\/\/\S+/);
 

@@ -16,6 +16,12 @@
     "sourceLink": "Source code",
     "footerProductTitle": "Product",
     "footerProjectTitle": "Project",
+    "footerLegalTitle": "Legal",
+    "footerLegal": {
+      "imprint": "Imprint",
+      "privacy": "Privacy notice",
+      "accessibility": "Accessibility statement"
+    },
     "footerLicense": "License (AGPL-3.0)",
     "footerRulepack": "Rulepack {version}",
     "expert": {
@@ -41,7 +47,7 @@
       "risks": "Which risks, dependencies and training needs are coming our way?"
     },
     "audienceTitle": "Who it is for",
-    "audience": "Municipalities, district offices, schools, utilities, associations and SMEs.",
+    "audience": "Wherever a move has to be planned rather than only discussed.",
     "outputTitle": "What you end up with",
     "ctaSecondary": "How the plan is built",
     "trust": {
@@ -135,7 +141,8 @@
     "headingWord2": "Google Workspace",
     "headingWord3": "SharePoint",
     "headingWord4": "Slack and Zoom",
-    "sealText": "sovereign · open · accountable",
+    "sealTop": "sovereign · open",
+    "sealBottom": "traceable",
     "numbers": {
       "title": "What you pay today, and what hangs on it",
       "lead": "lokal invents no figures. It multiplies your seat count by the list prices vendors publish themselves — with the source and the date.",
@@ -154,7 +161,7 @@
       "fact2Label": "reviewed target tools across {categories} areas, every one sourced",
       "fact3Value": "AGPL",
       "fact3Label": "you can run, modify and redistribute lokal yourself",
-      "euroOffice": "New in the rulepack: Euro-Office, the European office suite from Nextcloud, IONOS and partners — rated like everything else, including how young it is."
+      "euroOffice": "In the rulepack: Euro-Office, the European office suite from Nextcloud, IONOS and partners — rated on the same criteria as every other, maturity included."
     }
   },
   "wizard": {
@@ -167,6 +174,7 @@
     "submitting": "Creating …",
     "submitFailed": "The plan could not be created. Please try again.",
     "completeStep": "Please complete this step.",
+    "errorSummaryTitle": "These answers are still missing",
     "startOver": "Start over",
     "errors": {
       "required": "Required.",
@@ -238,13 +246,17 @@
     "stack": {
       "legend": "Areas in scope",
       "hint": "Choose at least one area.",
-      "notAssessedNote": "Unselected areas appear in the report as not assessed — not as unproblematic."
+      "notAssessedNote": "Unselected areas appear in the report as not assessed — not as unproblematic.",
+      "questionCount": "The next step asks {questions} questions: seven per area, currently {areas, plural, one {one area} other {# areas}}."
     },
     "detail": {
       "intro": "These answers set the sequence. Estimates are enough.",
       "nothingSelected": "No area has been selected yet.",
       "currentToolLabel": "Currently in use",
-      "currentToolHint": "Free text. Leave empty if nothing is in use yet.",
+      "currentToolHint": "Pick a listed product where you can — it sharpens effort, lock-in and the cost figures. Otherwise choose “Something else”.",
+      "currentToolNone": "Nothing in use",
+      "currentToolOther": "Something else …",
+      "currentToolOtherLabel": "Which system?",
       "currentToolPlaceholder": "e.g. SharePoint",
       "seatsLabel": "Seats affected",
       "seatsHint": "May differ from the total — a ticket system often affects only a few people.",
@@ -259,7 +271,7 @@
       "urgencyLabel": "Urgency",
       "urgencyHint": "When should something change?",
       "keyboardHint": "Tip: within a choice, the number keys 1-3 select the matching option.",
-      "progress": "{done} of {total} areas complete",
+      "progress": "{done} of {total, plural, one {one area} other {# areas}} complete",
       "applyToAllLabel": "Apply the first area's values to all",
       "copyFromFirstLabel": "Copy values from \"{category}\""
     },
@@ -276,8 +288,10 @@
       "useCasesHint": "Choose what you actually intend to do."
     },
     "review": {
-      "intro": "Your answers in brief. The plan is calculated from these alone.",
+      "intro": "Every answer you gave, grouped by step. The plan is computed from these and nothing else.",
       "edit": "Change",
+      "yes": "Yes",
+      "no": "No",
       "orgType": "Type",
       "seats": "Seats",
       "departments": "Areas",
@@ -290,7 +304,8 @@
       "warnNoDepartments": "No areas were named, although the organization is larger.",
       "warnNoAiUseCases": "Interest in AI was indicated, but no use case was chosen."
     },
-    "progressLabel": "Progress"
+    "progressLabel": "Progress",
+    "startOverConfirm": "Discard every answer and start again?"
   },
   "vocabulary": {
     "orgType": {
@@ -521,45 +536,54 @@
     },
     "category": {
       "office_docs": {
-        "label": "Office and documents"
+        "label": "Office and documents",
+        "hint": "Text, spreadsheets, presentations. E.g. Microsoft 365, LibreOffice."
       },
       "file_sharing": {
-        "label": "File storage"
+        "label": "File storage",
+        "hint": "Where files live and get shared. E.g. a network drive, SharePoint, Dropbox."
       },
       "chat_video": {
-        "label": "Chat and video"
+        "label": "Chat and video",
+        "hint": "Short messages and meetings. E.g. Teams, Zoom, WhatsApp."
       },
       "intranet_wiki": {
-        "label": "Intranet and knowledge"
+        "label": "Intranet and knowledge",
+        "hint": "Internal pages and knowledge that is not in files. E.g. Confluence, a SharePoint intranet."
       },
       "project_management": {
-        "label": "Projects and tasks"
+        "label": "Projects and tasks",
+        "hint": "Tasks, dates, who is responsible. E.g. Jira, Trello, spreadsheets."
       },
       "helpdesk": {
-        "label": "Helpdesk"
+        "label": "Helpdesk",
+        "hint": "Requests from citizens or staff, tracked to a close. E.g. a shared mailbox, Jira Service Management."
       },
       "forms_surveys": {
-        "label": "Forms and surveys"
+        "label": "Forms and surveys",
+        "hint": "Application forms and surveys. E.g. Microsoft Forms, Google Forms, a printable PDF."
       },
       "crm": {
-        "label": "Contact management"
+        "label": "Contact management",
+        "hint": "External contacts with a history. E.g. Salesforce, HubSpot, address lists."
       },
       "dms_archive": {
-        "label": "Document management"
+        "label": "Document management",
+        "hint": "Records management with retention periods — not the same as a file platform. E.g. d.velop, a paper archive."
       }
     }
   },
   "rationale": {
     "advantage": {
-      "aligns_with_public_sector_expectations": "Aligns with public-sector expectations: traceable procurement, open formats, auditable processes.",
-      "data_stays_under_own_control": "Data stays under your own control ({count} recommended systems with strong data sovereignty).",
-      "hosting_location_is_a_choice": "Where the systems run becomes your decision rather than the vendor's.",
-      "open_formats_and_exit_options": "Open formats keep a later change of course possible.",
-      "ready_for_local_ai": "The target stack can be combined with self-hosted AI.",
-      "reduced_lock_in": "Reduced lock-in in {count} areas you explicitly named as a concern."
+      "aligns_with_public_sector_expectations": "As a public body you gain on three counts: traceable procurement, open formats, auditable processes.",
+      "data_stays_under_own_control": "Data stays under your own control ({count, plural, one {one recommended system} other {# recommended systems}} with strong data sovereignty).",
+      "hosting_location_is_a_choice": "Where the systems run becomes your decision rather than the vendor's: at least one recommended system can be self-hosted.",
+      "open_formats_and_exit_options": "{count, plural, one {The recommended system stores} other {All # recommended systems store}} data in open formats — a later move stays possible.",
+      "ready_for_local_ai": "At least one recommended system can be pointed at self-hosted AI rather than tied to an external provider.",
+      "reduced_lock_in": "Reduced lock-in in {count, plural, one {one area} other {# areas}} you explicitly named as a concern."
     },
     "ai": {
-      "address_prerequisites_first": "All {count} desired use cases require groundwork first.",
+      "address_prerequisites_first": "{count, plural, one {The desired use case requires} other {All # desired use cases require}} groundwork first.",
       "fits_today": "Technically and organizationally viable today.",
       "hardware_below_requirement": "Available hardware ({available}) is not sufficient for this use case; at least {required} is required.",
       "needs_a_document_store_first": "Without an indexed document base there is nothing for questions to refer to. The repository comes first, then this use case.",
@@ -585,7 +609,7 @@
       "pilot_before_rollout": "{category}: pilot first rather than rolling out to all {seats} seats.",
       "plan_exceeds_annual_capacity": "The plan requires at least {minDays} administrator-days; roughly {availableDays} are available per year. Either extend the timeline or plan for support.",
       "plan_may_exceed_annual_capacity": "In the worst case ({maxDays} days) the plan exceeds the {availableDays} days available per year.",
-      "significant_training_load": "{count} migrations together affect {seats} seats with high training sensitivity."
+      "significant_training_load": "{count, plural, one {One migration affects} other {# migrations together affect}} {seats} seats with high training sensitivity."
     },
     "caution": {
       "approaching_seat_ceiling": "{tool} approaches its usual limit at this size.",
@@ -636,10 +660,10 @@
     "gap": {
       "ai_ambition_without_hardware": "AI is explicitly wanted but no suitable hardware exists. Without procurement, local AI stays an intention.",
       "identity_foundation_missing_at_scale": "At {totalSeats} seats without a central directory, every rollout creates its own account list.",
-      "many_migrations_with_low_admin_capacity": "{categories} areas are due for migration with little administration time available.",
+      "many_migrations_with_low_admin_capacity": "{categories, plural, one {One area is} other {# areas are}} due for migration with little administration time available.",
       "self_hosting_without_linux_capability": "Self-hosting is preferred but the operational skills are missing. Either build that capability or start with managed hosting.",
       "sensitive_data_with_external_inference": "Highly confidential content is to be processed by an external provider, which conflicts with the stated protection requirement.",
-      "several_urgent_critical_migrations_at_once": "{count} business-critical projects are meant to start at once and immediately. That exceeds what the organization can absorb."
+      "several_urgent_critical_migrations_at_once": "{count, plural, one {One business-critical project is} other {# business-critical projects are}} meant to start immediately. That exceeds what the organization can absorb."
     },
     "gotcha": {
       "attachment_links": "Links to attachments break and need reworking.",
@@ -685,23 +709,23 @@
     "next": {
       "address_prerequisite": "Establish the prerequisite: {prerequisite}",
       "pilot_ai_use_case": "Set up a pilot for the AI use case {useCase}.",
-      "plan_first_phase": "Plan the first phase with {count} projects in concrete terms.",
+      "plan_first_phase": "Plan the first phase with {count, plural, one {one project} other {# projects}} in concrete terms.",
       "run_pilot": "Set up a pilot for {category}.",
       "verify_recommendations_against_current_releases": "Check the recommendations against the current state of the products (rulepack {rulepackVersion})."
     },
     "note": {
-      "categories_not_assessed": "{count} areas were not assessed and are not evaluated in this plan.",
+      "categories_not_assessed": "{count, plural, one {One area was} other {# areas were}} not assessed and {count, plural, one {is} other {are}} not evaluated in this plan.",
       "category_seats_exceed_organization": "{category} reports {seats} seats while the organization has {totalSeats} in total. Please check.",
-      "no_candidate_survived_constraints": "For {category}, none of the {considered} options examined survived the stated constraints.",
+      "no_candidate_survived_constraints": "For {category}, {considered, plural, one {the one option examined} other {none of the # options examined}} survived the stated constraints.",
       "no_departments_named": "No areas were named for {totalSeats} seats, which makes coordination effort harder to judge.",
       "public_sector_implied_by_org_type": "As a {orgType}, public-sector expectations apply regardless of what was ticked."
     },
     "phase": {
       "complex_or_cannot_run_in_parallel": "High effort ({difficulty}) or no parallel operation possible.",
-      "deferred_to_spread_critical_change": "Deferred to keep at most {limit} business-critical change(s) running at once.",
+      "deferred_to_spread_critical_change": "Deferred to keep at most {limit, plural, one {one business-critical change} other {# business-critical changes}} running at once.",
       "moderate_effort_or_business_critical": "Moderate effort or business-critical.",
       "optimization_and_local_ai": "Optimization and local AI once the foundation is in place.",
-      "prerequisites_before_anything_else": "{count} prerequisites must be in place before any migration.",
+      "prerequisites_before_anything_else": "{count, plural, one {One prerequisite} other {# prerequisites}} must be in place before any migration.",
       "quick_win": "Low effort with noticeable benefit.",
       "waits_for_dependency": "Waits for {dependsOn}, which this system builds on."
     },
@@ -712,18 +736,18 @@
     "savings": {
       "excludes_internal_time_costs": "Internal staff time is not valued in this assessment.",
       "exit_options_improve": "{category}: improved exit options.",
-      "external_support_cost": "External support should be planned for {count} projects.",
+      "external_support_cost": "External support should be planned for {count, plural, one {one project} other {# projects}}.",
       "hosting_under_own_control": "Operating costs become something you shape rather than something set by a vendor.",
       "migration_effort_upfront": "The migration effort of {minDays} to {maxDays} administrator-days comes first.",
       "model_is_qualitative": "The overall assessment is qualitative. Any amounts shown are not a forecast — they are your own figures multiplied by published list prices.",
-      "parallel_running_costs": "Across {phases} phases, old and new systems run alongside each other for a time.",
+      "parallel_running_costs": "Across {phases, plural, one {one phase} other {# phases}}, old and new systems run alongside each other for a time.",
       "priced_exposure_partial": "Only {priced} of {assessed} assessed areas carry a citable list price, so the amount shown is a partial sum rather than a total.",
       "prices_are_list_prices": "Based on the vendors' published list prices. Your actual contract terms may differ; check against your own invoices.",
       "procurement_flexibility": "More room to manoeuvre in procurement.",
       "recurring_licence_exposure_reduced": "Recurring licence exposure for {tool} across {seats} seats falls away.",
       "subscription_not_fully_replaced": "{plan} does not fall away yet: {remaining} area(s) still run on this subscription. The contract ends only once the last of them is replaced.",
       "support_contracts_still_needed": "Support contracts remain necessary and offset part of the saving.",
-      "training_cost": "Training effort for {seats} seats."
+      "training_cost": "Training effort for {seats} seats, summed across the affected areas."
     },
     "scale": {
       "additional_departments_manageable": "Additional areas can be taken on without rebuilding.",
@@ -741,6 +765,7 @@
   },
   "report": {
     "documentKind": "Internal planning document",
+    "severityCaution": "Watch out:",
     "title": "Migration plan",
     "coverLine": "{orgType} · {seats} seats · created {date}",
     "draftRulepackNotice": "Note: rulepack {version} has not yet been checked against current product releases by a qualified reviewer. The ratings are careful but unconfirmed — verify before any procurement decision.",
@@ -753,8 +778,8 @@
       "savingsDetail": "band plus evidenced amounts",
       "ai": "AI",
       "aiDetail": "Recommended stance",
-      "seats": "Seats affected",
-      "seatsDetail": "of {total} in total",
+      "seats": "Seats, summed",
+      "seatsDetail": "Summed across the assessed areas; a seat in several areas counts more than once. Organization: {total}.",
       "phases": "Phases",
       "phasesDetail": "carrying work",
       "meterScale": "{score} out of 100"
@@ -814,8 +839,8 @@
     },
     "summary": {
       "title": "Executive summary",
-      "context": "{orgType} with {seats} seats (size band {bucket}), {categories} areas assessed.",
-      "target": "The plan proposes {planned} migrations. {keep} areas should stay as they are for now."
+      "context": "{orgType} with {seats} seats (size band {bucket}), {categories, plural, one {one area assessed} other {# areas assessed}}.",
+      "target": "The plan proposes {planned, plural, =0 {no migrations} one {one migration} other {# migrations}}. {keep, plural, =0 {No area stays} one {One area stays} other {# areas stay}} as it is for now."
     },
     "advantages": {
       "title": "Key advantages"
@@ -825,10 +850,10 @@
       "drivers": "Where cost falls away",
       "offsets": "What works against it",
       "exposureTitle": "Today's subscription cost",
-      "exposureFigure": "Figure",
-      "exposureAmount": "Amount",
       "exposureCurrent": "Current, per year",
-      "exposureAvoided": "Removed by this plan",
+      "exposureFallsAwayAll": "Migrating every evidenced area removes this amount. That is not a saving: hosting, support and training are not priced here.",
+      "exposureFallsAwayPart": "This plan removes {amount} per year of it; the rest continues, because not every subscription is fully replaced. The part that does fall away is not a saving either: hosting, support and training are not priced here.",
+      "exposureFallsAwayNone": "This plan removes none of it for now: no subscription is fully replaced.",
       "exposureCoverage": "Evidenced for {priced} of {assessed} assessed areas, across {seats} seats.",
       "exposureNote": "Your own figures multiplied by published list prices — not an estimate, not a forecast.",
       "basisTitle": "How this is calculated",
@@ -849,6 +874,7 @@
     "stack": {
       "title": "Recommended target stack",
       "lead": "One reasoned recommendation per area, with fallbacks and the candidates ruled out.",
+      "sharedFit": "True of {count, plural, one {the recommended system} other {all # recommended systems}}",
       "current": "Today",
       "seats": "{seats} seats",
       "backups": "Backup options",
@@ -860,6 +886,7 @@
     "roadmap": {
       "title": "Migration roadmap",
       "lead": "Sequence, effort and affected seats per phase. Effort is a planning estimate in admin days.",
+      "phaseEmpty": "Not occupied for this organization.",
       "effort": "{min}–{max} days",
       "seatsAffected": "Seats affected",
       "pilot": "pilot recommended",
