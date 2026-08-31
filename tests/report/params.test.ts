@@ -110,15 +110,6 @@ function rationaleItems(node: unknown, found: RationaleItem[] = []): RationaleIt
 }
 
 /**
- * Every machine identifier the report could interpolate.
- *
- * Enum values are only half of them. Prerequisite ids, tool ids and category
- * ids come from the rulepack, carry their labels as `{ de, en }` objects rather
- * than message keys, and are therefore unreachable by a catalogue lookup — which
- * is how `Voraussetzung schaffen: identity-directory` printed in section 9 while
- * section 5 rendered the same six by name.
- */
-/**
  * The one identifier still rendered raw, named rather than quietly excluded.
  *
  * `fit.fits_chosen_ecosystem` interpolates a target tool's `ecosystem`, and an
@@ -135,6 +126,15 @@ function rationaleItems(node: unknown, found: RationaleItem[] = []): RationaleIt
  */
 const KNOWN_UNRESOLVED = new Set(["fit.fits_chosen_ecosystem"]);
 
+/**
+ * Every machine identifier the report could interpolate.
+ *
+ * Enum values are only half of them. Prerequisite ids, tool ids and category ids
+ * come from the rulepack, carry their labels as `{ de, en }` objects rather than
+ * message keys, and are therefore unreachable by a catalogue lookup — which is
+ * how `Voraussetzung schaffen: identity-directory` printed in section 9 while
+ * section 5 rendered the same six by name.
+ */
 const IDENTIFIERS = new Set<string>([
   ...ENUM_VALUES,
   ...pack.sourceTools.map((tool) => tool.id),
