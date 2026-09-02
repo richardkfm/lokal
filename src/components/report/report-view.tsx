@@ -366,6 +366,28 @@ export async function ReportView({
           </div>
         </div>
 
+        {/* Printed only: the four at-a-glance figures §0 does not otherwise
+            carry. On screen they stay in their own grid below; on paper a
+            separate summary section directly under this one is the same job
+            done twice on the same sheet. */}
+        <div className="mt-5 hidden flex-wrap gap-2 print:flex">
+          <Badge tone={toneForScore(glance.readiness.score)}>
+            {r("glance.readiness")}:{" "}
+            {r(`readinessLabel.${glance.readiness.label}` as never)}
+          </Badge>
+          <Badge
+            tone={glance.migrationPosture === "prepare_first" ? "caution" : "neutral"}
+          >
+            {r("glance.posture")}: {r(`posture.${glance.migrationPosture}` as never)}
+          </Badge>
+          <Badge>
+            {r("glance.savings")}: {r(`outlook.${glance.savingsOutlook}` as never)}
+          </Badge>
+          <Badge>
+            {r("glance.ai")}: {r(`aiPosture.${glance.aiPosture}` as never)}
+          </Badge>
+        </div>
+
         {/* The desktop, on the first page, because for this audience it is the
             question that decides whether the rest is worth reading. */}
         <div className="border-line mt-6 rounded-lg border p-4">
@@ -398,8 +420,10 @@ export async function ReportView({
         </ol>
       </nav>
 
-      {/* At a glance */}
-      <section id="glance" className="mt-8 scroll-mt-24">
+      {/* At a glance — screen only. Its four unique figures are carried into §0
+          for print, above; keeping both on paper spends a sheet restating the
+          page the reader has just read. */}
+      <section id="glance" className="mt-8 scroll-mt-24 print:hidden">
         <h2 className="sr-only">{r("glance.title")}</h2>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
           <KpiCard
@@ -791,7 +815,10 @@ export async function ReportView({
            * The document's only wide graphic, because the timeframe is the
            * question this section exists to answer and nothing else should
            * compete with it for the eye. */}
-          <div className="border-line mb-6 rounded-lg border p-4">
+          {/* On screen only. §0 already carries the same drawing, and every phase
+              card below states its own span in text — on paper this would be the
+              same fact a third time, and a third telling costs a sheet. */}
+          <div className="border-line mb-6 rounded-lg border p-4 print:hidden">
             <PhaseTimeline
               phases={timelinePhases}
               label={timelineLabel}
@@ -919,25 +946,17 @@ export async function ReportView({
                            * a reader who thinks the training estimate is wrong
                            * can see which line to argue with. */}
                           {migration.effort.items.length > 0 ? (
-                            <ul className="mt-2 space-y-1">
-                              {migration.effort.items.map((item) => (
-                                <li
-                                  key={item.package}
-                                  className="flex items-baseline gap-2 text-xs"
-                                >
+                            <p className="text-muted mt-1.5 text-xs leading-relaxed">
+                              {migration.effort.items.map((item, index) => (
+                                <span key={item.package}>
+                                  {index > 0 ? " · " : ""}
                                   <span className="text-ink">
                                     {v(`workPackage.${item.package}.label` as never)}
-                                  </span>
-                                  <span
-                                    className="border-line mx-1 min-w-4 flex-1 border-b border-dotted"
-                                    aria-hidden="true"
-                                  />
-                                  <span className="text-muted tabular whitespace-nowrap">
-                                    {dayRange(item.days)}
-                                  </span>
-                                </li>
+                                  </span>{" "}
+                                  <span className="tabular">{dayRange(item.days)}</span>
+                                </span>
                               ))}
-                            </ul>
+                            </p>
                           ) : null}
 
                           {/* Why this move is as hard as it is.

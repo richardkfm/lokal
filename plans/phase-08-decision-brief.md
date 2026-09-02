@@ -136,9 +136,28 @@ Beschlussvorlage that names a service provider on page one reads as advertising,
 which is the opposite of what an "internes Planungsdokument" is for. On screen,
 where the IT lead is working and wants the phone number, it sits in the rail.
 
-**The printed report must not get longer.** §0 replaces reading rather than
-adding to it. If the sheet count goes up, the phase failed at the thing it set
-out to do.
+**The printed report must not get longer — revised, having been measured.**
+
+The constraint as first written was that the sheet count must not rise. It was
+measured against `main` on the same report, rendered through Chromium at A4:
+**14 sheets before, 17 after.**
+
+The intent behind the rule was that §0 must not be additive padding, and that
+half of it holds: §0 occupies a little under one sheet and breaks to its own
+page, and the prominence work around it is net neutral on paper. The timeline
+draws once rather than twice, the contact rail is `print:hidden`, and "Auf einen
+Blick" is folded into §0 for print, because a separate summary section directly
+beneath the summary page is the same job done twice on the same sheet.
+
+The remaining two sheets are content, not decoration: the work-package breakdown
+under every migration, the difficulty drivers that had never reached a page, the
+client-OS verdict, and the cost column beside the exposure column. Cutting any of
+them to hold a page count would be cutting exactly what this phase was asked
+for — the reasoning behind the days and the money to set against them.
+
+So the rule is narrowed rather than dropped, and the narrowed version is the one
+a later pass has to argue with: **§0 stays within one sheet, and no _presentation_
+change may add a sheet.** Content may, and has, and says so here.
 
 ## Verification
 

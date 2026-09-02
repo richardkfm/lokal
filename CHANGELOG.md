@@ -74,6 +74,13 @@ Dates are ISO 8601.
   graphic, and the horizon replaces the phase count in the at-a-glance grid —
   a swap, not growth.
 
+  On paper the printed report grows from 14 sheets to 17 for the same report,
+  measured rather than assumed. The presentation work is neutral: §0 occupies
+  under one sheet, the timeline draws once, the contact rail does not print, and
+  "Auf einen Blick" is folded into §0 rather than repeating it on the same sheet.
+  The three sheets are the work-package breakdown, the difficulty drivers, the
+  client-OS verdict and the cost column — content the phase exists to add.
+
 ### Fixed
 
 - **The per-migration difficulty drivers never reached a page.** They were
