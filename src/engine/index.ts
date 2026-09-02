@@ -7,6 +7,7 @@ import { assessReadiness } from "./readiness";
 import { assessSavings } from "./savings";
 import { buildSchedule } from "./schedule";
 import { sequence } from "./sequencing";
+import { assessClientOs } from "./workplace";
 import type { CategoryId } from "@/domain/enums";
 import type { AssessmentInput } from "@/domain/intake";
 import type { Rulepack } from "@/rulepack/schema";
@@ -19,6 +20,7 @@ import type { ReadinessProfile } from "./readiness";
 import type { SavingsOutlook } from "./savings";
 import type { Schedule } from "./schedule";
 import type { Sequencing } from "./sequencing";
+import type { ClientOsLaneAssessment } from "./workplace";
 
 export * from "./ai-lane";
 export * from "./candidates";
@@ -29,6 +31,7 @@ export * from "./readiness";
 export * from "./savings";
 export * from "./schedule";
 export * from "./sequencing";
+export * from "./workplace";
 export * from "./weights";
 
 /**
@@ -49,6 +52,7 @@ export type EngineResult = {
   sequencing: Sequencing;
   capacity: CapacityAssessment;
   schedule: Schedule;
+  clientOs: ClientOsLaneAssessment;
   savings: SavingsOutlook;
   aiLane: AiLane;
 };
@@ -82,6 +86,7 @@ export function runEngine(input: AssessmentInput, pack: Rulepack): EngineResult 
   );
   const capacity = assessCapacity(sequencing, assessment, readiness);
   const schedule = buildSchedule(sequencing, capacity, assessment);
+  const clientOs = assessClientOs(assessment, sequencing, pack);
   const savings = assessSavings(assessment, sequencing, capacity, pack);
   const aiLane = assessAiLane(assessment, readiness, sequencing, pack);
 
@@ -95,6 +100,7 @@ export function runEngine(input: AssessmentInput, pack: Rulepack): EngineResult 
     sequencing,
     capacity,
     schedule,
+    clientOs,
     savings,
     aiLane,
   };

@@ -282,6 +282,120 @@ describe("calendar duration", () => {
   });
 });
 
+describe("the client operating system", () => {
+  it("never names a distribution", () => {
+    // The boundary of what lokal claims. Which Linux to use depends on
+    // procurement, support contracts and the skills already in the building, and
+    // answering it from five intake answers would be exactly the
+    // alternatives-finder output lokal exists not to produce.
+    const serialized = JSON.stringify(
+      run({ clientOs: "windows", windowsOnlyApps: "none" }).clientOs,
+    ).toLowerCase();
+
+    for (const name of ["ubuntu", "debian", "fedora", "suse", "mint", "redhat"]) {
+      expect(serialized).not.toContain(name);
+    }
+  });
+
+  it("blocks where the decision rests with someone else's vendor", () => {
+    const result = run({ windowsOnlyApps: "many", peripheralDependency: "low" });
+
+    expect(result.clientOs.verdict).toBe("blocked");
+    expect(result.clientOs.blockers.length).toBeGreaterThan(0);
+    expect(allCodes(result)).toContain(
+      "client_os.blocked_by_windows_only_applications",
+    );
+  });
+
+  it("says a mixed estate is a legitimate outcome, not a failure", () => {
+    // An organization told "blockiert" without this concludes the whole idea is
+    // dead, when what is actually true is that some desks stay on Windows.
+    const result = run({ windowsOnlyApps: "several", peripheralDependency: "low" });
+
+    expect(result.clientOs.verdict).toBe("blocked");
+    expect(allCodes(result)).toContain("client_os.mixed_estate_is_a_valid_outcome");
+  });
+
+  it("puts the swap after every application migration, never before", () => {
+    // The doctrine the whole lane exists to encode. Swapping the operating
+    // system first means migrating applications and workstations at once, and
+    // unwinding both together whenever something goes wrong.
+    const result = run({
+      categories: ["file_sharing", "office_docs", "helpdesk"],
+      windowsOnlyApps: "none",
+      peripheralDependency: "low",
+      deviceManagement: "mdm",
+    });
+
+    const lastWithMigrations = Math.max(
+      ...result.sequencing.phases
+        .filter((phase) => phase.migrations.length > 0)
+        .map((phase) => phase.id),
+    );
+
+    expect(result.clientOs.verdict).toBe("after_apps");
+    expect(result.clientOs.phase).toBeGreaterThan(lastWithMigrations);
+    expect(allCodes(result)).toContain("client_os.doctrine_os_moves_last");
+  });
+
+  it("scales the estimate with devices and says where the number came from", () => {
+    const declared = run({
+      windowsOnlyApps: "none",
+      peripheralDependency: "low",
+      deviceManagement: "mdm",
+      totalSeats: 100,
+      categorySeats: 100,
+      deviceCount: 400,
+    });
+    const fallback = run({
+      windowsOnlyApps: "none",
+      peripheralDependency: "low",
+      deviceManagement: "mdm",
+      totalSeats: 100,
+      categorySeats: 100,
+    });
+
+    expect(declared.clientOs.devices).toEqual({ count: 400, source: "declared" });
+    expect(fallback.clientOs.devices).toEqual({ count: 100, source: "seats" });
+    // Four times the machines is more work, whatever the seat count says.
+    expect(declared.clientOs.effortDays!.max).toBeGreaterThan(
+      fallback.clientOs.effortDays!.max,
+    );
+    // And the fallback is disclosed rather than passed off as a device count.
+    expect(allCodes(fallback)).toContain("client_os.device_count_fell_back_to_seats");
+  });
+
+  it("asserts nothing when nothing was asked", () => {
+    // The branch an assessment stored before the workplace block existed lands
+    // in. Naming the unanswered question beats inventing an estate.
+    const result = run({ clientOs: "unknown" });
+
+    expect(result.clientOs.verdict).toBe("not_assessed");
+    expect(result.clientOs.effortDays).toBeNull();
+    expect(allCodes(result)).toContain("client_os.verdict_not_assessed");
+  });
+
+  it("says what an estate already on Linux removes from the plan", () => {
+    const result = run({ clientOs: "linux" });
+
+    expect(result.clientOs.verdict).toBe("already_open");
+    expect(allCodes(result)).toContain("client_os.verdict_already_open");
+  });
+
+  it("shows the gates lokal cannot decide as outstanding", () => {
+    // A checklist that completes itself is not a checklist.
+    const result = run({
+      windowsOnlyApps: "none",
+      peripheralDependency: "low",
+      deviceManagement: "mdm",
+    });
+    const manual = result.clientOs.gates.filter((gate) => gate.status === "manual");
+
+    expect(manual.length).toBeGreaterThan(0);
+    expect(manual.map((gate) => gate.gate.id)).toContain("pilot-through-a-full-cycle");
+  });
+});
+
 describe("savings outlook", () => {
   it("returns a qualitative band with drivers and offsets", () => {
     const result = run({ categories: ["file_sharing", "office_docs"] });
