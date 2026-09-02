@@ -167,6 +167,121 @@ describe("work packages", () => {
   });
 });
 
+describe("calendar duration", () => {
+  it("answers the question the day figures never could", () => {
+    // Twelve pages of plan and no month anywhere in it was the defect. The
+    // horizon is the first thing a Buergermeister asks for.
+    const result = run({ categories: ["file_sharing", "office_docs", "helpdesk"] });
+
+    expect(result.schedule.horizonMonths.min).toBeGreaterThan(0);
+    expect(result.schedule.horizonMonths.max).toBeGreaterThanOrEqual(
+      result.schedule.horizonMonths.min,
+    );
+  });
+
+  it("takes longer when there is more to do", () => {
+    const small = run({ categories: ["file_sharing"] });
+    const large = run({
+      categories: ["file_sharing", "office_docs", "helpdesk", "chat_video", "crm"],
+    });
+
+    expect(large.schedule.horizonMonths.max).toBeGreaterThanOrEqual(
+      small.schedule.horizonMonths.max,
+    );
+  });
+
+  it("takes longer when there is less time to do it in", () => {
+    const shape: AssessmentOverrides = {
+      categories: ["file_sharing", "office_docs"],
+    };
+    const stretched = run({ ...shape, adminCapacity: "low" });
+    const resourced = run({ ...shape, adminCapacity: "high" });
+
+    expect(stretched.schedule.horizonMonths.max).toBeGreaterThanOrEqual(
+      resourced.schedule.horizonMonths.max,
+    );
+  });
+
+  it("will not let capacity alone shorten a change many people have to absorb", () => {
+    // The substance of the module. 900 people cannot be retrained in a week
+    // however many administrator-days exist, and a schedule that says otherwise
+    // is the one that slips and takes the plan's credibility with it.
+    const result = run({
+      categories: ["office_docs"],
+      totalSeats: 900,
+      categorySeats: 900,
+      trainingSensitivity: "high",
+      adminCapacity: "high",
+    });
+
+    expect(result.schedule.phases.some((phase) => phase.floorBinds)).toBe(true);
+    expect(allCodes(result)).toContain("schedule.paced_by_people_not_capacity");
+    expect(allCodes(result)).toContain(
+      "schedule.more_admin_time_would_not_shorten_this",
+    );
+  });
+
+  it("does not multiply two uncertainty ranges together", () => {
+    // Pairing "the most days this could take" with "the least time they might
+    // have" produced a ten-year plan for a fourteen-person association. Both
+    // ends are computed against the middle of the declared capacity, so the
+    // spread the reader sees is the spread in the effort estimate and nothing
+    // else. The ratio of the two effort figures bounds the ratio of the months.
+    const result = run({
+      categories: ["file_sharing", "office_docs"],
+      totalSeats: 14,
+      categorySeats: 14,
+      adminCapacity: "low",
+    });
+
+    const effortRatio = result.capacity.total.max / result.capacity.total.min;
+    const horizonRatio =
+      result.schedule.horizonMonths.max / result.schedule.horizonMonths.min;
+
+    expect(horizonRatio).toBeLessThanOrEqual(effortRatio + 0.5);
+  });
+
+  it("says when the horizon is a capacity gap rather than a schedule", () => {
+    // "37 Monate" reads as a plan; "mehr als Sie in einem Jahr leisten koennen"
+    // reads as the decision it actually is. The report has to lead with the
+    // second.
+    const stretched = run({
+      categories: ["file_sharing", "office_docs", "helpdesk", "chat_video"],
+      adminCapacity: "low",
+      totalSeats: 400,
+      categorySeats: 400,
+    });
+    const comfortable = run({ categories: ["file_sharing"], adminCapacity: "high" });
+
+    expect(stretched.schedule.exceedsCapacity).toBe(true);
+    expect(allCodes(stretched)).toContain("schedule.horizon_reflects_a_capacity_gap");
+    expect(comfortable.schedule.exceedsCapacity).toBe(false);
+  });
+
+  it("gives an empty phase no elapsed time", () => {
+    // Padding the horizon with work nobody is doing would be the easiest way to
+    // make the whole figure untrustworthy.
+    const result = run({ categories: ["file_sharing"] });
+    const empty = result.schedule.phases.filter((phase) => {
+      const planned = result.sequencing.phases.find((p) => p.id === phase.phase);
+      return planned?.migrations.length === 0 && planned?.prerequisites.length === 0;
+    });
+
+    for (const phase of empty) {
+      expect(phase.months).toEqual({ min: 0, max: 0 });
+    }
+  });
+
+  it("runs the phases in sequence, which is what a phase is", () => {
+    const result = run({
+      categories: ["file_sharing", "office_docs", "helpdesk", "chat_video"],
+    });
+    const starts = result.schedule.phases.map((phase) => phase.startMonth);
+
+    expect(starts).toEqual([...starts].sort((a, b) => a - b));
+  });
+});
+
 describe("savings outlook", () => {
   it("returns a qualitative band with drivers and offsets", () => {
     const result = run({ categories: ["file_sharing", "office_docs"] });

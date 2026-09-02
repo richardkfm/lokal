@@ -5,6 +5,7 @@ import { assessDifficulty } from "./difficulty";
 import { normalize } from "./normalize";
 import { assessReadiness } from "./readiness";
 import { assessSavings } from "./savings";
+import { buildSchedule } from "./schedule";
 import { sequence } from "./sequencing";
 import type { CategoryId } from "@/domain/enums";
 import type { AssessmentInput } from "@/domain/intake";
@@ -16,6 +17,7 @@ import type { MigrationDifficulty } from "./difficulty";
 import type { NormalizedAssessment } from "./normalize";
 import type { ReadinessProfile } from "./readiness";
 import type { SavingsOutlook } from "./savings";
+import type { Schedule } from "./schedule";
 import type { Sequencing } from "./sequencing";
 
 export * from "./ai-lane";
@@ -25,6 +27,7 @@ export * from "./difficulty";
 export * from "./normalize";
 export * from "./readiness";
 export * from "./savings";
+export * from "./schedule";
 export * from "./sequencing";
 export * from "./weights";
 
@@ -45,6 +48,7 @@ export type EngineResult = {
   difficulties: Map<CategoryId, MigrationDifficulty>;
   sequencing: Sequencing;
   capacity: CapacityAssessment;
+  schedule: Schedule;
   savings: SavingsOutlook;
   aiLane: AiLane;
 };
@@ -77,6 +81,7 @@ export function runEngine(input: AssessmentInput, pack: Rulepack): EngineResult 
     pack,
   );
   const capacity = assessCapacity(sequencing, assessment, readiness);
+  const schedule = buildSchedule(sequencing, capacity, assessment);
   const savings = assessSavings(assessment, sequencing, capacity, pack);
   const aiLane = assessAiLane(assessment, readiness, sequencing, pack);
 
@@ -89,6 +94,7 @@ export function runEngine(input: AssessmentInput, pack: Rulepack): EngineResult 
     difficulties,
     sequencing,
     capacity,
+    schedule,
     savings,
     aiLane,
   };

@@ -927,6 +927,13 @@
       "self_hosting_supports_stricter_rules": "Self-hosting supports stricter requirements later without changing the stack.",
       "stack_supports_broader_ai_later": "The stack supports broadening AI use later.",
       "start_managed_move_in_house_later": "Start with managed hosting and bring it in-house as capability grows."
+    },
+    "schedule": {
+      "horizon_reflects_a_capacity_gap": "This timeframe is not a schedule but the capacity gap expressed in months: {days} effort days against roughly {availableDays} administrator days available per year. Before dates are discussed, either the scope has to shrink or capacity has to be found — in-house or bought in.",
+      "more_admin_time_would_not_shorten_this": "At least one phase is limited by what staff can absorb, not by IT. More administrator time will not shorten it — earlier notice and more training capacity will.",
+      "paced_by_available_admin_time": "The length of this phase follows from {days} effort days against roughly {availableDays} administrator days available per year.",
+      "paced_by_people_not_capacity": "The length of this phase is set not by available administrator time but by the number of people who have to be carried through it ({seats}). At least {weeks} weeks are assumed.",
+      "phases_run_in_sequence": "The phases build on one another and run in sequence. That gives a timeframe of roughly {min} to {max} months."
     }
   },
   "report": {

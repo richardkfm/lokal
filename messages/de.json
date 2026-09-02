@@ -927,6 +927,13 @@
       "self_hosting_supports_stricter_rules": "Selbstbetrieb trägt auch strengere Vorgaben, ohne den Aufbau zu wechseln.",
       "stack_supports_broader_ai_later": "Der Aufbau trägt eine spätere Ausweitung der KI-Nutzung.",
       "start_managed_move_in_house_later": "Zunächst betreut betreiben, später bei wachsender Kompetenz ins Haus holen."
+    },
+    "schedule": {
+      "horizon_reflects_a_capacity_gap": "Dieser Zeitrahmen ist kein Terminplan, sondern die Kapazitätslücke in Monaten: {days} Aufwandstage stehen etwa {availableDays} verfügbaren Administrationstagen im Jahr gegenüber. Bevor über Termine gesprochen wird, ist entweder der Umfang zu verkleinern oder Kapazität zu schaffen — intern oder eingekauft.",
+      "more_admin_time_would_not_shorten_this": "Mindestens eine Phase wird durch den Umstellungsaufwand der Beschäftigten begrenzt, nicht durch die IT. Zusätzliche Administrationszeit verkürzt sie nicht — eine frühere Ankündigung und mehr Schulungskapazität schon.",
+      "paced_by_available_admin_time": "Die Dauer dieser Phase ergibt sich aus {days} Aufwandstagen bei etwa {availableDays} verfügbaren Administrationstagen im Jahr.",
+      "paced_by_people_not_capacity": "Die Dauer dieser Phase wird nicht von der verfügbaren Administrationszeit bestimmt, sondern von der Zahl der Personen, die mitgenommen werden müssen ({seats}). Gerechnet ist mit mindestens {weeks} Wochen.",
+      "phases_run_in_sequence": "Die Phasen bauen aufeinander auf und laufen nacheinander. Daraus ergibt sich ein Zeitrahmen von etwa {min} bis {max} Monaten."
     }
   },
   "report": {
