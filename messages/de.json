@@ -1024,6 +1024,9 @@
       "blocked": "Derzeit nicht möglich. Die Gründe stehen im Fahrplan.",
       "after_apps": "Möglich, aber erst nach den Anwendungen. Die Reihenfolge steht im Fahrplan."
     },
+    "contents": {
+      "title": "Inhalt"
+    },
     "cost": {
       "title": "Was der Wechsel kostet",
       "internalLabel": "Interner Aufwand",

@@ -89,6 +89,37 @@ function localized(text: { de: string; en?: string }, locale: string): string {
   return locale === "en" ? (text.en ?? text.de) : text.de;
 }
 
+type SectionEntry = {
+  id: string;
+  number: number;
+  title: string;
+  /** One of the three areas this phase lifted, marked so the map shows it. */
+  raised: boolean;
+};
+
+/**
+ * The document's sections, in order.
+ *
+ * Every section has carried a `scroll-mt-24` anchor since phase 4 and nothing
+ * has ever linked to one, so twelve pages scrolled past with no map. This one
+ * list feeds the screen rail, the printed table of contents and nothing else —
+ * two lists is how a section gets added to one and forgotten in the other.
+ */
+export function reportSections(t: (key: string) => string): SectionEntry[] {
+  return [
+    { id: "brief", number: 0, title: t("brief.title"), raised: true },
+    { id: "summary", number: 1, title: t("summary.title"), raised: false },
+    { id: "advantages", number: 2, title: t("advantages.title"), raised: false },
+    { id: "savings", number: 3, title: t("savings.title"), raised: true },
+    { id: "stack", number: 4, title: t("stack.title"), raised: false },
+    { id: "roadmap", number: 5, title: t("roadmap.title"), raised: true },
+    { id: "capacity", number: 6, title: t("capacity.title"), raised: false },
+    { id: "ai", number: 7, title: t("ai.title"), raised: false },
+    { id: "scalability", number: 8, title: t("scalability.title"), raised: false },
+    { id: "next", number: 9, title: t("next.title"), raised: false },
+  ];
+}
+
 export async function ReportView({
   report,
   print = false,
@@ -176,6 +207,8 @@ export async function ReportView({
       .join("; "),
   });
   const monthLabel = (month: number) => r("roadmap.monthTick", { month });
+
+  const sections = reportSections(r);
   const money = (cents: number) => formatAmount(cents, "EUR", locale);
 
   /**
@@ -342,6 +375,28 @@ export async function ReportView({
           </p>
         </div>
       </section>
+
+      {/* Inhalt — printed only.
+       *
+       * No page numbers: the print route has no pagination model, and a wrong
+       * page number is worse than none. Section numbers are the reference, and
+       * they are on every heading. On screen this is the rail beside the
+       * document instead, which is a better shape for scrolling and a worse one
+       * for paper. */}
+      <nav
+        aria-label={r("contents.title")}
+        className="mt-8 hidden break-inside-avoid print:block"
+      >
+        <h2 className="text-ink text-base font-semibold">{r("contents.title")}</h2>
+        <ol className="mt-2 space-y-0.5">
+          {sections.map((section) => (
+            <li key={section.id} className="text-muted text-sm">
+              <span className="text-faint tabular mr-2">{section.number}</span>
+              {section.title}
+            </li>
+          ))}
+        </ol>
+      </nav>
 
       {/* At a glance */}
       <section id="glance" className="mt-8 scroll-mt-24">

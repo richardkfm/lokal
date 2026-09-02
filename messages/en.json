@@ -1024,6 +1024,9 @@
       "blocked": "Not possible at present. The reasons are in the roadmap.",
       "after_apps": "Possible, but only after the applications. The order is in the roadmap."
     },
+    "contents": {
+      "title": "Contents"
+    },
     "cost": {
       "title": "What the change costs",
       "internalLabel": "Internal effort",

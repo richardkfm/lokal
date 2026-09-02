@@ -22,7 +22,7 @@ import { expertContact } from "@/lib/expert-contact";
 export async function ExpertContactBlock({
   variant = "card",
 }: {
-  variant?: "card" | "print";
+  variant?: "card" | "print" | "rail";
 }) {
   await connection();
 
@@ -47,7 +47,12 @@ export async function ExpertContactBlock({
       className={
         variant === "print"
           ? "border-line mt-8 break-inside-avoid rounded-lg border p-4"
-          : "border-line bg-surface shadow-card rounded-xl border p-6"
+          : variant === "rail"
+            ? // Beside the document on screen, never in the print tree. The
+              // disclaimer below is not trimmed to fit: a reader deciding
+              // whether to call deserves it at whatever width.
+              "border-line bg-surface rounded-lg border p-4 print:hidden"
+            : "border-line bg-surface shadow-card rounded-xl border p-6"
       }
     >
       <p className="text-faint text-xs tracking-wide uppercase">{t("eyebrow")}</p>
