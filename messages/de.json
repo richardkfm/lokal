@@ -230,8 +230,8 @@
     "operating": {
       "hostingLegend": "Bevorzugter Betrieb",
       "hostingHint": "Wo sollen die Systeme künftig laufen?",
-      "linuxLegend": "Linux- und Betriebskenntnisse",
-      "linuxHint": "Entscheidet darüber, ob Selbstbetrieb realistisch ist.",
+      "linuxLegend": "Linux- und Serverkenntnisse im Team",
+      "linuxHint": "Betrifft den Serverbetrieb, nicht die Arbeitsplätze. Entscheidet darüber, ob Selbstbetrieb realistisch ist.",
       "capacityLegend": "Kapazitäten",
       "capacityHint": "Ehrliche Einschätzung hilft mehr als eine optimistische.",
       "adminCapacityLabel": "Verfügbare Administrationszeit",
@@ -241,7 +241,31 @@
       "identityMaturityLabel": "Benutzerverwaltung",
       "identityMaturityHint": "Gibt es ein zentrales Verzeichnis für Konten und Gruppen?",
       "supportLegend": "Erwartung an Unterstützung",
-      "supportHint": "Reicht eine aktive Community, oder braucht es einen Vertragspartner?"
+      "supportHint": "Reicht eine aktive Community, oder braucht es einen Vertragspartner?",
+      "workplaceTitle": "Die Arbeitsplätze",
+      "workplaceLead": "Fünf Angaben zu den Rechnern, an denen tatsächlich gearbeitet wird. Daraus ergibt sich, ob und wann ein Wechsel des Betriebssystems in diesen Plan gehört — welche Distribution, sagt lokal bewusst nicht.",
+      "clientOsLegend": "Betriebssystem der Arbeitsplätze",
+      "clientOsHint": "Was läuft heute auf den Rechnern der Beschäftigten?",
+      "windowsOnlyLegend": "Anwendungen, die nur unter Windows laufen",
+      "windowsOnlyHint": "Fachverfahren, Lohn- und Buchhaltungsprogramme, CAD, Labor- und Maschinensteuerung. Die wichtigste Einzelfrage: ein unverzichtbares Windows-Programm entscheidet über die betroffenen Arbeitsplätze, unabhängig davon, wie gut alles andere passt.",
+      "deviceManagementLegend": "Softwareverteilung auf den Geräten",
+      "deviceManagementHint": "Wie kommen Programme und Einstellungen heute auf die Rechner?",
+      "peripheralLegend": "Angeschlossene Geräte",
+      "peripheralHint": "Der zweithäufigste Grund, aus dem ein Wechsel liegen bleibt — und der, der am spätesten auffällt.",
+      "peripheralLabel": "Abhängigkeit von Spezialgeräten",
+      "peripheralFieldHint": "Unterschriftenpads, Kartenlesegeräte, Etikettendrucker, Labor- und Maschinenschnittstellen.",
+      "deviceCountLegend": "Zahl der Geräte",
+      "deviceCountHint": "Der Aufwand wächst mit den Geräten, nicht mit den Personen.",
+      "deviceCountLabel": "Arbeitsplatzrechner (optional)",
+      "deviceCountFieldHint": "Ohne Angabe rechnet lokal mit der Zahl der Arbeitsplätze und weist im Bericht darauf hin. Eine geschätzte Gerätezahl ist schlechter als keine.",
+      "ratesTitle": "Was ein Arbeitstag kostet",
+      "ratesLead": "Beide Angaben sind freiwillig. Ohne sie nennt der Bericht keine Migrationskosten — lokal schätzt keinen Tagessatz und setzt auch keinen Durchschnittswert ein.",
+      "ratesLegend": "Tagessätze",
+      "ratesHint": "Aus diesen Sätzen und den ermittelten Aufwandstagen entsteht die Kostenspalte im Bericht. Die Angaben verlassen Ihren Rechner erst mit dem Absenden.",
+      "internalRateLabel": "Interner Tagessatz",
+      "internalRateHint": "Vollkosten eines Administrationstages im Haus, in Euro.",
+      "externalRateLabel": "Externer Tagessatz",
+      "externalRateHint": "Was ein Dienstleistungstag kostet, in Euro. Nur nötig, wenn externe Unterstützung infrage kommt."
     },
     "stack": {
       "legend": "Bereiche in Betrachtung",
@@ -302,7 +326,9 @@
       "warningsNote": "Diese Hinweise verhindern das Absenden nicht. Sie erscheinen auch im Bericht.",
       "warnSeatsExceedOrg": "Ein Bereich weist mehr Arbeitsplätze aus als die Organisation insgesamt.",
       "warnNoDepartments": "Es wurden keine Bereiche benannt, obwohl die Organisation größer ist.",
-      "warnNoAiUseCases": "Es wurde Interesse an KI angegeben, aber kein Anwendungsfall gewählt."
+      "warnNoAiUseCases": "Es wurde Interesse an KI angegeben, aber kein Anwendungsfall gewählt.",
+      "notStated": "Nicht angegeben",
+      "noRateDeclared": "Nicht angegeben — der Bericht nennt dann keine Kosten"
     },
     "progressLabel": "Fortschritt",
     "startOverConfirm": "Alle Angaben verwerfen und neu beginnen?"
@@ -571,6 +597,108 @@
         "label": "Dokumentenmanagement",
         "hint": "Rechtssichere Ablage mit Aufbewahrungsfristen — nicht dasselbe wie eine Dateiablage. Z. B. d.velop, Papierarchiv."
       }
+    },
+    "clientOs": {
+      "windows": {
+        "label": "Windows",
+        "hint": "Windows 10 oder 11 auf den Arbeitsplätzen."
+      },
+      "macos": {
+        "label": "macOS",
+        "hint": "Überwiegend Apple-Rechner."
+      },
+      "mixed": {
+        "label": "Gemischt",
+        "hint": "Mehrere Betriebssysteme nebeneinander, ohne einheitliches Bild."
+      },
+      "linux": {
+        "label": "Bereits Linux",
+        "hint": "Die Arbeitsplätze laufen schon unter Linux."
+      },
+      "unknown": {
+        "label": "Nicht bekannt",
+        "hint": "Der Bestand lässt sich derzeit nicht verlässlich beschreiben. Auch das ist eine Aussage."
+      }
+    },
+    "windowsOnlyApps": {
+      "none": {
+        "label": "Keine",
+        "hint": "Alles Nötige läuft im Browser oder plattformübergreifend."
+      },
+      "few": {
+        "label": "Einzelne",
+        "hint": "Ein bis zwei Programme, die nur einzelne Arbeitsplätze betreffen."
+      },
+      "several": {
+        "label": "Mehrere",
+        "hint": "Mehrere Programme, verteilt über verschiedene Bereiche."
+      },
+      "many": {
+        "label": "Viele",
+        "hint": "Die tägliche Arbeit hängt an Windows-Programmen."
+      },
+      "unknown": {
+        "label": "Nicht bekannt",
+        "hint": "Es gibt keine Übersicht der eingesetzten Programme."
+      }
+    },
+    "deviceManagement": {
+      "none": {
+        "label": "Keine",
+        "hint": "Software wird an jedem Gerät einzeln installiert."
+      },
+      "ad_gpo": {
+        "label": "Active Directory / Gruppenrichtlinien",
+        "hint": "Verteilung und Einstellungen über die Windows-Domäne."
+      },
+      "mdm": {
+        "label": "Geräteverwaltung (MDM)",
+        "hint": "Zentrale Verwaltung über Intune, Jamf oder Vergleichbares."
+      },
+      "other": {
+        "label": "Anderes Verfahren",
+        "hint": "Etwa Softwareverteilung über Skripte oder ein eigenes Werkzeug."
+      },
+      "unknown": {
+        "label": "Nicht bekannt"
+      }
+    },
+    "peripheralDependency": {
+      "low": {
+        "label": "Gering",
+        "hint": "Bildschirm, Tastatur, Netzwerkdrucker."
+      },
+      "medium": {
+        "label": "Mittel",
+        "hint": "Einzelne Spezialgeräte an bestimmten Arbeitsplätzen."
+      },
+      "high": {
+        "label": "Hoch",
+        "hint": "Spezialgeräte gehören zum täglichen Ablauf an vielen Plätzen."
+      }
+    },
+    "workPackage": {
+      "preparation": {
+        "label": "Vorbereitung"
+      },
+      "data_migration": {
+        "label": "Datenübernahme"
+      },
+      "pilot": {
+        "label": "Pilotbetrieb"
+      },
+      "rollout": {
+        "label": "Ausrollen"
+      },
+      "training": {
+        "label": "Schulung"
+      },
+      "parallel_run": {
+        "label": "Parallelbetrieb"
+      },
+      "aftercare": {
+        "label": "Nachbetreuung"
+      }
     }
   },
   "rationale": {
@@ -603,6 +731,13 @@
       "self_host_without_linux_capability": "{tool} ist nur im Selbstbetrieb verfügbar und verlangt Betriebskenntnisse, die derzeit nicht vorhanden sind.",
       "young_release_pilot_first": "{tool} ist erst seit kurzem in einer stabilen Fassung verfügbar. Vor einer flächendeckenden Einführung ist ein begrenzter Pilotbetrieb angeraten."
     },
+    "brief": {
+      "ask_budget_for_the_migration": "Ein Budget für {migrations, plural, one {das vorgesehene Vorhaben} other {die # vorgesehenen Vorhaben}}, in der Größenordnung der nebenstehenden Spalte.",
+      "ask_budget_unquantified": "Ein Budget für die Umsetzung. Eine Größenordnung nennt dieser Bericht nicht, weil kein Tagessatz angegeben wurde — mit dieser einen Angabe im Fragebogen steht sie hier.",
+      "ask_capacity_or_smaller_scope": "Entweder zusätzliche Kapazität oder ein kleinerer Zuschnitt. Der Plan verlangt mindestens {days} Aufwandstage, verfügbar sind etwa {availableDays} im Jahr. Beides ist vertretbar — die Lücke offen zu lassen ist es nicht.",
+      "ask_decision_on_direction": "Eine Grundsatzentscheidung zur Richtung, damit die Vorarbeiten beginnen können. Der Plan ist auf rund {months} Monate angelegt; ohne Entscheidung verfällt vor allem die Vorbereitung, nicht die Umsetzung.",
+      "ask_external_support": "Eine Entscheidung darüber, ob für {count, plural, one {ein Vorhaben} other {# Vorhaben}} externe Unterstützung beschafft wird. {count, plural, one {Dieses Vorhaben übersteigt} other {Diese Vorhaben übersteigen}} nach heutigem Stand die eigene Betriebskompetenz."
+    },
     "capacity": {
       "budget_for_external_support": "Für externe Unterstützung sollte ein Budget eingeplant werden.",
       "external_support_likely": "Für {category} ({tool}) ist externe Unterstützung wahrscheinlich erforderlich.",
@@ -621,6 +756,33 @@
       "ops_load_exceeds_admin_capacity": "{tool} verlangt mehr laufende Betreuung, als derzeit verfügbar erscheint.",
       "thin_german_service_market": "Für {tool} gibt es in Deutschland wenige Dienstleister.",
       "training_load_meets_sensitivity": "{tool} erfordert spürbare Einarbeitung bei einer Belegschaft, die auf Umstellungen empfindlich reagiert."
+    },
+    "client_os": {
+      "blocked_by_windows_only_applications": "Mehrere Anwendungen laufen ausschließlich unter Windows. Für die Arbeitsplätze, die sie brauchen, ist ein Wechsel des Betriebssystems derzeit ausgeschlossen — nicht wegen fehlender Kapazität, sondern weil die Entscheidung bei den Herstellern dieser Programme liegt.",
+      "blocked_pending_peripheral_check": "An vielen Arbeitsplätzen hängen Spezialgeräte am täglichen Ablauf. Vor jeder weiteren Planung ist je Gerätetyp am Gerät zu prüfen, ob es unter dem neuen System läuft.",
+      "caution_group_policy_ties_the_directory": "Die Arbeitsplätze werden über Gruppenrichtlinien der Windows-Domäne konfiguriert, und eine zentrale Benutzerverwaltung ist noch nicht etabliert. Ein Wechsel des Betriebssystems zieht damit die Verzeichnisfrage mit sich — ein eigenes Vorhaben, das lokal nicht plant.",
+      "caution_no_application_inventory": "Es gibt keine Übersicht der eingesetzten Windows-Programme. Bis diese Bestandsaufnahme vorliegt, ist jede Aussage über einen Wechsel des Betriebssystems eine Vermutung.",
+      "caution_no_application_migrations_planned": "Dieser Plan sieht keine Anwendungsmigration vor. Da die Anwendungen die Voraussetzung sind, hat ein Wechsel des Betriebssystems hier nichts, worauf er folgen könnte.",
+      "caution_no_endpoint_deployment": "Software wird heute an jedem Gerät einzeln installiert. Ohne Softwareverteilung wächst der Aufwand des Wechsels linear mit jedem Arbeitsplatz.",
+      "device_count_fell_back_to_seats": "Ohne angegebene Gerätezahl wurde mit {seats} Arbeitsplätzen gerechnet. Geteilte Rechner und Zweitgeräte verschieben diesen Wert in beide Richtungen.",
+      "doctrine_os_moves_last": "Deshalb steht der Wechsel am Ende des Fahrplans und nicht am Anfang.",
+      "gate_manual": "Von Ihnen zu prüfen und zu bestätigen — lokal kann das aus den Angaben nicht entscheiden.",
+      "gate_met": "Erfüllt.",
+      "gate_open": "Noch offen.",
+      "lane_absent_from_rulepack": "Diese Bewertung wurde mit Regelwerk {version} erstellt, das die Frage nach dem Betriebssystem noch nicht kennt.",
+      "mixed_estate_is_a_valid_outcome": "Ein gemischter Bestand ist ein zulässiges Ergebnis: Arbeitsplätze mit Windows-Programmen bleiben, die übrigen wechseln.",
+      "no_distribution_named": "Welche Linux-Distribution infrage kommt, sagt lokal bewusst nicht: das hängt an Beschaffung, Support und vorhandenen Kenntnissen und ist keine Frage, die sich aus fünf Angaben beantworten lässt.",
+      "verdict_after_apps": "Ein Wechsel des Betriebssystems ist realistisch — aber erst, nachdem die Anwendungen plattformübergreifend laufen. Diese Reihenfolge ist entscheidend: wer zuerst das Betriebssystem tauscht, migriert Anwendungen und Arbeitsplätze gleichzeitig und muss bei jedem Problem beides zugleich zurücknehmen.",
+      "verdict_already_open": "Die Arbeitsplätze laufen bereits unter Linux. Der größte Einzelposten einer Ablösung entfällt damit, und die Anwendungsmigration ist nicht länger durch das Betriebssystem eingeschränkt.",
+      "verdict_blocked": "Ein Wechsel des Betriebssystems gehört derzeit nicht in diesen Plan. Die Gründe stehen darunter; sie sind zu beheben, bevor die Frage erneut sinnvoll gestellt werden kann.",
+      "verdict_not_assessed": "Zu den Arbeitsplätzen liegen keine Angaben vor, daher trifft dieser Plan keine Aussage zum Betriebssystem. Die Fragen stehen in Schritt 2 des Fragebogens."
+    },
+    "cost": {
+      "estimate_not_a_quote": "Der Aufwand ist eine Spanne, also ist es der Betrag auch. Es handelt sich um eine Planungsgröße, nicht um ein Angebot.",
+      "external_support_likely_but_no_rate": "Für {count} Vorhaben ist externe Unterstützung wahrscheinlich, ein externer Tagessatz wurde jedoch nicht angegeben. Dieser Teil fehlt in der Kostenspalte.",
+      "includes_client_os_swap": "Enthalten sind {min} bis {max} Tage für den Wechsel des Betriebssystems auf den Arbeitsplätzen.",
+      "no_internal_rate_declared": "Für den internen Aufwand wurde kein Tagessatz angegeben, daher nennt dieser Bericht dazu keinen Betrag. lokal setzt hier bewusst keinen Durchschnittswert ein.",
+      "not_subtractable_from_exposure": "Diese Zahl ist nicht von den heutigen Abokosten abzuziehen. lokal bepreist weder den Betrieb der neuen Systeme noch deren Supportverträge noch Produktivitätsverluste während der Umstellung — die Gegenrechnung müssen Sie mit Ihren eigenen Zahlen aufmachen."
     },
     "difficulty": {
       "base_complexity": "Grundaufwand der Zielanwendung",
@@ -645,6 +807,20 @@
       "linux_capability": "Linux- und Betriebskenntnisse",
       "organization_size": "Größe der Organisation",
       "support_expectation": "Erwartung an Unterstützung"
+    },
+    "effort": {
+      "aftercare_after_go_live": "Nachbetreuung in den Wochen nach der Umstellung, wenn die Rückfragen kommen. Ein Plan, der am Umstellungstag endet, ist der, der überzogen wird.",
+      "band_capped_at_largest": "Auf die höchste Stufe begrenzt. Vorhaben dieser Größe werden nicht mehr als ein Vorhaben geplant, sondern in Teilprojekte zerlegt.",
+      "band_from_difficulty": "Grundlage ist die Schwierigkeit dieses Wechsels ({difficulty} von 5).",
+      "band_raised_by_seat_count": "Um eine Stufe angehoben, weil mehr als {threshold} Arbeitsplätze betroffen sind ({seats}).",
+      "cutover_because_no_parallel_operation": "Kein Parallelbetrieb möglich: die Umstellung erfolgt zu einem Stichtag. Das spart Zeit und erhöht das Risiko — eine Rücksicherung ist hier keine Formalie.",
+      "data_migration_with_tooling": "Datenübernahme. Für diesen Weg gibt es Werkzeuge, was den Aufwand deutlich senkt.",
+      "data_migration_without_tooling": "Datenübernahme. Für diesen Weg gibt es kein fertiges Werkzeug — der Aufwand entsteht durch Prüfen, Umformen und Nachkontrolle.",
+      "parallel_run_scales_with_criticality": "Parallelbetrieb, solange altes und neues System nebeneinander laufen. Bemessen an der Kritikalität „{criticality}“.",
+      "pilot_before_rollout": "Pilotbetrieb mit einer kleinen Gruppe, bevor {seats} Arbeitsplätze umgestellt werden.",
+      "preparation_scales_with_difficulty": "Vorbereitung: Konzept, Aufbau und Konfiguration. Wächst mit der Schwierigkeit ({difficulty} von 5).",
+      "rollout_scales_with_seats": "Ausrollen auf {seats} Arbeitsplätze.",
+      "training_scales_with_sensitivity_and_seats": "Schulung und Begleitung für {seats} Personen, bei angegebener Umstellungsempfindlichkeit „{sensitivity}“."
     },
     "fit": {
       "can_run_alongside_current": "Kann parallel zum heutigen System betrieben werden",
@@ -698,12 +874,16 @@
     },
     "method": {
       "not_modelled": {
+        "device_hardware_replacement": "Ersatz oder Nachrüstung von Arbeitsplatzrechnern",
         "existing_contracts": "Bestehende Verträge und Laufzeiten",
+        "hosting_and_support_cost_of_the_new_stack": "Betriebs-, Hosting- und Supportkosten der neuen Systeme",
         "integrations_with_specialist_software": "Anbindungen an Fachverfahren",
         "legal_retention_duties": "Gesetzliche Aufbewahrungs- und Archivpflichten",
         "negotiated_contract_terms": "Ausgehandelte Vertragskonditionen, Rabatte und Rahmenverträge",
         "network_topology": "Netzaufbau und Standortanbindung",
-        "staff_skills_in_detail": "Kenntnisse einzelner Beschäftigter"
+        "productivity_during_changeover": "Produktivitätsverluste während der Umstellung",
+        "staff_skills_in_detail": "Kenntnisse einzelner Beschäftigter",
+        "which_linux_distribution": "Die Wahl einer konkreten Linux-Distribution"
       }
     },
     "next": {
@@ -761,55 +941,27 @@
       "self_hosting_supports_stricter_rules": "Selbstbetrieb trägt auch strengere Vorgaben, ohne den Aufbau zu wechseln.",
       "stack_supports_broader_ai_later": "Der Aufbau trägt eine spätere Ausweitung der KI-Nutzung.",
       "start_managed_move_in_house_later": "Zunächst betreut betreiben, später bei wachsender Kompetenz ins Haus holen."
+    },
+    "schedule": {
+      "horizon_reflects_a_capacity_gap": "Dieser Zeitrahmen ist kein Terminplan, sondern die Kapazitätslücke in Monaten: {days} Aufwandstage stehen etwa {availableDays} verfügbaren Administrationstagen im Jahr gegenüber. Bevor über Termine gesprochen wird, ist entweder der Umfang zu verkleinern oder Kapazität zu schaffen — intern oder eingekauft.",
+      "more_admin_time_would_not_shorten_this": "Mindestens eine Phase wird durch den Umstellungsaufwand der Beschäftigten begrenzt, nicht durch die IT. Zusätzliche Administrationszeit verkürzt sie nicht — eine frühere Ankündigung und mehr Schulungskapazität schon.",
+      "paced_by_available_admin_time": "Die Dauer dieser Phase ergibt sich aus {days} Aufwandstagen bei etwa {availableDays} verfügbaren Administrationstagen im Jahr.",
+      "paced_by_people_not_capacity": "Die Dauer dieser Phase wird nicht von der verfügbaren Administrationszeit bestimmt, sondern von der Zahl der Personen, die mitgenommen werden müssen ({seats}). Gerechnet ist mit mindestens {weeks} Wochen.",
+      "phases_run_in_sequence": "Die Phasen bauen aufeinander auf und laufen nacheinander. Daraus ergibt sich ein Zeitrahmen von etwa {min} bis {max} Monaten."
     }
   },
   "report": {
-    "documentKind": "Internes Planungsdokument",
-    "severityCaution": "Zu beachten:",
-    "title": "Migrationsplan",
-    "coverLine": "{orgType} · {seats} Arbeitsplätze · erstellt am {date}",
-    "draftRulepackNotice": "Hinweis: Das Regelwerk ({version}) wurde noch nicht fachkundig gegen die aktuellen Produktstände geprüft. Die Bewertungen sind sorgfältig, aber unbestätigt — vor einer Beschaffungsentscheidung selbst prüfen.",
-    "glance": {
-      "title": "Auf einen Blick",
-      "readiness": "Bereitschaft",
-      "readinessDetail": "{score} von 100",
-      "posture": "Vorgehen",
-      "savings": "Einsparperspektive",
-      "savingsDetail": "Band plus belegte Beträge",
-      "ai": "KI",
-      "aiDetail": "Empfohlene Haltung",
-      "seats": "Arbeitsplätze, summiert",
-      "seatsDetail": "Summe über die betrachteten Bereiche; ein Arbeitsplatz in mehreren Bereichen zählt mehrfach. Organisation: {total}.",
-      "phases": "Phasen",
-      "phasesDetail": "mit Vorhaben belegt",
-      "meterScale": "{score} von 100"
+    "actions": {
+      "markdown": "Markdown herunterladen",
+      "print": "Drucken oder als PDF sichern",
+      "backToReport": "Zurück zum Bericht"
     },
-    "readinessLabel": {
-      "weak": "Gering",
-      "developing": "Im Aufbau",
-      "solid": "Belastbar",
-      "strong": "Stark"
+    "advantages": {
+      "title": "Wesentliche Vorteile"
     },
-    "readinessBand": {
-      "opsCapability": "Betriebsfähigkeit",
-      "changeCapacity": "Veränderungsfähigkeit",
-      "identityReadiness": "Benutzerverwaltung",
-      "aiReadiness": "KI-Reife"
-    },
-    "posture": {
-      "prepare_first": "Erst vorbereiten",
-      "start_selectively": "Gezielt beginnen",
-      "proceed": "Umsetzen"
-    },
-    "postureDetail": {
-      "prepare_first": "Grundlagen fehlen noch",
-      "start_selectively": "Einzelne Vorhaben starten",
-      "proceed": "Voraussetzungen sind gegeben"
-    },
-    "postureNarrative": {
-      "prepare_first": "Der Zielaufbau trägt, die Organisation an entscheidenden Stellen noch nicht. Ohne die benannten Voraussetzungen verschiebt sich der Aufwand nur nach hinten — und wird teurer.",
-      "start_selectively": "Einiges lässt sich jetzt beginnen, anderes braucht Vorarbeiten. Abschnitt 5 ist entsprechend sortiert.",
-      "proceed": "Die Voraussetzungen sind im Wesentlichen gegeben. Der Plan lässt sich in der vorgeschlagenen Reihenfolge angehen."
+    "ai": {
+      "title": "Lokale KI",
+      "lead": "Welche Anwendungsfälle heute tragfähig sind, welche einen Pilotbetrieb verdienen und welche warten sollten."
     },
     "aiNarrative": {
       "not_now": "Für KI fehlen derzeit die Grundlagen. Das ist kein Versäumnis, sondern eine Reihenfolgefrage.",
@@ -826,25 +978,186 @@
       "pilot": "Pilot",
       "later": "Später"
     },
-    "outlook": {
-      "low": "Gering",
-      "moderate": "Mittel",
-      "strong": "Deutlich"
+    "brief": {
+      "title": "Entscheidungsvorlage",
+      "lead": "Zur Entscheidung {planned, plural, one {steht ein Vorhaben} other {stehen # Vorhaben}} in einer Organisation mit {total} Arbeitsplätzen. {keep, plural, =0 {Kein Bereich bleibt} one {Ein Bereich bleibt} other {# Bereiche bleiben}} vorerst unverändert; die Gründe stehen im Fahrplan.",
+      "horizonLabel": "Zeitrahmen",
+      "horizonValue": "{min}–{max} Monate",
+      "horizonBasis": "Über {phases, plural, one {eine Phase} other {# aufeinander aufbauende Phasen}}, gerechnet mit der von Ihnen angegebenen Administrationszeit.",
+      "costLabel": "Einmaliger Umstellungsaufwand",
+      "costValue": "{min} – {max}",
+      "costAbsent": "Nicht beziffert",
+      "costBasis": "{minDays}–{maxDays} Tage zu {rate} je Tag — Tagessatz von Ihnen angegeben.",
+      "costAbsentBasis": "Ohne Angabe eines Tagessatzes nennt lokal hier keinen Betrag und setzt auch keinen Durchschnittswert ein.",
+      "exposureLabel": "Heutige Abokosten pro Jahr",
+      "exposureAbsent": "Nicht beziffert",
+      "exposureAbsentBasis": "Für die genannten Systeme ist keine belegbare Listenpreisangabe der Hersteller hinterlegt.",
+      "notSubtractable": "Diese beiden Beträge sind nicht voneinander abzuziehen. lokal bepreist weder den Betrieb der neuen Systeme noch deren Supportverträge, Schulungen über den ausgewiesenen Aufwand hinaus oder Produktivitätsverluste während der Umstellung. Die Gegenrechnung ist mit Ihren eigenen Zahlen aufzumachen.",
+      "risksTitle": "Die drei größten Risiken",
+      "risksNone": "Aus den Angaben ergeben sich derzeit keine Punkte dieser Schwere.",
+      "asksTitle": "Was von der Leitung gebraucht wird",
+      "clientOsTitle": "Betriebssystem der Arbeitsplätze"
     },
+    "capacity": {
+      "title": "Bereitschaft und Kapazität",
+      "lead": "Wie belastbar die Organisation an den Stellen ist, auf die es ankommt.",
+      "budget": "Aufwand gegen verfügbare Zeit",
+      "budgetLine": "Der Plan erfordert etwa {min}–{max} Administrationstage. Verfügbar sind schätzungsweise {availableMin}–{availableMax} Tage pro Jahr.",
+      "estimateNote": "Planungsschätzung in Bandbreiten, kein Angebot und keine Zusage.",
+      "gaps": "Wo es hakt",
+      "horizonLine": "Zeitrahmen insgesamt: etwa {min} bis {max} Monate."
+    },
+    "clientOs": {
+      "title": "Betriebssystem der Arbeitsplätze",
+      "scheduledIn": "Vorgesehen für {phase}.",
+      "notScheduled": "In diesem Plan nicht vorgesehen.",
+      "devicesDeclared": "{count} Geräte",
+      "devicesFromSeats": "gerechnet mit {count} Arbeitsplätzen",
+      "gatesTitle": "Voraussetzungen für den Wechsel",
+      "gate_met": "(erfüllt)",
+      "gate_open": "(offen)",
+      "gate_manual": "(von Ihnen zu prüfen)"
+    },
+    "clientOsVerdict": {
+      "not_assessed": "Zu den Arbeitsplätzen wurden keine Angaben gemacht, daher trifft dieser Plan dazu keine Aussage.",
+      "already_open": "Die Arbeitsplätze laufen bereits unter Linux — der größte Einzelposten einer Ablösung entfällt.",
+      "blocked": "Derzeit nicht möglich. Die Gründe stehen im Fahrplan.",
+      "after_apps": "Möglich, aber erst nach den Anwendungen. Die Reihenfolge steht im Fahrplan."
+    },
+    "contents": {
+      "title": "Inhalt"
+    },
+    "cost": {
+      "title": "Was der Wechsel kostet",
+      "internalLabel": "Interner Aufwand",
+      "externalLabel": "Externe Unterstützung",
+      "lineBasis": "{minDays}–{maxDays} Tage zu {rate} je Tag — Tagessatz von Ihnen angegeben.",
+      "coverage": "Enthalten sind {migrations, plural, one {ein Vorhaben} other {# Vorhaben}}, davon {external, plural, =0 {keines} one {eines} other {#}} mit voraussichtlich externer Unterstützung."
+    },
+    "coverLine": "{orgType} · {seats} Arbeitsplätze · erstellt am {date}",
     "difficulty": {
       "low": "gering",
       "moderate": "mittel",
       "high": "hoch",
       "very_high": "sehr hoch"
     },
-    "summary": {
-      "title": "Zusammenfassung",
-      "context": "{orgType} mit {seats} Arbeitsplätzen (Größenklasse {bucket}), {categories, plural, one {ein erhobener Bereich} other {# erhobene Bereiche}}.",
-      "target": "Der Plan sieht {planned, plural, =0 {keine Migration} one {eine Migration} other {# Migrationen}} vor. {keep, plural, =0 {Kein Bereich bleibt} one {Ein Bereich bleibt} other {# Bereiche bleiben}} vorerst unverändert."
+    "documentKind": "Internes Planungsdokument",
+    "draftRulepackNotice": "Hinweis: Das Regelwerk ({version}) wurde noch nicht fachkundig gegen die aktuellen Produktstände geprüft. Die Bewertungen sind sorgfältig, aber unbestätigt — vor einer Beschaffungsentscheidung selbst prüfen.",
+    "effortBand": {
+      "xs": "sehr klein",
+      "s": "klein",
+      "m": "mittel",
+      "l": "groß",
+      "xl": "sehr groß"
     },
-    "advantages": {
-      "title": "Wesentliche Vorteile"
+    "glance": {
+      "title": "Auf einen Blick",
+      "readiness": "Bereitschaft",
+      "readinessDetail": "{score} von 100",
+      "posture": "Vorgehen",
+      "savings": "Einsparperspektive",
+      "savingsDetail": "Band plus belegte Beträge",
+      "ai": "KI",
+      "aiDetail": "Empfohlene Haltung",
+      "seats": "Arbeitsplätze, summiert",
+      "seatsDetail": "Summe über die betrachteten Bereiche; ein Arbeitsplatz in mehreren Bereichen zählt mehrfach. Organisation: {total}.",
+      "meterScale": "{score} von 100",
+      "horizon": "Zeitrahmen",
+      "horizonDetail": "über {phases, plural, one {eine belegte Phase} other {# belegte Phasen}}"
     },
+    "method": {
+      "title": "Methodik und Grenzen",
+      "lead": "Berechnet aus Ihren Angaben und einem festen Regelwerk. Kein Sprachmodell beteiligt; gleiche Angaben, gleiches Ergebnis.",
+      "notModelled": "Nicht berücksichtigt",
+      "notAssessed": "Nicht erhobene Bereiche",
+      "dataQuality": "Hinweise zu den Angaben",
+      "footer": "Berechnet mit lokal (Engine {engineVersion}, Regelwerk {rulepackVersion}).",
+      "linkNotice": "Der Link ist nicht erratbar, aber ungeschützt. Behandeln Sie ihn als internes Dokument."
+    },
+    "next": {
+      "title": "Nächste Schritte",
+      "immediate": "Sofort",
+      "within30Days": "In den nächsten 30 Tagen",
+      "pilots": "Pilotvorhaben",
+      "cautionFlags": "Warnhinweise"
+    },
+    "notFound": {
+      "title": "Bericht nicht gefunden",
+      "body": "Unter diesem Link liegt kein Bericht. Möglicherweise wurde er entfernt oder der Link ist unvollständig.",
+      "cta": "Neue Erhebung starten"
+    },
+    "outlook": {
+      "low": "Gering",
+      "moderate": "Mittel",
+      "strong": "Deutlich"
+    },
+    "phase": {
+      "0": {
+        "title": "Phase 0 — Voraussetzungen",
+        "goal": "Grundlagen schaffen, auf denen alle weiteren Schritte aufsetzen."
+      },
+      "1": {
+        "title": "Phase 1 — Schnelle Erfolge",
+        "goal": "Vorhaben mit spürbarem Nutzen bei überschaubarem Aufwand."
+      },
+      "2": {
+        "title": "Phase 2 — Mittlere Vorhaben",
+        "goal": "Umstellungen mit erhöhtem Abstimmungs- und Schulungsbedarf."
+      },
+      "3": {
+        "title": "Phase 3 — Aufwendige Vorhaben",
+        "goal": "Komplexe oder betriebskritische Umstellungen mit eigener Projektstruktur."
+      },
+      "4": {
+        "title": "Phase 4 — Optimierung und lokale KI",
+        "goal": "Konsolidierung und der Einstieg in KI-Anwendungsfälle."
+      }
+    },
+    "posture": {
+      "prepare_first": "Erst vorbereiten",
+      "start_selectively": "Gezielt beginnen",
+      "proceed": "Umsetzen"
+    },
+    "postureDetail": {
+      "prepare_first": "Grundlagen fehlen noch",
+      "start_selectively": "Einzelne Vorhaben starten",
+      "proceed": "Voraussetzungen sind gegeben"
+    },
+    "postureNarrative": {
+      "prepare_first": "Der Zielaufbau trägt, die Organisation an entscheidenden Stellen noch nicht. Ohne die benannten Voraussetzungen verschiebt sich der Aufwand nur nach hinten — und wird teurer.",
+      "start_selectively": "Einiges lässt sich jetzt beginnen, anderes braucht Vorarbeiten. Abschnitt 5 ist entsprechend sortiert.",
+      "proceed": "Die Voraussetzungen sind im Wesentlichen gegeben. Der Plan lässt sich in der vorgeschlagenen Reihenfolge angehen."
+    },
+    "readinessBand": {
+      "opsCapability": "Betriebsfähigkeit",
+      "changeCapacity": "Veränderungsfähigkeit",
+      "identityReadiness": "Benutzerverwaltung",
+      "aiReadiness": "KI-Reife"
+    },
+    "readinessLabel": {
+      "weak": "Gering",
+      "developing": "Im Aufbau",
+      "solid": "Belastbar",
+      "strong": "Stark"
+    },
+    "roadmap": {
+      "title": "Migrationsfahrplan",
+      "lead": "Reihenfolge, Aufwand und betroffene Arbeitsplätze je Phase. Aufwände sind Planungsschätzungen in Administrationstagen.",
+      "phaseEmpty": "Für diese Organisation nicht belegt.",
+      "effort": "{same, select, yes {{max, plural, one {ein Tag} other {# Tage}}} other {{min}–{max} Tage}}",
+      "seatsAffected": "Betroffene Arbeitsplätze",
+      "pilot": "Pilot empfohlen",
+      "externalSupport": "externe Unterstützung wahrscheinlich",
+      "watchOutFor": "Zu beachten:",
+      "keepForNow": "Vorerst unverändert lassen",
+      "keepForNowLead": "Diese Bereiche sollten jetzt nicht angefasst werden. Das ist eine bewusste Empfehlung, keine Lücke im Plan.",
+      "whyThisHard": "Warum dieser Wechsel so aufwendig ist:",
+      "timelineLabel": "Zeitstrahl der Phasen über etwa {min} bis {max} Monate. {phases}",
+      "timelineNote": "Die Balken zeigen den erwarteten Verlauf; der Zeitrahmen darüber nennt die Spanne. Beide beruhen auf der von Ihnen angegebenen Administrationszeit und verschieben sich mit ihr.",
+      "monthTick": "Monat {month}",
+      "phaseSpan": "Monat {start}–{end}"
+    },
+    "rulesChanged": "Hinweis: Neu berechnet mit einem neueren Regelwerk, weil die ursprüngliche Fassung ({version}) nicht mehr verfügbar ist. Einzelne Empfehlungen können abweichen.",
     "savings": {
       "title": "Einsparperspektive",
       "drivers": "Wo Aufwand entfällt",
@@ -871,6 +1184,17 @@
         "gross": "inkl. MwSt."
       }
     },
+    "scalability": {
+      "title": "Tragfähigkeit und Ausblick",
+      "lead": "Ob der empfohlene Aufbau auch dann noch trägt, wenn sich die Organisation verändert.",
+      "currentSize": "Heutige Größe",
+      "growth": "Wachstum",
+      "moreDepartments": "Weitere Bereiche",
+      "stricterGovernance": "Strengere Vorgaben",
+      "broaderAi": "Breitere KI-Nutzung",
+      "selfHostingMaturity": "Mehr Eigenbetrieb"
+    },
+    "severityCaution": "Zu beachten:",
     "stack": {
       "title": "Empfohlener Zielaufbau",
       "lead": "Je Bereich eine begründete Empfehlung, Ausweichoptionen und die ausgeschiedenen Alternativen.",
@@ -883,88 +1207,11 @@
       "ruledOut": "{count} geprüft und ausgeschieden",
       "focusedCoverage": "eingeschränkt abgedeckt"
     },
-    "roadmap": {
-      "title": "Migrationsfahrplan",
-      "lead": "Reihenfolge, Aufwand und betroffene Arbeitsplätze je Phase. Aufwände sind Planungsschätzungen in Administrationstagen.",
-      "phaseEmpty": "Für diese Organisation nicht belegt.",
-      "effort": "{min}–{max} Tage",
-      "seatsAffected": "Betroffene Arbeitsplätze",
-      "pilot": "Pilot empfohlen",
-      "externalSupport": "externe Unterstützung wahrscheinlich",
-      "watchOutFor": "Zu beachten:",
-      "keepForNow": "Vorerst unverändert lassen",
-      "keepForNowLead": "Diese Bereiche sollten jetzt nicht angefasst werden. Das ist eine bewusste Empfehlung, keine Lücke im Plan."
+    "summary": {
+      "title": "Zusammenfassung",
+      "context": "{orgType} mit {seats} Arbeitsplätzen (Größenklasse {bucket}), {categories, plural, one {ein erhobener Bereich} other {# erhobene Bereiche}}.",
+      "target": "Der Plan sieht {planned, plural, =0 {keine Migration} one {eine Migration} other {# Migrationen}} vor. {keep, plural, =0 {Kein Bereich bleibt} one {Ein Bereich bleibt} other {# Bereiche bleiben}} vorerst unverändert."
     },
-    "phase": {
-      "0": {
-        "title": "Phase 0 — Voraussetzungen",
-        "goal": "Grundlagen schaffen, auf denen alle weiteren Schritte aufsetzen."
-      },
-      "1": {
-        "title": "Phase 1 — Schnelle Erfolge",
-        "goal": "Vorhaben mit spürbarem Nutzen bei überschaubarem Aufwand."
-      },
-      "2": {
-        "title": "Phase 2 — Mittlere Vorhaben",
-        "goal": "Umstellungen mit erhöhtem Abstimmungs- und Schulungsbedarf."
-      },
-      "3": {
-        "title": "Phase 3 — Aufwendige Vorhaben",
-        "goal": "Komplexe oder betriebskritische Umstellungen mit eigener Projektstruktur."
-      },
-      "4": {
-        "title": "Phase 4 — Optimierung und lokale KI",
-        "goal": "Konsolidierung und der Einstieg in KI-Anwendungsfälle."
-      }
-    },
-    "capacity": {
-      "title": "Bereitschaft und Kapazität",
-      "lead": "Wie belastbar die Organisation an den Stellen ist, auf die es ankommt.",
-      "budget": "Aufwand gegen verfügbare Zeit",
-      "budgetLine": "Der Plan erfordert etwa {min}–{max} Administrationstage. Verfügbar sind schätzungsweise {availableMin}–{availableMax} Tage pro Jahr.",
-      "estimateNote": "Planungsschätzung in Bandbreiten, kein Angebot und keine Zusage.",
-      "gaps": "Wo es hakt"
-    },
-    "ai": {
-      "title": "Lokale KI",
-      "lead": "Welche Anwendungsfälle heute tragfähig sind, welche einen Pilotbetrieb verdienen und welche warten sollten."
-    },
-    "scalability": {
-      "title": "Tragfähigkeit und Ausblick",
-      "lead": "Ob der empfohlene Aufbau auch dann noch trägt, wenn sich die Organisation verändert.",
-      "currentSize": "Heutige Größe",
-      "growth": "Wachstum",
-      "moreDepartments": "Weitere Bereiche",
-      "stricterGovernance": "Strengere Vorgaben",
-      "broaderAi": "Breitere KI-Nutzung",
-      "selfHostingMaturity": "Mehr Eigenbetrieb"
-    },
-    "next": {
-      "title": "Nächste Schritte",
-      "immediate": "Sofort",
-      "within30Days": "In den nächsten 30 Tagen",
-      "pilots": "Pilotvorhaben",
-      "cautionFlags": "Warnhinweise"
-    },
-    "method": {
-      "title": "Methodik und Grenzen",
-      "lead": "Berechnet aus Ihren Angaben und einem festen Regelwerk. Kein Sprachmodell beteiligt; gleiche Angaben, gleiches Ergebnis.",
-      "notModelled": "Nicht berücksichtigt",
-      "notAssessed": "Nicht erhobene Bereiche",
-      "dataQuality": "Hinweise zu den Angaben",
-      "footer": "Berechnet mit lokal (Engine {engineVersion}, Regelwerk {rulepackVersion}).",
-      "linkNotice": "Der Link ist nicht erratbar, aber ungeschützt. Behandeln Sie ihn als internes Dokument."
-    },
-    "actions": {
-      "markdown": "Markdown herunterladen",
-      "print": "Drucken oder als PDF sichern",
-      "backToReport": "Zurück zum Bericht"
-    },
-    "notFound": {
-      "title": "Bericht nicht gefunden",
-      "body": "Unter diesem Link liegt kein Bericht. Möglicherweise wurde er entfernt oder der Link ist unvollständig.",
-      "cta": "Neue Erhebung starten"
-    },
-    "rulesChanged": "Hinweis: Neu berechnet mit einem neueren Regelwerk, weil die ursprüngliche Fassung ({version}) nicht mehr verfügbar ist. Einzelne Empfehlungen können abweichen."
+    "title": "Migrationsplan"
   }
 }

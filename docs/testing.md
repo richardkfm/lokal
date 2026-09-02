@@ -50,7 +50,7 @@ set of labelled native controls.
 Three things it asserts that are product decisions rather than mechanics:
 
 - **The mandated outputs are on the page.** "Considered and ruled out" and
-  "keep for now" are two of the four outputs that make this a plan rather than a
+  "keep for now" are two of the outputs that make this a plan rather than a
   list ([CLAUDE.md](../CLAUDE.md)). The intake in the spec is chosen to produce
   both, so a change that quietly drops either one turns the suite red.
 - **The data-quality warning warns without blocking.** A category declaring more

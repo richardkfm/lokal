@@ -7,6 +7,7 @@ import {
   READINESS_LABELS,
 } from "@/domain/enums";
 import type { RationaleItem } from "@/domain/rationale";
+import { EFFORT_BANDS } from "@/engine/capacity";
 import { DIFFICULTY_LABELS } from "@/engine/difficulty";
 
 /**
@@ -59,6 +60,14 @@ const RESOLVERS: Record<string, Resolver> = {
   sensitivity: vocabulary("dataSensitivity", LEVELS),
   required: vocabulary("hardwareProfile", HARDWARE_PROFILES),
   available: vocabulary("hardwareProfile", HARDWARE_PROFILES),
+  // Both from the work-package breakdown: `criticality` sizes parallel running,
+  // `sensitivity` sizes training. Same three-point scale, different names,
+  // because the name is what the stage author chooses and what this table keys on.
+  criticality: vocabulary("criticality", LEVELS),
+  band: {
+    values: new Set<string>(EFFORT_BANDS),
+    key: (value) => `report.effortBand.${value}`,
+  },
   difficulty: {
     values: new Set<string>(DIFFICULTY_LABELS),
     key: (value) => `report.difficulty.${value}`,

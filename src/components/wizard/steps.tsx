@@ -6,6 +6,8 @@ import {
   AI_INTERESTS,
   AI_USE_CASE_IDS,
   CATEGORY_IDS,
+  CLIENT_OS,
+  DEVICE_MANAGEMENT,
   GERMAN_REGIONS,
   HARDWARE_PROFILES,
   HOSTING_PREFERENCES,
@@ -14,6 +16,7 @@ import {
   ORG_TYPES,
   SUPPORT_EXPECTATIONS,
   URGENCIES,
+  WINDOWS_ONLY_APPS,
   sizeBucketForSeats,
 } from "@/domain/enums";
 import {
@@ -170,12 +173,34 @@ export function OrganizationStep({ draft, update, issues }: StepProps) {
   );
 }
 
+/**
+ * Whole euros in, whole cents out.
+ *
+ * The schema stores minor units so no layer downstream has to reason about
+ * floats, but nobody types their day rate in cents. Rounding rather than
+ * truncating, because a rate entered as 480,50 should not quietly become 480,50
+ * minus half a cent.
+ */
+function eurosToCents(euros: number | undefined): number | undefined {
+  return euros === undefined ? undefined : Math.round(euros * 100);
+}
+
+function centsToEuros(cents: number | undefined): number | undefined {
+  return cents === undefined ? undefined : cents / 100;
+}
+
 export function OperatingStep({ draft, update, issues }: StepProps) {
   const t = useTranslations("wizard.operating");
   const choices = useChoices();
 
   const set = (patch: Partial<Draft["operating"]>) =>
     update((d) => ({ ...d, operating: { ...d.operating, ...patch } }));
+
+  const setWorkplace = (patch: Partial<Draft["workplace"]>) =>
+    update((d) => ({ ...d, workplace: { ...d.workplace, ...patch } }));
+
+  const setRate = (patch: Partial<Draft["rates"]>) =>
+    update((d) => ({ ...d, rates: { ...d.rates, ...patch } }));
 
   return (
     <div className="space-y-8">
@@ -248,6 +273,125 @@ export function OperatingStep({ draft, update, issues }: StepProps) {
             })
           }
         />
+      </Fieldset>
+
+      {/* The workstations.
+       *
+       * Deliberately below the server questions and visibly separated from
+       * them, because the two are easy to conflate: "Linux- und
+       * Betriebskenntnisse" above is about running servers, and this block is
+       * about what people sit in front of. An organization can very well have
+       * one and not the other. */}
+      <div className="border-line border-t pt-8">
+        <h3 className="text-ink text-base font-semibold">{t("workplaceTitle")}</h3>
+        <p className="text-muted mt-1 max-w-[60ch] text-sm leading-relaxed">
+          {t("workplaceLead")}
+        </p>
+      </div>
+
+      <Fieldset
+        legend={t("clientOsLegend")}
+        hint={t("clientOsHint")}
+        error={issues.clientOs}
+      >
+        <RadioCards
+          name="clientOs"
+          value={draft.workplace.clientOs}
+          choices={choices("clientOs", CLIENT_OS)}
+          onChange={(value) =>
+            setWorkplace({ clientOs: value as Draft["workplace"]["clientOs"] })
+          }
+        />
+      </Fieldset>
+
+      <Fieldset
+        legend={t("windowsOnlyLegend")}
+        hint={t("windowsOnlyHint")}
+        error={issues.windowsOnlyApps}
+      >
+        <RadioCards
+          name="windowsOnlyApps"
+          value={draft.workplace.windowsOnlyApps}
+          choices={choices("windowsOnlyApps", WINDOWS_ONLY_APPS)}
+          onChange={(value) =>
+            setWorkplace({
+              windowsOnlyApps: value as Draft["workplace"]["windowsOnlyApps"],
+            })
+          }
+        />
+      </Fieldset>
+
+      <Fieldset
+        legend={t("deviceManagementLegend")}
+        hint={t("deviceManagementHint")}
+        error={issues.deviceManagement}
+      >
+        <RadioCards
+          name="deviceManagement"
+          value={draft.workplace.deviceManagement}
+          choices={choices("deviceManagement", DEVICE_MANAGEMENT)}
+          onChange={(value) =>
+            setWorkplace({
+              deviceManagement: value as Draft["workplace"]["deviceManagement"],
+            })
+          }
+        />
+      </Fieldset>
+
+      <Fieldset legend={t("peripheralLegend")} hint={t("peripheralHint")}>
+        <RadioGroup
+          legend={t("peripheralLabel")}
+          hint={t("peripheralFieldHint")}
+          error={issues.peripheralDependency}
+          name="peripheralDependency"
+          value={draft.workplace.peripheralDependency}
+          choices={choices("peripheralDependency", LEVELS)}
+          onChange={(value) => setWorkplace({ peripheralDependency: value as Level })}
+        />
+      </Fieldset>
+
+      <Fieldset legend={t("deviceCountLegend")} hint={t("deviceCountHint")}>
+        <NumberField
+          label={t("deviceCountLabel")}
+          hint={t("deviceCountFieldHint")}
+          value={draft.workplace.deviceCount}
+          error={issues.deviceCount}
+          onChange={(value) => setWorkplace({ deviceCount: value })}
+        />
+      </Fieldset>
+
+      {/* Day rates.
+       *
+       * Optional, and the hint says outright what leaving them empty means, so
+       * skipping the block is an informed choice rather than an omission. lokal
+       * estimates no rate: unset means the report states no cost figure at all
+       * (ADR-0004). */}
+      <div className="border-line border-t pt-8">
+        <h3 className="text-ink text-base font-semibold">{t("ratesTitle")}</h3>
+        <p className="text-muted mt-1 max-w-[60ch] text-sm leading-relaxed">
+          {t("ratesLead")}
+        </p>
+      </div>
+
+      <Fieldset legend={t("ratesLegend")} hint={t("ratesHint")}>
+        <div className="flex flex-wrap gap-6">
+          <NumberField
+            label={t("internalRateLabel")}
+            hint={t("internalRateHint")}
+            value={centsToEuros(draft.rates.internalDayRateCents)}
+            error={issues.internalDayRateCents}
+            max={10_000}
+            onChange={(value) => setRate({ internalDayRateCents: eurosToCents(value) })}
+          />
+          <NumberField
+            label={t("externalRateLabel")}
+            hint={t("externalRateHint")}
+            value={centsToEuros(draft.rates.externalDayRateCents)}
+            error={issues.externalDayRateCents}
+            max={10_000}
+            onChange={(value) => setRate({ externalDayRateCents: eurosToCents(value) })}
+          />
+        </div>
       </Fieldset>
     </div>
   );

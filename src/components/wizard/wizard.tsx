@@ -55,6 +55,13 @@ const ISSUE_LABELS: Partial<Record<StepId, Record<string, string>>> = {
     itMaturity: "operating.itMaturityLabel",
     identityMaturity: "operating.identityMaturityLabel",
     supportExpectation: "operating.supportLegend",
+    clientOs: "operating.clientOsLegend",
+    windowsOnlyApps: "operating.windowsOnlyLegend",
+    deviceManagement: "operating.deviceManagementLegend",
+    peripheralDependency: "operating.peripheralLabel",
+    deviceCount: "operating.deviceCountLabel",
+    internalDayRateCents: "operating.internalRateLabel",
+    externalDayRateCents: "operating.externalRateLabel",
   },
   ai: {
     interest: "ai.interestLegend",
@@ -166,6 +173,7 @@ function ReviewStep({
   const t = useTranslations("wizard.review");
   const w = useTranslations("wizard");
   const vocabulary = useTranslations("vocabulary");
+  const locale = useLocale();
   const warnings = dataQualityWarnings(draft, t as never);
 
   const dash = "—";
@@ -177,6 +185,22 @@ function ReviewStep({
         : key;
   const term = (vocab: string, value: string | undefined) =>
     value ? vocabulary(`${vocab}.${value}.label` as never) : dash;
+
+  /**
+   * A declared day rate, or the sentence saying what leaving it empty means.
+   *
+   * "—" would read as an oversight to correct. The absence is deliberate and
+   * has a consequence the respondent should see before submitting: no rate, no
+   * cost figure in the report (ADR-0004).
+   */
+  const formatRate = (cents: number | undefined) =>
+    cents === undefined
+      ? t("noRateDeclared")
+      : new Intl.NumberFormat(locale, {
+          style: "currency",
+          currency: "EUR",
+          maximumFractionDigits: 0,
+        }).format(cents / 100);
 
   /**
    * Every answer, grouped by the step that asked for it.
@@ -243,6 +267,38 @@ function ReviewStep({
         {
           label: label("operating", "support"),
           value: term("supportExpectation", draft.operating.supportExpectation),
+        },
+        {
+          label: label("operating", "clientOs"),
+          value: term("clientOs", draft.workplace.clientOs),
+        },
+        {
+          label: label("operating", "windowsOnly"),
+          value: term("windowsOnlyApps", draft.workplace.windowsOnlyApps),
+        },
+        {
+          label: label("operating", "deviceManagement"),
+          value: term("deviceManagement", draft.workplace.deviceManagement),
+        },
+        {
+          label: label("operating", "peripheral"),
+          value: term("peripheralDependency", draft.workplace.peripheralDependency),
+        },
+        {
+          label: label("operating", "deviceCount"),
+          // An absent device count is a real answer, not a gap: the plan falls
+          // back to seats and says so.
+          value: draft.workplace.deviceCount
+            ? String(draft.workplace.deviceCount)
+            : t("notStated"),
+        },
+        {
+          label: label("operating", "internalRate"),
+          value: formatRate(draft.rates.internalDayRateCents),
+        },
+        {
+          label: label("operating", "externalRate"),
+          value: formatRate(draft.rates.externalDayRateCents),
         },
       ],
     },

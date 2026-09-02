@@ -12,7 +12,7 @@ import { CATEGORY_IDS } from "@/domain/enums";
 const pack = currentRulepack();
 
 const baseInput = {
-  schemaVersion: 1 as const,
+  schemaVersion: 2 as const,
   locale: "de" as const,
   org: {
     orgType: "municipality" as const,
@@ -30,6 +30,13 @@ const baseInput = {
     linuxCapability: "basic" as const,
     supportExpectation: "vendor_support_needed" as const,
   },
+  workplace: {
+    clientOs: "windows" as const,
+    windowsOnlyApps: "few" as const,
+    deviceManagement: "ad_gpo" as const,
+    peripheralDependency: "medium" as const,
+  },
+  rates: {},
   stack: [
     {
       category: "forms_surveys" as const,
@@ -118,8 +125,14 @@ describe("shipped rulepack", () => {
     }
   });
 
-  it("keeps every prerequisite reachable from at least one target", () => {
-    const referenced = new Set(pack.targetTools.flatMap((t) => t.prerequisites));
+  it("keeps every prerequisite reachable from at least one target or gate", () => {
+    const referenced = new Set([
+      ...pack.targetTools.flatMap((t) => t.prerequisites),
+      // The client-OS lane fills phase 0 too. Its groundwork is reached through
+      // a gate rather than through a target tool, because the lane recommends
+      // no product to hang a prerequisite on.
+      ...(pack.clientOsLane?.gates.map((gate) => gate.id) ?? []),
+    ]);
     const orphaned = pack.prerequisites
       .map((p) => p.id)
       .filter((id) => !referenced.has(id));
@@ -268,30 +281,116 @@ describe("capability regressions", () => {
  * why. These tests are what stop a future contributor from "just adding" an
  * entry to the older pack.
  */
+describe("the client-OS lane", () => {
+  const lane = pack.clientOsLane;
+
+  it("ships in the current pack", () => {
+    expect(lane).toBeDefined();
+  });
+
+  it("recommends no product", () => {
+    // The whole reason the lane can ship without a distribution research pass,
+    // and the boundary that keeps it a plan rather than a list. A recommendation
+    // derived from five intake answers would be exactly the alternatives-finder
+    // output lokal exists not to produce.
+    const serialized = JSON.stringify(lane);
+    for (const distribution of ["ubuntu", "debian", "fedora", "suse", "mint"]) {
+      expect(serialized.toLowerCase()).not.toContain(distribution);
+    }
+  });
+
+  it("states that the operating system moves after the applications", () => {
+    // Not a comment but a field, because it is the doctrine the sequencing
+    // depends on and a later edit has to argue with the type to remove it.
+    expect(lane?.movesAfterApplications).toBe(true);
+  });
+
+  it("sources and dates every gate, like every other claim in the pack", () => {
+    for (const gate of lane?.gates ?? []) {
+      expect(gate.sources.length).toBeGreaterThan(0);
+      expect(gate.lastReviewed).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(gate.description.de.length).toBeGreaterThan(60);
+    }
+  });
+
+  it("marks the gates lokal cannot decide as manual", () => {
+    // A checklist that ticks itself off is not a checklist. Peripherals and the
+    // pilot are work the organization does and confirms; nothing in the intake
+    // can answer them.
+    const manual = (lane?.gates ?? [])
+      .filter((gate) => gate.kind === "manual")
+      .map((gate) => gate.id);
+    expect(manual).toContain("peripheral-inventory");
+    expect(manual).toContain("pilot-through-a-full-cycle");
+  });
+
+  it("blocks only on what capacity cannot fix", () => {
+    // Everything else in the lane is work. Windows-only applications and
+    // unverified peripherals are dependencies on someone else's decision or on
+    // physical hardware, which is why they are the only blockers.
+    const blockers = (lane?.rules ?? [])
+      .filter((rule) => rule.severity === "blocker")
+      .map((rule) => rule.id);
+    expect(blockers).toEqual([
+      "windows-only-applications-dominate",
+      "peripherals-unverified",
+    ]);
+  });
+
+  it("treats an unmapped estate as a caution, never as a block", () => {
+    // "Blockiert" would let an organization conclude the answer is no, when the
+    // honest answer is that nobody currently knows.
+    const unknown = lane?.rules.find(
+      (rule) => rule.id === "windows-only-applications-unknown",
+    );
+    expect(unknown?.severity).toBe("caution");
+  });
+
+  it("scales the effort per device rather than by band", () => {
+    // Unlike an application migration this one is nearly linear in machines, so
+    // a band would hide the number that drives the estimate.
+    expect(lane?.daysPerDevice.min).toBeLessThan(lane!.daysPerDevice.max);
+    expect(lane?.fixedDays.min).toBeGreaterThan(0);
+  });
+});
+
 describe("released packs stay immutable", () => {
   const previous = getRulepack("v2026-08");
 
-  it("keeps the previous pack available for assessments taken against it", () => {
-    expect(availableRulepackVersions()).toEqual(["v2026-08", "v2026-09"]);
-    expect(CURRENT_RULEPACK_VERSION).toBe("v2026-09");
+  it("keeps every earlier pack available for assessments taken against it", () => {
+    expect(availableRulepackVersions()).toEqual(["v2026-08", "v2026-09", "v2026-10"]);
+    expect(CURRENT_RULEPACK_VERSION).toBe("v2026-10");
   });
 
-  it("leaves the previous pack free of this release's additions", () => {
+  it("leaves the earlier packs free of the later releases' additions", () => {
     expect(previous.targetTools.map((t) => t.id)).not.toContain("euro-office");
     expect(previous.sourceTools.filter((t) => t.listPrice)).toEqual([]);
     expect(previous.blockerRules.map((r) => r.id)).not.toContain(
       "young-suite-needs-pilot",
     );
+
+    // A pack that predates the question has to say so rather than answer it.
+    // The engine reports "diese Regelversion kennt die Frage nicht"; it does not
+    // silently apply the current lane to an older assessment.
+    expect(previous.clientOsLane).toBeUndefined();
+    expect(getRulepack("v2026-09").clientOsLane).toBeUndefined();
   });
 
-  it("changes nothing else about the previous pack's content", () => {
+  it("changes nothing else about the earlier packs' content", () => {
     expect(previous.categories).toEqual(pack.categories);
-    expect(previous.prerequisites).toEqual(pack.prerequisites);
     expect(previous.aiUseCases).toEqual(pack.aiUseCases);
     // Same source tools, differing only by the prices overlaid onto them.
     expect(previous.sourceTools.map((t) => t.id)).toEqual(
       pack.sourceTools.map((t) => t.id),
     );
+    // v2026-10 adds two prerequisites for the client-OS lane and touches none
+    // of the existing ones, which is what an overlay means.
+    expect(pack.prerequisites.slice(0, previous.prerequisites.length)).toEqual(
+      previous.prerequisites,
+    );
+    expect(
+      pack.prerequisites.slice(previous.prerequisites.length).map((p) => p.id),
+    ).toEqual(["fachverfahren-inventory", "peripheral-inventory"]);
   });
 });
 

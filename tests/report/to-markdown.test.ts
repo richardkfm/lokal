@@ -10,12 +10,13 @@ import type { PlanningReport } from "@/report/schema";
 const pack = currentRulepack();
 const GENERATED_AT = "2026-08-12T00:00:00.000Z";
 
-function markdownFor(id: string, locale: "de" | "en" = "de"): string {
+function report(id: string, locale: "de" | "en" = "de"): PlanningReport {
   const input = { ...persona(id).input, locale };
-  const report: PlanningReport = buildReport(runEngine(input, pack), pack, {
-    generatedAt: GENERATED_AT,
-  });
-  return toMarkdown(report, { t: strictTranslator(locale) });
+  return buildReport(runEngine(input, pack), pack, { generatedAt: GENERATED_AT });
+}
+
+function markdownFor(id: string, locale: "de" | "en" = "de"): string {
+  return toMarkdown(report(id, locale), { t: strictTranslator(locale) });
 }
 
 describe("markdown export", () => {
@@ -109,6 +110,7 @@ describe("markdown export", () => {
 
     for (const heading of [
       "# Migrationsplan",
+      "## 0. Entscheidungsvorlage",
       "## Auf einen Blick",
       "## 1. Zusammenfassung",
       "## 4. Empfohlener Zielaufbau",
@@ -117,6 +119,10 @@ describe("markdown export", () => {
       "## 7. Lokale KI",
       "## 8. Tragfähigkeit und Ausblick",
       "## 9. Nächste Schritte",
+      // Both of this phase's additions have to reach the export too: it is the
+      // copy that gets pasted into a wiki and read by whoever was not in the room.
+      "### Was der Wechsel kostet",
+      "### Betriebssystem der Arbeitsplätze",
       "## Methodik und Grenzen",
     ]) {
       expect(markdown).toContain(heading);
@@ -131,13 +137,21 @@ describe("markdown export", () => {
     expect(sme).toContain("Vorerst unverändert lassen");
   });
 
-  // ADR-0003 permits euro figures and forbids unaccountable ones. Where the
-  // export names an amount it must also name the plan, the source and the date
-  // it was read, so a reader can check it against their own invoice.
-  it("never prints a euro figure without its basis", () => {
+  /**
+   * Two kinds of euro figure now reach a reader, and each carries a different
+   * basis: an exposure traces to a vendor's published price (ADR-0003), a cost
+   * traces to a day rate the respondent typed (ADR-0004).
+   *
+   * This used to be one assertion demanding the exposure audit trail wherever a
+   * "€" appeared, and it failed the moment a persona declared a day rate and had
+   * no priced subscription — a report that was, in fact, perfectly well
+   * evidenced. Each figure is now checked against its own basis, which is the
+   * assertion the two ADRs actually make.
+   */
+  it("never prints a subscription figure without its published source", () => {
     for (const { id } of PERSONAS) {
+      if (!report(id).savings.subscriptionExposure) continue;
       const markdown = markdownFor(id);
-      if (!markdown.includes("€")) continue;
 
       expect(markdown).toContain("Rechengrundlage");
       expect(markdown).toMatch(/je Arbeitsplatz und Monat/);
@@ -147,6 +161,32 @@ describe("markdown export", () => {
       expect(markdown).not.toMatch(/erhoben am \d{4}-\d{2}-\d{2}/);
       // Coverage is stated wherever a sum is.
       expect(markdown).toMatch(/Belegt für \d+ von \d+ betrachteten Bereichen/);
+    }
+  });
+
+  it("never prints a cost figure without the rate it was multiplied by", () => {
+    for (const { id } of PERSONAS) {
+      const doc = report(id);
+      const markdown = markdownFor(id);
+
+      if (!doc.cost.totalCents) {
+        // Absent, never zero (ADR-0004 guardrail 1).
+        expect(markdown).toContain("Nicht beziffert");
+        continue;
+      }
+
+      expect(markdown).toMatch(/Tagessatz von Ihnen angegeben/);
+      expect(markdown).toMatch(/\d+–\d+ Tage zu /);
+    }
+  });
+
+  it("keeps the two amounts from being read as a subtraction", () => {
+    // The one caveat that has to survive a reader who sees only the first page.
+    for (const { id } of PERSONAS) {
+      const doc = report(id);
+      if (!doc.cost.totalCents || !doc.savings.subscriptionExposure) continue;
+
+      expect(markdownFor(id)).toContain("nicht voneinander abzuziehen");
     }
   });
 

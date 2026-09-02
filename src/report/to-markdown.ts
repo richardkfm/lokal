@@ -46,6 +46,13 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     t(`report.${key}`, values);
   const v = (key: string) => t(`vocabulary.${key}`);
   const category = (id: string) => v(`category.${id}.label`);
+  /** A day range, or a single number when its ends are equal. See report-view. */
+  const dayRange = (days: { min: number; max: number }) =>
+    r("roadmap.effort", {
+      min: days.min,
+      max: days.max,
+      same: days.min === days.max ? "yes" : "no",
+    });
   const locale = report.locale;
   const labels = prerequisiteLabels(report.roadmap.phases, locale);
   const ctx: ListContext = { ...context, labels };
@@ -72,6 +79,60 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     blank();
   }
 
+  // --- 0 Entscheidungsvorlage ----------------------------------------------
+  //
+  // The same page the screen and the print route open with. A Markdown export
+  // that dropped it would be a third document telling a different story, and
+  // this one is the copy that gets pasted into a wiki and read by whoever was
+  // not in the room.
+  const brief = report.decisionBrief;
+  const money = (cents: number) => formatAmount(cents, "EUR", locale);
+
+  push(`## 0. ${r("brief.title")}`, "");
+  push(
+    r("brief.lead", {
+      planned: brief.migrationsPlanned,
+      keep: brief.categoriesKept,
+      total: report.organization.totalSeats,
+    }),
+    "",
+  );
+
+  push(`| | |`, `| --- | --- |`);
+  push(
+    `| ${r("brief.horizonLabel")} | ${r("brief.horizonValue", {
+      min: report.schedule.horizonMonths.min,
+      max: report.schedule.horizonMonths.max,
+    })} |`,
+    `| ${r("brief.costLabel")} | ${
+      report.cost.totalCents
+        ? `${money(report.cost.totalCents.min)} – ${money(report.cost.totalCents.max)}`
+        : r("brief.costAbsent")
+    } |`,
+    `| ${r("brief.exposureLabel")} | ${
+      report.savings.subscriptionExposure
+        ? money(report.savings.subscriptionExposure.annualCents)
+        : r("brief.exposureAbsent")
+    } |`,
+  );
+  blank();
+
+  // Immediately under the two amounts, never at the end of the section: a reader
+  // who sees them side by side will subtract them (ADR-0004 guardrail 3).
+  push(`> ${r("brief.notSubtractable")}`);
+  blank();
+
+  push(`### ${r("brief.risksTitle")}`, "");
+  push(
+    ...(brief.topRisks.length > 0 ? list(brief.topRisks, ctx) : [r("brief.risksNone")]),
+    "",
+  );
+  push(`### ${r("brief.asksTitle")}`, "", ...list(brief.asks, ctx), "");
+  push(
+    `**${r("brief.clientOsTitle")}:** ${r(`clientOsVerdict.${report.clientOs.verdict}`)}`,
+  );
+  blank();
+
   // --- At a glance ---------------------------------------------------------
   const glance = report.atAGlance;
   push(`## ${r("glance.title")}`, "");
@@ -82,7 +143,10 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     `| ${r("glance.savings")} | ${r(`outlook.${glance.savingsOutlook}`)} |`,
     `| ${r("glance.ai")} | ${r(`aiPosture.${glance.aiPosture}`)} |`,
     `| ${r("glance.seats")} | ${glance.affectedSeats} / ${report.organization.totalSeats} |`,
-    `| ${r("glance.phases")} | ${glance.activePhases} |`,
+    // The horizon replaces the phase count here too. Renderers that disagree
+    // about the at-a-glance figures are how a printed copy and a pasted wiki
+    // page start telling different stories about the same plan.
+    `| ${r("glance.horizon")} | ${r("brief.horizonValue", { min: report.schedule.horizonMonths.min, max: report.schedule.horizonMonths.max })} (${r("glance.horizonDetail", { phases: glance.activePhases })}) |`,
   );
   blank();
 
@@ -121,8 +185,6 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
   // is followed by the line that says where it came from (ADR-0003).
   const exposure = report.savings.subscriptionExposure;
   if (exposure) {
-    const money = (cents: number) => formatAmount(cents, exposure.currency, locale);
-
     // One figure, and a sentence for what the roadmap removes from it. A second
     // amount in a second row — the same number, labelled "entfällt" — is a net
     // saving in everything but the noun, and ADR-0003 forbids stating one.
@@ -167,6 +229,38 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
 
   push(...list(report.savings.modelLimitations, ctx));
   blank();
+
+  // The cost of moving, beside the cost of staying (ADR-0004). Absent rather
+  // than zero where no day rate was declared.
+  push(`### ${r("cost.title")}`, "");
+  if (report.cost.totalCents) {
+    push(`| | | |`, `| --- | --- | --- |`);
+    for (const [label, line] of [
+      [r("cost.internalLabel"), report.cost.internal],
+      [r("cost.externalLabel"), report.cost.external],
+    ] as const) {
+      if (!line) continue;
+      push(
+        `| ${label} | ${money(line.cents.min)} – ${money(line.cents.max)} | ${r(
+          "cost.lineBasis",
+          {
+            minDays: line.days.min,
+            maxDays: line.days.max,
+            rate: money(line.rateCents),
+          },
+        )} |`,
+      );
+    }
+    blank();
+    push(
+      r("cost.coverage", {
+        migrations: report.cost.coverage.migrationsTotal,
+        external: report.cost.coverage.externalSupportMigrations,
+      }),
+      "",
+    );
+  }
+  push(...list(report.cost.notes, ctx), "");
 
   // --- 4 Target stack ------------------------------------------------------
   push(`## 4. ${r("stack.title")}`, "", r("stack.lead"), "");
@@ -253,7 +347,10 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     push(`### ${r(`phase.${phase.id}.title`)}`, "");
     push(r(`phase.${phase.id}.goal`), "");
     push(
-      `${r("roadmap.effort", { min: phase.effortDays.min, max: phase.effortDays.max })} · ${r("glance.seats")}: ${phase.affectedSeats}`,
+      `${r("roadmap.phaseSpan", {
+        start: phase.duration.startMonth,
+        end: phase.duration.endMonth,
+      })} · ${dayRange(phase.effortDays)} · ${r("glance.seats")}: ${phase.affectedSeats}`,
       "",
     );
 
@@ -268,10 +365,25 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
       push(
         `#### ${category(migration.category)} → ${migration.toolName}`,
         "",
-        `${r(`difficulty.${migration.difficulty.label}`)} · ${r("roadmap.effort", { min: migration.effort.days.min, max: migration.effort.days.max })} · ${migration.seats} ${r("glance.seats")}${migration.pilotRecommended ? ` · ${r("roadmap.pilot")}` : ""}${migration.externalSupportLikely ? ` · ${r("roadmap.externalSupport")}` : ""}`,
+        `${r(`difficulty.${migration.difficulty.label}`)} · ${dayRange(migration.effort.days)} · ${migration.seats} ${r("glance.seats")}${migration.pilotRecommended ? ` · ${r("roadmap.pilot")}` : ""}${migration.externalSupportLikely ? ` · ${r("roadmap.externalSupport")}` : ""}`,
         "",
         ...list(migration.reasons, ctx),
       );
+
+      // What the range is made of, and why the move is as hard as it is. The
+      // drivers were computed, carried in the document, and dropped by every
+      // renderer including this one.
+      if (migration.effort.items.length > 0) {
+        blank();
+        for (const item of migration.effort.items) {
+          push(`- ${v(`workPackage.${item.package}.label`)}: ${dayRange(item.days)}`);
+        }
+      }
+      if (migration.difficulty.drivers.length > 0) {
+        push("", `${r("roadmap.whyThisHard")}`, "");
+        push(...list(migration.difficulty.drivers, ctx));
+      }
+
       if (migration.gotchas.length > 0) {
         push("", `${r("roadmap.watchOutFor")}`, "");
         for (const gotcha of migration.gotchas) push(`- ${t(`rationale.${gotcha}`)}`);
@@ -279,6 +391,38 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
       blank();
     }
   }
+
+  // The client operating system, inside the roadmap because it is a roadmap
+  // item: it has a phase, or a reason it has none.
+  push(`### ${r("clientOs.title")}`, "");
+  push(
+    report.clientOs.phase !== null
+      ? r("clientOs.scheduledIn", { phase: r(`phase.${report.clientOs.phase}.title`) })
+      : r("clientOs.notScheduled"),
+    "",
+  );
+  if (report.clientOs.effortDays && report.clientOs.devices) {
+    push(
+      `${dayRange(report.clientOs.effortDays)} · ${r(
+        report.clientOs.devices.source === "declared"
+          ? "clientOs.devicesDeclared"
+          : "clientOs.devicesFromSeats",
+        { count: report.clientOs.devices.count },
+      )}`,
+      "",
+    );
+  }
+  push(...list([...report.clientOs.blockers, ...report.clientOs.cautions], ctx));
+  if (report.clientOs.gates.length > 0) {
+    push("", `**${r("clientOs.gatesTitle")}**`, "");
+    for (const gate of report.clientOs.gates) {
+      push(
+        `- **${localized(gate.label, locale)}** ${r(`clientOs.gate_${gate.status}`)} — ${localized(gate.description, locale)}`,
+      );
+    }
+  }
+  push("", ...list(report.clientOs.reasons, ctx));
+  blank();
 
   if (report.roadmap.keepForNow.length > 0) {
     push(`### ${r("roadmap.keepForNow")}`, "", r("roadmap.keepForNowLead"), "");

@@ -9,7 +9,9 @@ import {
   assessmentInputSchema,
   operatingModelSchema,
   orgProfileSchema,
+  ratesSchema,
   stackEntrySchema,
+  workplaceSchema,
 } from "@/domain/intake";
 import type { AssessmentInput, StackEntry } from "@/domain/intake";
 import { CATEGORY_IDS } from "@/domain/enums";
@@ -43,6 +45,13 @@ const STORAGE_KEY = "lokal.assessment.draft.v1";
 export type Draft = {
   org: Partial<AssessmentInput["org"]>;
   operating: Partial<AssessmentInput["operating"]>;
+  workplace: Partial<AssessmentInput["workplace"]>;
+  /**
+   * Both rates are optional in the schema, so an empty draft is already valid
+   * here. That is the point: no rate declared means the report states no cost
+   * figure at all rather than a plausible one (ADR-0004).
+   */
+  rates: Partial<AssessmentInput["rates"]>;
   /** Keyed by category so toggling one off and on again keeps its answers. */
   stack: Partial<Record<CategoryId, Partial<StackEntry>>>;
   selectedCategories: CategoryId[];
@@ -58,6 +67,8 @@ export function emptyDraft(): Draft {
       germanLanguageRequired: true,
     },
     operating: {},
+    workplace: {},
+    rates: {},
     stack: {},
     selectedCategories: [],
     ai: { useCases: [] },
@@ -67,7 +78,13 @@ export function emptyDraft(): Draft {
 /** Per-step validation, so a step only reports on its own fields. */
 const STEP_SCHEMAS: Record<StepId, z.ZodType | null> = {
   organization: orgProfileSchema,
-  operating: operatingModelSchema,
+  // Step 2 carries three blocks — how the team runs servers, what runs on the
+  // desks, and what a day costs — merged flat rather than nested. Their field
+  // names are disjoint, and a flat shape keeps every issue path a bare field
+  // name, which is what the step's `error={issues.<field>}` wiring reads.
+  operating: operatingModelSchema
+    .extend(workplaceSchema.shape)
+    .extend(ratesSchema.shape),
   stack: z.array(z.string()).min(1),
   detail: z.array(stackEntrySchema).min(1),
   ai: aiPostureSchema,
@@ -169,7 +186,7 @@ function subjectFor(step: StepId, draft: Draft): unknown {
     case "organization":
       return draft.org;
     case "operating":
-      return draft.operating;
+      return { ...draft.operating, ...draft.workplace, ...draft.rates };
     case "stack":
       return draft.selectedCategories;
     case "detail":
@@ -246,6 +263,8 @@ export function toAssessment(
     locale,
     org: draft.org,
     operating: draft.operating,
+    workplace: draft.workplace,
+    rates: draft.rates,
     stack: stackEntries(draft),
     ai: draft.ai,
   });

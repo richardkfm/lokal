@@ -121,6 +121,13 @@ test("the wizard is accessible on every step", async ({ page }) => {
     ["itMaturity", "medium"],
     ["identityMaturity", "medium"],
     ["supportExpectation", "vendor_support_needed"],
+    // The workplace block, which is required and sits below the server
+    // questions. It is also the part of step 2 most at risk of an unlabelled
+    // control, being five new groups added at once.
+    ["clientOs", "windows"],
+    ["windowsOnlyApps", "few"],
+    ["deviceManagement", "ad_gpo"],
+    ["peripheralDependency", "medium"],
   ] as const) {
     await page.locator(`label:has(input[name="${name}"][value="${value}"])`).click();
   }

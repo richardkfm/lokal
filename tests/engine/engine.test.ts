@@ -74,6 +74,328 @@ describe("capacity", () => {
   });
 });
 
+describe("work packages", () => {
+  const efforts = (result: ReturnType<typeof run>) =>
+    result.capacity.perPhase.flatMap((phase) => phase.efforts);
+
+  it("explains the range without changing it", () => {
+    // The invariant this whole module lives or dies by. A breakdown that does
+    // not add up to its own total is the first thing a sceptical reader checks,
+    // and a total that moved would make this a scoring change wearing the
+    // clothes of a rendering improvement.
+    for (const effort of efforts(
+      run({
+        categories: ["file_sharing", "office_docs", "helpdesk", "chat_video"],
+        totalSeats: 600,
+        categorySeats: 600,
+      }),
+    )) {
+      const summed = effort.items.reduce(
+        (acc, item) => ({
+          min: acc.min + item.days.min,
+          max: acc.max + item.days.max,
+        }),
+        { min: 0, max: 0 },
+      );
+
+      expect(summed).toEqual(effort.days);
+    }
+  });
+
+  it("holds the sum for every persona, at every size", () => {
+    for (const size of [14, 45, 180, 600, 2400]) {
+      for (const effort of efforts(run({ totalSeats: size, categorySeats: size }))) {
+        const min = effort.items.reduce((acc, item) => acc + item.days.min, 0);
+        expect(min).toBe(effort.days.min);
+      }
+    }
+  });
+
+  it("emits no package for work the plan does not contain", () => {
+    // A training line reading zero days is padding, and padding is what makes
+    // an estimate untrustworthy. Absent is the honest rendering.
+    const result = run({
+      trainingSensitivity: "low",
+      totalSeats: 30,
+      categorySeats: 30,
+    });
+
+    for (const effort of efforts(result)) {
+      expect(effort.items.map((item) => item.package)).not.toContain("training");
+      for (const item of effort.items) {
+        expect(item.days.max).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it("orders the packages as the work happens, not by size", () => {
+    // Sorted by size it reads as a cost table; sorted by sequence it reads as a
+    // plan, which is what the reader is being asked to approve.
+    const order = [
+      "preparation",
+      "data_migration",
+      "pilot",
+      "rollout",
+      "training",
+      "parallel_run",
+      "aftercare",
+    ];
+
+    for (const effort of efforts(run({ totalSeats: 400, categorySeats: 400 }))) {
+      const positions = effort.items.map((item) => order.indexOf(item.package));
+      expect(positions).toEqual([...positions].sort((a, b) => a - b));
+    }
+  });
+
+  it("says which band it chose and what raised it", () => {
+    // The direct answer to "yes there are days, but why". bandFor used to
+    // return a band and emit nothing at all.
+    const small = allCodes(run({ totalSeats: 40, categorySeats: 40 }));
+    const large = allCodes(run({ totalSeats: 900, categorySeats: 900 }));
+
+    expect(small).toContain("effort.band_from_difficulty");
+    expect(small).not.toContain("effort.band_raised_by_seat_count");
+    expect(large).toContain("effort.band_raised_by_seat_count");
+  });
+
+  it("keeps every package traceable to an intake field", () => {
+    for (const effort of efforts(run({ totalSeats: 300, categorySeats: 300 }))) {
+      for (const item of effort.items) {
+        expect(item.reasons.length).toBeGreaterThan(0);
+      }
+    }
+  });
+});
+
+describe("calendar duration", () => {
+  it("answers the question the day figures never could", () => {
+    // Twelve pages of plan and no month anywhere in it was the defect. The
+    // horizon is the first thing a Buergermeister asks for.
+    const result = run({ categories: ["file_sharing", "office_docs", "helpdesk"] });
+
+    expect(result.schedule.horizonMonths.min).toBeGreaterThan(0);
+    expect(result.schedule.horizonMonths.max).toBeGreaterThanOrEqual(
+      result.schedule.horizonMonths.min,
+    );
+  });
+
+  it("takes longer when there is more to do", () => {
+    const small = run({ categories: ["file_sharing"] });
+    const large = run({
+      categories: ["file_sharing", "office_docs", "helpdesk", "chat_video", "crm"],
+    });
+
+    expect(large.schedule.horizonMonths.max).toBeGreaterThanOrEqual(
+      small.schedule.horizonMonths.max,
+    );
+  });
+
+  it("takes longer when there is less time to do it in", () => {
+    const shape: AssessmentOverrides = {
+      categories: ["file_sharing", "office_docs"],
+    };
+    const stretched = run({ ...shape, adminCapacity: "low" });
+    const resourced = run({ ...shape, adminCapacity: "high" });
+
+    expect(stretched.schedule.horizonMonths.max).toBeGreaterThanOrEqual(
+      resourced.schedule.horizonMonths.max,
+    );
+  });
+
+  it("will not let capacity alone shorten a change many people have to absorb", () => {
+    // The substance of the module. 900 people cannot be retrained in a week
+    // however many administrator-days exist, and a schedule that says otherwise
+    // is the one that slips and takes the plan's credibility with it.
+    const result = run({
+      categories: ["office_docs"],
+      totalSeats: 900,
+      categorySeats: 900,
+      trainingSensitivity: "high",
+      adminCapacity: "high",
+    });
+
+    expect(result.schedule.phases.some((phase) => phase.floorBinds)).toBe(true);
+    expect(allCodes(result)).toContain("schedule.paced_by_people_not_capacity");
+    expect(allCodes(result)).toContain(
+      "schedule.more_admin_time_would_not_shorten_this",
+    );
+  });
+
+  it("does not multiply two uncertainty ranges together", () => {
+    // Pairing "the most days this could take" with "the least time they might
+    // have" produced a ten-year plan for a fourteen-person association. Both
+    // ends are computed against the middle of the declared capacity, so the
+    // spread the reader sees is the spread in the effort estimate and nothing
+    // else. The ratio of the two effort figures bounds the ratio of the months.
+    const result = run({
+      categories: ["file_sharing", "office_docs"],
+      totalSeats: 14,
+      categorySeats: 14,
+      adminCapacity: "low",
+    });
+
+    const effortRatio = result.capacity.total.max / result.capacity.total.min;
+    const horizonRatio =
+      result.schedule.horizonMonths.max / result.schedule.horizonMonths.min;
+
+    expect(horizonRatio).toBeLessThanOrEqual(effortRatio + 0.5);
+  });
+
+  it("says when the horizon is a capacity gap rather than a schedule", () => {
+    // "37 Monate" reads as a plan; "mehr als Sie in einem Jahr leisten koennen"
+    // reads as the decision it actually is. The report has to lead with the
+    // second.
+    const stretched = run({
+      categories: ["file_sharing", "office_docs", "helpdesk", "chat_video"],
+      adminCapacity: "low",
+      totalSeats: 400,
+      categorySeats: 400,
+    });
+    const comfortable = run({ categories: ["file_sharing"], adminCapacity: "high" });
+
+    expect(stretched.schedule.exceedsCapacity).toBe(true);
+    expect(allCodes(stretched)).toContain("schedule.horizon_reflects_a_capacity_gap");
+    expect(comfortable.schedule.exceedsCapacity).toBe(false);
+  });
+
+  it("gives an empty phase no elapsed time", () => {
+    // Padding the horizon with work nobody is doing would be the easiest way to
+    // make the whole figure untrustworthy.
+    const result = run({ categories: ["file_sharing"] });
+    const empty = result.schedule.phases.filter((phase) => {
+      const planned = result.sequencing.phases.find((p) => p.id === phase.phase);
+      return planned?.migrations.length === 0 && planned?.prerequisites.length === 0;
+    });
+
+    for (const phase of empty) {
+      expect(phase.months).toEqual({ min: 0, max: 0 });
+    }
+  });
+
+  it("runs the phases in sequence, which is what a phase is", () => {
+    const result = run({
+      categories: ["file_sharing", "office_docs", "helpdesk", "chat_video"],
+    });
+    const starts = result.schedule.phases.map((phase) => phase.startMonth);
+
+    expect(starts).toEqual([...starts].sort((a, b) => a - b));
+  });
+});
+
+describe("the client operating system", () => {
+  it("never names a distribution", () => {
+    // The boundary of what lokal claims. Which Linux to use depends on
+    // procurement, support contracts and the skills already in the building, and
+    // answering it from five intake answers would be exactly the
+    // alternatives-finder output lokal exists not to produce.
+    const serialized = JSON.stringify(
+      run({ clientOs: "windows", windowsOnlyApps: "none" }).clientOs,
+    ).toLowerCase();
+
+    for (const name of ["ubuntu", "debian", "fedora", "suse", "mint", "redhat"]) {
+      expect(serialized).not.toContain(name);
+    }
+  });
+
+  it("blocks where the decision rests with someone else's vendor", () => {
+    const result = run({ windowsOnlyApps: "many", peripheralDependency: "low" });
+
+    expect(result.clientOs.verdict).toBe("blocked");
+    expect(result.clientOs.blockers.length).toBeGreaterThan(0);
+    expect(allCodes(result)).toContain(
+      "client_os.blocked_by_windows_only_applications",
+    );
+  });
+
+  it("says a mixed estate is a legitimate outcome, not a failure", () => {
+    // An organization told "blockiert" without this concludes the whole idea is
+    // dead, when what is actually true is that some desks stay on Windows.
+    const result = run({ windowsOnlyApps: "several", peripheralDependency: "low" });
+
+    expect(result.clientOs.verdict).toBe("blocked");
+    expect(allCodes(result)).toContain("client_os.mixed_estate_is_a_valid_outcome");
+  });
+
+  it("puts the swap after every application migration, never before", () => {
+    // The doctrine the whole lane exists to encode. Swapping the operating
+    // system first means migrating applications and workstations at once, and
+    // unwinding both together whenever something goes wrong.
+    const result = run({
+      categories: ["file_sharing", "office_docs", "helpdesk"],
+      windowsOnlyApps: "none",
+      peripheralDependency: "low",
+      deviceManagement: "mdm",
+    });
+
+    const lastWithMigrations = Math.max(
+      ...result.sequencing.phases
+        .filter((phase) => phase.migrations.length > 0)
+        .map((phase) => phase.id),
+    );
+
+    expect(result.clientOs.verdict).toBe("after_apps");
+    expect(result.clientOs.phase).toBeGreaterThan(lastWithMigrations);
+    expect(allCodes(result)).toContain("client_os.doctrine_os_moves_last");
+  });
+
+  it("scales the estimate with devices and says where the number came from", () => {
+    const declared = run({
+      windowsOnlyApps: "none",
+      peripheralDependency: "low",
+      deviceManagement: "mdm",
+      totalSeats: 100,
+      categorySeats: 100,
+      deviceCount: 400,
+    });
+    const fallback = run({
+      windowsOnlyApps: "none",
+      peripheralDependency: "low",
+      deviceManagement: "mdm",
+      totalSeats: 100,
+      categorySeats: 100,
+    });
+
+    expect(declared.clientOs.devices).toEqual({ count: 400, source: "declared" });
+    expect(fallback.clientOs.devices).toEqual({ count: 100, source: "seats" });
+    // Four times the machines is more work, whatever the seat count says.
+    expect(declared.clientOs.effortDays!.max).toBeGreaterThan(
+      fallback.clientOs.effortDays!.max,
+    );
+    // And the fallback is disclosed rather than passed off as a device count.
+    expect(allCodes(fallback)).toContain("client_os.device_count_fell_back_to_seats");
+  });
+
+  it("asserts nothing when nothing was asked", () => {
+    // The branch an assessment stored before the workplace block existed lands
+    // in. Naming the unanswered question beats inventing an estate.
+    const result = run({ clientOs: "unknown" });
+
+    expect(result.clientOs.verdict).toBe("not_assessed");
+    expect(result.clientOs.effortDays).toBeNull();
+    expect(allCodes(result)).toContain("client_os.verdict_not_assessed");
+  });
+
+  it("says what an estate already on Linux removes from the plan", () => {
+    const result = run({ clientOs: "linux" });
+
+    expect(result.clientOs.verdict).toBe("already_open");
+    expect(allCodes(result)).toContain("client_os.verdict_already_open");
+  });
+
+  it("shows the gates lokal cannot decide as outstanding", () => {
+    // A checklist that completes itself is not a checklist.
+    const result = run({
+      windowsOnlyApps: "none",
+      peripheralDependency: "low",
+      deviceManagement: "mdm",
+    });
+    const manual = result.clientOs.gates.filter((gate) => gate.status === "manual");
+
+    expect(manual.length).toBeGreaterThan(0);
+    expect(manual.map((gate) => gate.gate.id)).toContain("pilot-through-a-full-cycle");
+  });
+});
+
 describe("savings outlook", () => {
   it("returns a qualitative band with drivers and offsets", () => {
     const result = run({ categories: ["file_sharing", "office_docs"] });
@@ -129,6 +451,107 @@ describe("savings outlook", () => {
         "savings.parallel_running_costs",
       );
     }
+  });
+});
+
+describe("migration cost", () => {
+  const priced = {
+    internalDayRateCents: 48_000,
+    externalDayRateCents: 95_000,
+  } satisfies Partial<AssessmentOverrides>;
+
+  it("states no figure at all when no rate was declared", () => {
+    // Not zero, not a regional average, not an estimate from organization size.
+    // A plausible placeholder looks discharged (ADR-0004 guardrail 1).
+    const result = run({ categories: ["file_sharing", "office_docs"] });
+
+    expect(result.cost.internal).toBeNull();
+    expect(result.cost.external).toBeNull();
+    expect(result.cost.totalCents).toBeNull();
+    expect(allCodes(result)).toContain("cost.no_internal_rate_declared");
+  });
+
+  it("multiplies the days it already computed by the rate the user typed", () => {
+    const result = run({ ...priced, categories: ["file_sharing"] });
+
+    expect(result.cost.internal).not.toBeNull();
+    expect(result.cost.internal!.rateCents).toBe(48_000);
+    expect(result.cost.internal!.cents.min).toBe(
+      Math.round(result.cost.internal!.days.min * 48_000),
+    );
+  });
+
+  it("never states a net, an ROI or a payback", () => {
+    // ADR-0003 guardrail 5, restated in ADR-0004 and permanently deferred.
+    const result = run({ ...priced, categories: ["file_sharing", "office_docs"] });
+    const keys = Object.keys(result.cost);
+
+    for (const forbidden of ["net", "roi", "payback", "breakEven", "savingsCents"]) {
+      expect(keys).not.toContain(forbidden);
+    }
+  });
+
+  it("carries the sentence that stops the two columns being subtracted", () => {
+    // The one caveat that has to survive a reader who sees only the figure.
+    const result = run({ ...priced, categories: ["file_sharing"] });
+
+    expect(allCodes(result)).toContain("cost.not_subtractable_from_exposure");
+    expect(allCodes(result)).toContain("cost.estimate_not_a_quote");
+  });
+
+  it("takes its external days from the migrations capacity already flagged", () => {
+    // A second heuristic here would let the cost section disagree with the
+    // capacity section about the same plan.
+    const result = run({
+      ...priced,
+      categories: ["file_sharing", "chat_video", "intranet_wiki"],
+      adminCapacity: "low",
+      linuxCapability: "none",
+      supportExpectation: "community_tolerant",
+    });
+
+    expect(result.cost.coverage.externalSupportMigrations).toBe(
+      result.capacity.externalSupportFor.length,
+    );
+  });
+
+  it("says which part of the plan the figure covers", () => {
+    const result = run({
+      internalDayRateCents: 48_000,
+      categories: ["file_sharing", "chat_video", "intranet_wiki"],
+      adminCapacity: "low",
+      linuxCapability: "none",
+      supportExpectation: "community_tolerant",
+    });
+
+    // External help is likely and no external rate was given: the report has to
+    // say that part is missing rather than presenting a partial sum as a total.
+    if (result.capacity.externalSupportFor.length > 0) {
+      expect(allCodes(result)).toContain("cost.external_support_likely_but_no_rate");
+    }
+    expect(result.cost.coverage.migrationsTotal).toBeGreaterThan(0);
+  });
+
+  it("counts the operating-system swap where the plan schedules one", () => {
+    const result = run({
+      ...priced,
+      windowsOnlyApps: "none",
+      peripheralDependency: "low",
+      deviceManagement: "mdm",
+      deviceCount: 300,
+    });
+
+    expect(result.cost.coverage.includesClientOs).toBe(true);
+    expect(allCodes(result)).toContain("cost.includes_client_os_swap");
+  });
+
+  it("keeps money out of the engine as integers with a currency code", () => {
+    // The eslint rule forbids the glyph in pure layers; this asserts the shape.
+    const result = run({ ...priced, categories: ["file_sharing"] });
+
+    expect(result.cost.currency).toBe("EUR");
+    expect(Number.isInteger(result.cost.totalCents!.min)).toBe(true);
+    expect(JSON.stringify(result.cost)).not.toContain("\u20ac");
   });
 });
 

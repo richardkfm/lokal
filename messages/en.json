@@ -230,8 +230,8 @@
     "operating": {
       "hostingLegend": "Preferred hosting",
       "hostingHint": "Where should the systems run in future?",
-      "linuxLegend": "Linux and operations skills",
-      "linuxHint": "Decides whether self-hosting is realistic.",
+      "linuxLegend": "Linux and server skills in the team",
+      "linuxHint": "About running servers, not about the workstations. Decides whether self-hosting is realistic.",
       "capacityLegend": "Capacity",
       "capacityHint": "An honest estimate helps more than an optimistic one.",
       "adminCapacityLabel": "Available administration time",
@@ -241,7 +241,31 @@
       "identityMaturityLabel": "User management",
       "identityMaturityHint": "Is there a central directory for accounts and groups?",
       "supportLegend": "Support expectation",
-      "supportHint": "Is an active community enough, or do you need a contracted partner?"
+      "supportHint": "Is an active community enough, or do you need a contracted partner?",
+      "workplaceTitle": "The workstations",
+      "workplaceLead": "Five answers about the machines people actually work on. They decide whether and when an operating-system change belongs in this plan — which distribution is deliberately not something lokal says.",
+      "clientOsLegend": "Operating system on the workstations",
+      "clientOsHint": "What runs on staff machines today?",
+      "windowsOnlyLegend": "Applications that only run on Windows",
+      "windowsOnlyHint": "Specialist administrative software, payroll and accounting packages, CAD, lab and machine control. The single most important question here: one irreplaceable Windows-only application decides the matter for the workstations that need it, however well everything else fits.",
+      "deviceManagementLegend": "Getting software onto the devices",
+      "deviceManagementHint": "How do programs and settings reach the machines today?",
+      "peripheralLegend": "Attached devices",
+      "peripheralHint": "The second most common reason a desktop change stalls — and the one noticed latest.",
+      "peripheralLabel": "Dependency on specialist devices",
+      "peripheralFieldHint": "Signature pads, card readers, label printers, lab and machine interfaces.",
+      "deviceCountLegend": "Number of devices",
+      "deviceCountHint": "Effort grows with machines, not with people.",
+      "deviceCountLabel": "Workstations (optional)",
+      "deviceCountFieldHint": "Without a figure lokal uses the number of seats and says so in the report. A guessed device count is worse than none.",
+      "ratesTitle": "What a working day costs",
+      "ratesLead": "Both are optional. Without them the report states no migration cost — lokal estimates no day rate and substitutes no average.",
+      "ratesLegend": "Day rates",
+      "ratesHint": "These rates and the effort days lokal computes are what produce the cost column in the report. Nothing leaves your machine until you submit.",
+      "internalRateLabel": "Internal day rate",
+      "internalRateHint": "Fully loaded cost of one in-house administration day, in euros.",
+      "externalRateLabel": "External day rate",
+      "externalRateHint": "What a day of outside help costs, in euros. Only needed if external support is a possibility."
     },
     "stack": {
       "legend": "Areas in scope",
@@ -302,7 +326,9 @@
       "warningsNote": "These notes do not prevent submission. They also appear in the report.",
       "warnSeatsExceedOrg": "One area reports more seats than the organization has in total.",
       "warnNoDepartments": "No areas were named, although the organization is larger.",
-      "warnNoAiUseCases": "Interest in AI was indicated, but no use case was chosen."
+      "warnNoAiUseCases": "Interest in AI was indicated, but no use case was chosen.",
+      "notStated": "Not stated",
+      "noRateDeclared": "Not stated — the report will then state no cost"
     },
     "progressLabel": "Progress",
     "startOverConfirm": "Discard every answer and start again?"
@@ -571,6 +597,108 @@
         "label": "Document management",
         "hint": "Records management with retention periods — not the same as a file platform. E.g. d.velop, a paper archive."
       }
+    },
+    "clientOs": {
+      "windows": {
+        "label": "Windows",
+        "hint": "Windows 10 or 11 on the workstations."
+      },
+      "macos": {
+        "label": "macOS",
+        "hint": "Predominantly Apple machines."
+      },
+      "mixed": {
+        "label": "Mixed",
+        "hint": "Several operating systems side by side, with no consistent picture."
+      },
+      "linux": {
+        "label": "Already Linux",
+        "hint": "The workstations already run Linux."
+      },
+      "unknown": {
+        "label": "Not known",
+        "hint": "The estate cannot currently be described reliably. That is a finding too."
+      }
+    },
+    "windowsOnlyApps": {
+      "none": {
+        "label": "None",
+        "hint": "Everything needed runs in a browser or cross-platform."
+      },
+      "few": {
+        "label": "A few",
+        "hint": "One or two programs, affecting individual workstations."
+      },
+      "several": {
+        "label": "Several",
+        "hint": "Several programs, spread across different areas."
+      },
+      "many": {
+        "label": "Many",
+        "hint": "Daily work depends on Windows programs."
+      },
+      "unknown": {
+        "label": "Not known",
+        "hint": "There is no inventory of the software in use."
+      }
+    },
+    "deviceManagement": {
+      "none": {
+        "label": "None",
+        "hint": "Software is installed on each device individually."
+      },
+      "ad_gpo": {
+        "label": "Active Directory / group policy",
+        "hint": "Deployment and settings through the Windows domain."
+      },
+      "mdm": {
+        "label": "Device management (MDM)",
+        "hint": "Central management through Intune, Jamf or similar."
+      },
+      "other": {
+        "label": "Another method",
+        "hint": "Scripted deployment or an in-house tool, for example."
+      },
+      "unknown": {
+        "label": "Not known"
+      }
+    },
+    "peripheralDependency": {
+      "low": {
+        "label": "Low",
+        "hint": "Monitor, keyboard, network printer."
+      },
+      "medium": {
+        "label": "Medium",
+        "hint": "A few specialist devices at particular workstations."
+      },
+      "high": {
+        "label": "High",
+        "hint": "Specialist devices are part of daily work at many desks."
+      }
+    },
+    "workPackage": {
+      "preparation": {
+        "label": "Preparation"
+      },
+      "data_migration": {
+        "label": "Data migration"
+      },
+      "pilot": {
+        "label": "Pilot"
+      },
+      "rollout": {
+        "label": "Rollout"
+      },
+      "training": {
+        "label": "Training"
+      },
+      "parallel_run": {
+        "label": "Parallel operation"
+      },
+      "aftercare": {
+        "label": "Aftercare"
+      }
     }
   },
   "rationale": {
@@ -603,6 +731,13 @@
       "self_host_without_linux_capability": "{tool} is only available self-hosted and demands operational skills not currently available.",
       "young_release_pilot_first": "{tool} has only recently reached a stable release. A limited pilot is advisable before rolling it out to everyone."
     },
+    "brief": {
+      "ask_budget_for_the_migration": "A budget for {migrations, plural, one {the planned migration} other {the # planned migrations}}, in the order of magnitude shown in the column beside this.",
+      "ask_budget_unquantified": "A budget for delivery. This report states no order of magnitude because no day rate was given — that one answer in the questionnaire puts it here.",
+      "ask_capacity_or_smaller_scope": "Either more capacity or a smaller scope. The plan needs at least {days} effort days against roughly {availableDays} available per year. Either answer is defensible — leaving the gap open is not.",
+      "ask_decision_on_direction": "A decision in principle on the direction, so the groundwork can start. The plan spans roughly {months} months; without a decision it is mainly the preparation that lapses, not the delivery.",
+      "ask_external_support": "A decision on whether external support is bought in for {count, plural, one {one migration} other {# migrations}}. On today's answers {count, plural, one {it exceeds} other {they exceed}} the operational capability in-house."
+    },
     "capacity": {
       "budget_for_external_support": "A budget for external support should be planned.",
       "external_support_likely": "External support is likely required for {category} ({tool}).",
@@ -621,6 +756,33 @@
       "ops_load_exceeds_admin_capacity": "{tool} demands more ongoing attention than currently appears available.",
       "thin_german_service_market": "There are few service providers for {tool} in Germany.",
       "training_load_meets_sensitivity": "{tool} requires noticeable retraining in a workforce sensitive to change."
+    },
+    "client_os": {
+      "blocked_by_windows_only_applications": "Several applications run only on Windows. For the workstations that need them, changing the operating system is currently ruled out — not for lack of capacity, but because the decision rests with those applications' vendors.",
+      "blocked_pending_peripheral_check": "Specialist devices are part of daily work at many desks. Before planning any further, each kind of device has to be tried on the new system, on the device itself.",
+      "caution_group_policy_ties_the_directory": "The workstations are configured through Windows domain group policy, and no central user directory is established yet. Changing the operating system therefore drags the directory question with it — a project of its own that lokal does not plan.",
+      "caution_no_application_inventory": "There is no inventory of the Windows programs in use. Until that inventory exists, any statement about changing the operating system is a guess.",
+      "caution_no_application_migrations_planned": "This plan schedules no application migration. Since the applications are the prerequisite, an operating-system change has nothing here to follow.",
+      "caution_no_endpoint_deployment": "Software is installed on each device individually today. Without endpoint deployment, the cost of the change grows linearly with every workstation.",
+      "device_count_fell_back_to_seats": "With no device count given, the calculation used {seats} workstations. Shared machines and second devices move that figure in both directions.",
+      "doctrine_os_moves_last": "That is why the change sits at the end of the roadmap and not at its start.",
+      "gate_manual": "For you to check and confirm — lokal cannot decide this from the answers given.",
+      "gate_met": "Met.",
+      "gate_open": "Still open.",
+      "lane_absent_from_rulepack": "This assessment was produced with rulepack {version}, which does not yet know the operating-system question.",
+      "mixed_estate_is_a_valid_outcome": "A mixed estate is a legitimate outcome: workstations that need Windows programs stay, the rest move.",
+      "no_distribution_named": "Which Linux distribution to use is deliberately not something lokal says: it depends on procurement, support and existing skills, and it is not a question five answers can settle.",
+      "verdict_after_apps": "Changing the operating system is realistic — but only once the applications run cross-platform. That order is what matters: swapping the operating system first means migrating applications and workstations at once, and unwinding both together whenever something goes wrong.",
+      "verdict_already_open": "The workstations already run Linux. The largest single item of a replacement falls away, and the application migration is no longer constrained by the operating system.",
+      "verdict_blocked": "Changing the operating system does not belong in this plan at present. The reasons are below; they have to be resolved before the question can sensibly be asked again.",
+      "verdict_not_assessed": "No answers were given about the workstations, so this plan makes no statement about the operating system. The questions are in step 2 of the questionnaire."
+    },
+    "cost": {
+      "estimate_not_a_quote": "The effort is a range, so the amount is one too. This is a planning figure, not an offer.",
+      "external_support_likely_but_no_rate": "External support is likely for {count} migrations, but no external day rate was given. That part is missing from the cost column.",
+      "includes_client_os_swap": "This includes {min} to {max} days for changing the operating system on the workstations.",
+      "no_internal_rate_declared": "No day rate was given for internal effort, so this report states no amount for it. lokal deliberately substitutes no average.",
+      "not_subtractable_from_exposure": "This figure is not to be subtracted from today's subscription cost. lokal prices neither the operation of the new systems, nor their support contracts, nor productivity lost during the changeover — that calculation has to be made with your own numbers."
     },
     "difficulty": {
       "base_complexity": "Base complexity of the target",
@@ -645,6 +807,20 @@
       "linux_capability": "Linux and operations skills",
       "organization_size": "Size of the organization",
       "support_expectation": "Support expectation"
+    },
+    "effort": {
+      "aftercare_after_go_live": "Support in the weeks after the change, when the questions arrive. A plan that ends on the go-live date is the one that overruns.",
+      "band_capped_at_largest": "Capped at the largest step. Work of this size is not planned as one project but broken into parts.",
+      "band_from_difficulty": "Based on how hard this particular move is ({difficulty} out of 5).",
+      "band_raised_by_seat_count": "Raised one step because more than {threshold} workstations are affected ({seats}).",
+      "cutover_because_no_parallel_operation": "No parallel operation is possible: the change happens on a single date. That saves time and raises the risk — a tested restore is not a formality here.",
+      "data_migration_with_tooling": "Carrying the data across. Tooling exists for this path, which lowers the effort considerably.",
+      "data_migration_without_tooling": "Carrying the data across. No ready tooling exists for this path — the effort is in checking, reshaping and verifying.",
+      "parallel_run_scales_with_criticality": "Running both systems side by side. Sized by the stated criticality of “{criticality}”.",
+      "pilot_before_rollout": "A pilot with a small group before {seats} workstations are changed over.",
+      "preparation_scales_with_difficulty": "Preparation: design, setup and configuration. Grows with difficulty ({difficulty} out of 5).",
+      "rollout_scales_with_seats": "Rolling out to {seats} workstations.",
+      "training_scales_with_sensitivity_and_seats": "Training and support for {seats} people, at the stated change sensitivity of “{sensitivity}”."
     },
     "fit": {
       "can_run_alongside_current": "Can run alongside the current system",
@@ -698,12 +874,16 @@
     },
     "method": {
       "not_modelled": {
+        "device_hardware_replacement": "Replacing or upgrading workstations",
         "existing_contracts": "Existing contracts and their terms",
+        "hosting_and_support_cost_of_the_new_stack": "Hosting, operations and support cost of the new systems",
         "integrations_with_specialist_software": "Integrations with specialist software",
         "legal_retention_duties": "Legal retention and archival duties",
         "negotiated_contract_terms": "Negotiated contract terms, discounts and framework agreements",
         "network_topology": "Network topology and site connectivity",
-        "staff_skills_in_detail": "The skills of individual staff"
+        "productivity_during_changeover": "Productivity lost during the changeover",
+        "staff_skills_in_detail": "The skills of individual staff",
+        "which_linux_distribution": "The choice of a specific Linux distribution"
       }
     },
     "next": {
@@ -761,55 +941,27 @@
       "self_hosting_supports_stricter_rules": "Self-hosting supports stricter requirements later without changing the stack.",
       "stack_supports_broader_ai_later": "The stack supports broadening AI use later.",
       "start_managed_move_in_house_later": "Start with managed hosting and bring it in-house as capability grows."
+    },
+    "schedule": {
+      "horizon_reflects_a_capacity_gap": "This timeframe is not a schedule but the capacity gap expressed in months: {days} effort days against roughly {availableDays} administrator days available per year. Before dates are discussed, either the scope has to shrink or capacity has to be found — in-house or bought in.",
+      "more_admin_time_would_not_shorten_this": "At least one phase is limited by what staff can absorb, not by IT. More administrator time will not shorten it — earlier notice and more training capacity will.",
+      "paced_by_available_admin_time": "The length of this phase follows from {days} effort days against roughly {availableDays} administrator days available per year.",
+      "paced_by_people_not_capacity": "The length of this phase is set not by available administrator time but by the number of people who have to be carried through it ({seats}). At least {weeks} weeks are assumed.",
+      "phases_run_in_sequence": "The phases build on one another and run in sequence. That gives a timeframe of roughly {min} to {max} months."
     }
   },
   "report": {
-    "documentKind": "Internal planning document",
-    "severityCaution": "Watch out:",
-    "title": "Migration plan",
-    "coverLine": "{orgType} · {seats} seats · created {date}",
-    "draftRulepackNotice": "Note: rulepack {version} has not yet been checked against current product releases by a qualified reviewer. The ratings are careful but unconfirmed — verify before any procurement decision.",
-    "glance": {
-      "title": "At a glance",
-      "readiness": "Readiness",
-      "readinessDetail": "{score} of 100",
-      "posture": "Approach",
-      "savings": "Savings outlook",
-      "savingsDetail": "band plus evidenced amounts",
-      "ai": "AI",
-      "aiDetail": "Recommended stance",
-      "seats": "Seats, summed",
-      "seatsDetail": "Summed across the assessed areas; a seat in several areas counts more than once. Organization: {total}.",
-      "phases": "Phases",
-      "phasesDetail": "carrying work",
-      "meterScale": "{score} out of 100"
+    "actions": {
+      "markdown": "Download Markdown",
+      "print": "Print or save as PDF",
+      "backToReport": "Back to the report"
     },
-    "readinessLabel": {
-      "weak": "Weak",
-      "developing": "Developing",
-      "solid": "Solid",
-      "strong": "Strong"
+    "advantages": {
+      "title": "Key advantages"
     },
-    "readinessBand": {
-      "opsCapability": "Operations capability",
-      "changeCapacity": "Change capacity",
-      "identityReadiness": "User management",
-      "aiReadiness": "AI readiness"
-    },
-    "posture": {
-      "prepare_first": "Prepare first",
-      "start_selectively": "Start selectively",
-      "proceed": "Proceed"
-    },
-    "postureDetail": {
-      "prepare_first": "Foundations still missing",
-      "start_selectively": "Begin with individual projects",
-      "proceed": "Preconditions are met"
-    },
-    "postureNarrative": {
-      "prepare_first": "The target stack holds up; the organization does not yet, in decisive places. Without the prerequisites named here the effort only moves later — and gets more expensive.",
-      "start_selectively": "Some work can start now, some needs groundwork first. Section 5 is ordered accordingly.",
-      "proceed": "The preconditions are broadly met. The plan can be approached in the order proposed."
+    "ai": {
+      "title": "Local AI",
+      "lead": "Which use cases are viable today, which deserve a pilot, and which should wait."
     },
     "aiNarrative": {
       "not_now": "The foundations for AI are not in place yet. That is a question of sequence, not a failing.",
@@ -826,25 +978,186 @@
       "pilot": "Pilot",
       "later": "Later"
     },
-    "outlook": {
-      "low": "Low",
-      "moderate": "Moderate",
-      "strong": "Strong"
+    "brief": {
+      "title": "Decision brief",
+      "lead": "{planned, plural, one {One migration is} other {# migrations are}} up for decision, in an organization of {total} workstations. {keep, plural, =0 {No area stays} one {One area stays} other {# areas stay}} unchanged for now; the reasons are in the roadmap.",
+      "horizonLabel": "Timeframe",
+      "horizonValue": "{min}–{max} months",
+      "horizonBasis": "Across {phases, plural, one {one phase} other {# phases that build on one another}}, at the administration time you stated.",
+      "costLabel": "One-off cost of the change",
+      "costValue": "{min} – {max}",
+      "costAbsent": "Not quantified",
+      "costBasis": "{minDays}–{maxDays} days at {rate} per day — day rate as you stated it.",
+      "costAbsentBasis": "Without a day rate lokal states no amount here and substitutes no average.",
+      "exposureLabel": "Current subscriptions per year",
+      "exposureAbsent": "Not quantified",
+      "exposureAbsentBasis": "No citable published vendor list price is on file for the systems named.",
+      "notSubtractable": "These two amounts are not to be subtracted from one another. lokal prices neither the operation of the new systems, nor their support contracts, nor training beyond the effort shown, nor productivity lost during the changeover. That calculation has to be made with your own numbers.",
+      "risksTitle": "The three biggest risks",
+      "risksNone": "The answers given raise nothing of this severity at present.",
+      "asksTitle": "What is needed from leadership",
+      "clientOsTitle": "Operating system on the workstations"
     },
+    "capacity": {
+      "title": "Readiness and capacity",
+      "lead": "How much the organization can carry, in the places that matter.",
+      "budget": "Effort against available time",
+      "budgetLine": "The plan requires roughly {min}–{max} administrator-days. An estimated {availableMin}–{availableMax} days are available per year.",
+      "estimateNote": "A planning estimate in ranges — not a quote and not a commitment.",
+      "gaps": "Where it gets difficult",
+      "horizonLine": "Overall timeframe: roughly {min} to {max} months."
+    },
+    "clientOs": {
+      "title": "Operating system on the workstations",
+      "scheduledIn": "Planned for {phase}.",
+      "notScheduled": "Not planned in this roadmap.",
+      "devicesDeclared": "{count} devices",
+      "devicesFromSeats": "calculated with {count} workstations",
+      "gatesTitle": "Conditions for the change",
+      "gate_met": "(met)",
+      "gate_open": "(open)",
+      "gate_manual": "(for you to check)"
+    },
+    "clientOsVerdict": {
+      "not_assessed": "No answers were given about the workstations, so this plan makes no statement about them.",
+      "already_open": "The workstations already run Linux — the largest single item of a replacement falls away.",
+      "blocked": "Not possible at present. The reasons are in the roadmap.",
+      "after_apps": "Possible, but only after the applications. The order is in the roadmap."
+    },
+    "contents": {
+      "title": "Contents"
+    },
+    "cost": {
+      "title": "What the change costs",
+      "internalLabel": "Internal effort",
+      "externalLabel": "External support",
+      "lineBasis": "{minDays}–{maxDays} days at {rate} per day — day rate as you stated it.",
+      "coverage": "This covers {migrations, plural, one {one migration} other {# migrations}}, {external, plural, =0 {none} one {one} other {#}} of them likely to need external support."
+    },
+    "coverLine": "{orgType} · {seats} seats · created {date}",
     "difficulty": {
       "low": "low",
       "moderate": "moderate",
       "high": "high",
       "very_high": "very high"
     },
-    "summary": {
-      "title": "Executive summary",
-      "context": "{orgType} with {seats} seats (size band {bucket}), {categories, plural, one {one area assessed} other {# areas assessed}}.",
-      "target": "The plan proposes {planned, plural, =0 {no migrations} one {one migration} other {# migrations}}. {keep, plural, =0 {No area stays} one {One area stays} other {# areas stay}} as it is for now."
+    "documentKind": "Internal planning document",
+    "draftRulepackNotice": "Note: rulepack {version} has not yet been checked against current product releases by a qualified reviewer. The ratings are careful but unconfirmed — verify before any procurement decision.",
+    "effortBand": {
+      "xs": "very small",
+      "s": "small",
+      "m": "medium",
+      "l": "large",
+      "xl": "very large"
     },
-    "advantages": {
-      "title": "Key advantages"
+    "glance": {
+      "title": "At a glance",
+      "readiness": "Readiness",
+      "readinessDetail": "{score} of 100",
+      "posture": "Approach",
+      "savings": "Savings outlook",
+      "savingsDetail": "band plus evidenced amounts",
+      "ai": "AI",
+      "aiDetail": "Recommended stance",
+      "seats": "Seats, summed",
+      "seatsDetail": "Summed across the assessed areas; a seat in several areas counts more than once. Organization: {total}.",
+      "meterScale": "{score} out of 100",
+      "horizon": "Timeframe",
+      "horizonDetail": "across {phases, plural, one {one populated phase} other {# populated phases}}"
     },
+    "method": {
+      "title": "Method and limits",
+      "lead": "Calculated from your answers and a fixed rulepack. No language model involved; same answers, same result.",
+      "notModelled": "Not modelled",
+      "notAssessed": "Areas not assessed",
+      "dataQuality": "Notes on the answers",
+      "footer": "Calculated with lokal (engine {engineVersion}, rulepack {rulepackVersion}).",
+      "linkNotice": "The link is unguessable but unprotected. Treat it as an internal document."
+    },
+    "next": {
+      "title": "Next steps",
+      "immediate": "Immediately",
+      "within30Days": "Within 30 days",
+      "pilots": "Pilots",
+      "cautionFlags": "Caution flags"
+    },
+    "notFound": {
+      "title": "Report not found",
+      "body": "There is no report at this link. It may have been removed, or the link may be incomplete.",
+      "cta": "Start a new assessment"
+    },
+    "outlook": {
+      "low": "Low",
+      "moderate": "Moderate",
+      "strong": "Strong"
+    },
+    "phase": {
+      "0": {
+        "title": "Phase 0 — Prerequisites",
+        "goal": "Establish the foundations every later step builds on."
+      },
+      "1": {
+        "title": "Phase 1 — Quick wins",
+        "goal": "Projects with noticeable benefit at manageable effort."
+      },
+      "2": {
+        "title": "Phase 2 — Moderate projects",
+        "goal": "Changes with higher coordination and training needs."
+      },
+      "3": {
+        "title": "Phase 3 — Demanding projects",
+        "goal": "Complex or business-critical changes needing their own project structure."
+      },
+      "4": {
+        "title": "Phase 4 — Optimization and local AI",
+        "goal": "Consolidation and the first AI use cases."
+      }
+    },
+    "posture": {
+      "prepare_first": "Prepare first",
+      "start_selectively": "Start selectively",
+      "proceed": "Proceed"
+    },
+    "postureDetail": {
+      "prepare_first": "Foundations still missing",
+      "start_selectively": "Begin with individual projects",
+      "proceed": "Preconditions are met"
+    },
+    "postureNarrative": {
+      "prepare_first": "The target stack holds up; the organization does not yet, in decisive places. Without the prerequisites named here the effort only moves later — and gets more expensive.",
+      "start_selectively": "Some work can start now, some needs groundwork first. Section 5 is ordered accordingly.",
+      "proceed": "The preconditions are broadly met. The plan can be approached in the order proposed."
+    },
+    "readinessBand": {
+      "opsCapability": "Operations capability",
+      "changeCapacity": "Change capacity",
+      "identityReadiness": "User management",
+      "aiReadiness": "AI readiness"
+    },
+    "readinessLabel": {
+      "weak": "Weak",
+      "developing": "Developing",
+      "solid": "Solid",
+      "strong": "Strong"
+    },
+    "roadmap": {
+      "title": "Migration roadmap",
+      "lead": "Sequence, effort and affected seats per phase. Effort is a planning estimate in admin days.",
+      "phaseEmpty": "Not occupied for this organization.",
+      "effort": "{same, select, yes {{max, plural, one {one day} other {# days}}} other {{min}–{max} days}}",
+      "seatsAffected": "Seats affected",
+      "pilot": "pilot recommended",
+      "externalSupport": "external support likely",
+      "watchOutFor": "Watch out for:",
+      "keepForNow": "Keep as they are for now",
+      "keepForNowLead": "These areas should not be touched right now. That is a deliberate recommendation, not a gap in the plan.",
+      "whyThisHard": "Why this move costs what it does:",
+      "timelineLabel": "Timeline of the phases across roughly {min} to {max} months. {phases}",
+      "timelineNote": "The bars show the expected course; the timeframe above states the range. Both rest on the administration time you stated and move with it.",
+      "monthTick": "Month {month}",
+      "phaseSpan": "Month {start}–{end}"
+    },
+    "rulesChanged": "Note: recalculated with a newer rulepack because the original version ({version}) is no longer available. Some recommendations may differ.",
     "savings": {
       "title": "Savings outlook",
       "drivers": "Where cost falls away",
@@ -871,6 +1184,17 @@
         "gross": "incl. VAT"
       }
     },
+    "scalability": {
+      "title": "Scalability and outlook",
+      "lead": "Whether the recommended stack still holds as the organization changes.",
+      "currentSize": "Current size",
+      "growth": "Growth",
+      "moreDepartments": "More areas",
+      "stricterGovernance": "Stricter requirements",
+      "broaderAi": "Broader AI use",
+      "selfHostingMaturity": "More self-hosting"
+    },
+    "severityCaution": "Watch out:",
     "stack": {
       "title": "Recommended target stack",
       "lead": "One reasoned recommendation per area, with fallbacks and the candidates ruled out.",
@@ -883,88 +1207,11 @@
       "ruledOut": "{count} examined and ruled out",
       "focusedCoverage": "narrower coverage"
     },
-    "roadmap": {
-      "title": "Migration roadmap",
-      "lead": "Sequence, effort and affected seats per phase. Effort is a planning estimate in admin days.",
-      "phaseEmpty": "Not occupied for this organization.",
-      "effort": "{min}–{max} days",
-      "seatsAffected": "Seats affected",
-      "pilot": "pilot recommended",
-      "externalSupport": "external support likely",
-      "watchOutFor": "Watch out for:",
-      "keepForNow": "Keep as they are for now",
-      "keepForNowLead": "These areas should not be touched right now. That is a deliberate recommendation, not a gap in the plan."
+    "summary": {
+      "title": "Executive summary",
+      "context": "{orgType} with {seats} seats (size band {bucket}), {categories, plural, one {one area assessed} other {# areas assessed}}.",
+      "target": "The plan proposes {planned, plural, =0 {no migrations} one {one migration} other {# migrations}}. {keep, plural, =0 {No area stays} one {One area stays} other {# areas stay}} as it is for now."
     },
-    "phase": {
-      "0": {
-        "title": "Phase 0 — Prerequisites",
-        "goal": "Establish the foundations every later step builds on."
-      },
-      "1": {
-        "title": "Phase 1 — Quick wins",
-        "goal": "Projects with noticeable benefit at manageable effort."
-      },
-      "2": {
-        "title": "Phase 2 — Moderate projects",
-        "goal": "Changes with higher coordination and training needs."
-      },
-      "3": {
-        "title": "Phase 3 — Demanding projects",
-        "goal": "Complex or business-critical changes needing their own project structure."
-      },
-      "4": {
-        "title": "Phase 4 — Optimization and local AI",
-        "goal": "Consolidation and the first AI use cases."
-      }
-    },
-    "capacity": {
-      "title": "Readiness and capacity",
-      "lead": "How much the organization can carry, in the places that matter.",
-      "budget": "Effort against available time",
-      "budgetLine": "The plan requires roughly {min}–{max} administrator-days. An estimated {availableMin}–{availableMax} days are available per year.",
-      "estimateNote": "A planning estimate in ranges — not a quote and not a commitment.",
-      "gaps": "Where it gets difficult"
-    },
-    "ai": {
-      "title": "Local AI",
-      "lead": "Which use cases are viable today, which deserve a pilot, and which should wait."
-    },
-    "scalability": {
-      "title": "Scalability and outlook",
-      "lead": "Whether the recommended stack still holds as the organization changes.",
-      "currentSize": "Current size",
-      "growth": "Growth",
-      "moreDepartments": "More areas",
-      "stricterGovernance": "Stricter requirements",
-      "broaderAi": "Broader AI use",
-      "selfHostingMaturity": "More self-hosting"
-    },
-    "next": {
-      "title": "Next steps",
-      "immediate": "Immediately",
-      "within30Days": "Within 30 days",
-      "pilots": "Pilots",
-      "cautionFlags": "Caution flags"
-    },
-    "method": {
-      "title": "Method and limits",
-      "lead": "Calculated from your answers and a fixed rulepack. No language model involved; same answers, same result.",
-      "notModelled": "Not modelled",
-      "notAssessed": "Areas not assessed",
-      "dataQuality": "Notes on the answers",
-      "footer": "Calculated with lokal (engine {engineVersion}, rulepack {rulepackVersion}).",
-      "linkNotice": "The link is unguessable but unprotected. Treat it as an internal document."
-    },
-    "actions": {
-      "markdown": "Download Markdown",
-      "print": "Print or save as PDF",
-      "backToReport": "Back to the report"
-    },
-    "notFound": {
-      "title": "Report not found",
-      "body": "There is no report at this link. It may have been removed, or the link may be incomplete.",
-      "cta": "Start a new assessment"
-    },
-    "rulesChanged": "Note: recalculated with a newer rulepack because the original version ({version}) is no longer available. Some recommendations may differ."
+    "title": "Migration plan"
   }
 }

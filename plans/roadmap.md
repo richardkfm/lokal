@@ -107,6 +107,28 @@ Added to v0.1.0 on explicit request; see the note under "Deferred" and
 
 Recorded here so that adding any of it is a deliberate decision, not drift.
 
+Phase 8 (Entscheidungsvorlage) was added on explicit request after a review of a
+live plan, and is likewise new scope. It carries four deliberate deferrals of its
+own, recorded here so that adding any of them is a decision rather than drift:
+
+- **A distribution catalogue for the client operating system.** Ubuntu LTS,
+  openSUSE and Debian as scored target tools with fit reasons and ruled-out
+  lists. The lane that ships in phase 8 answers _whether and when the desktop
+  can move, and what blocks it_; it never names a distribution. Deferred to
+  v0.4.0, and it is the reason the lane needs no product research to ship.
+- **E-Mail und Groupware as a tenth category.** Exchange and Outlook are the
+  strongest single tie to Microsoft for this audience, and no desktop plan is
+  fully credible while mail sits on Exchange. Named here rather than quietly
+  omitted, because a reader who sees an OS lane will ask about mail next.
+- **Verzeichnis und Server-Betriebssystem.** Active Directory and Windows Server
+  to Samba AD, LDAP or Keycloak. Today implied by the `identity-directory`
+  prerequisite and never named as a migration with its own effort and risk.
+- **Break-even, Amortisation, ROI, Payback — permanently.** Restated in
+  [ADR-0004](../docs/adr/0004-declared-rates-for-the-cost-side.md). Phase 8 adds
+  a cost column beside the exposure column and states in the document that the
+  two are not subtractable. Every ingredient an amortisation figure needs is one
+  of the costs lokal explicitly does not price.
+
 Accounts and authentication, billing, saved profiles and revisions, assessment
 comparison, external integrations or discovery, live migration tooling, procurement
 workflow, vector database or RAG, agent frameworks, model hosting, chatbot UI,
@@ -211,3 +233,30 @@ own verification (`git describe`) is satisfied.
    published vendor list price, shown with its source, plan and observation
    date. No net savings, ROI or payback figures anywhere (ADR-0003). **Met**, in
    both locales and on paper.
+
+## Phase 8 — Der Plan als Entscheidungsvorlage (post-0.1.0)
+
+Prompted by an IT lead reviewing a live plan and asking what they would hand to
+their management with it. Three gaps came back — the operating system is not
+modelled, the effort days have no reasoning and no calendar, and there is no
+cost side — plus a fourth found in the running document: the report is stacked,
+has no section navigation, and buries the one named human to call behind §9.
+
+See [`phase-08-decision-brief.md`](phase-08-decision-brief.md) and
+[ADR-0004](../docs/adr/0004-declared-rates-for-the-cost-side.md).
+
+| #    | Chunk                                                                | Verify                                                                | Status |
+| ---- | -------------------------------------------------------------------- | --------------------------------------------------------------------- | ------ |
+| 8.1  | Phase plan, ADR-0004, roadmap deferrals, README and CLAUDE.md rule 4 | Docs read coherently; no broken internal links                        | done   |
+| 8.2  | Intake: workplace block, optional rates, v1→v2 upgrade path          | A v1 payload still loads and still renders                            | done   |
+| 8.3  | Wizard: the new questions, nothing seeded, review step complete      | No missing keys in either locale; step 6 lists every answer           | done   |
+| 8.4  | Rulepack `v2026-10`: the client-OS lane as rules                     | Integrity passes; `v2026-08` and `v2026-09` still registered          | done   |
+| 8.5  | Engine: `bandFor` reasons and `effort.ts` work packages              | Packages sum exactly to the band; fixtures byte-identical             | done   |
+| 8.6  | Engine: `schedule.ts` calendar duration                              | Horizon monotone in days, inverse in capacity; the floor binds        | done   |
+| 8.7  | Engine: `workplace.ts` client-OS verdict                             | `windowsOnlyApps: many` always blocks, with a named reason            | done   |
+| 8.8  | Engine: `cost.ts` declared-rate cost                                 | No rate means no figure, never a zero; no net anywhere in the output  | done   |
+| 8.9  | Report: schema slices and the `decisionBrief` derivation             | Determinism test still green; risk ordering stable across two runs    | done   |
+| 8.10 | Report: §0, difficulty drivers, work packages, two money columns     | Drivers reach the page; neither money column in the "good" tone       | done   |
+| 8.11 | Report: the phase timeline, horizon replaces the phase-count tile    | Legible in greyscale at A4; at-a-glance still six tiles               | done   |
+| 8.12 | Report: section navigation, printed Inhalt, contact rail             | Rail absent from the printed PDF; print tree still has no client code | done   |
+| 8.13 | Markdown and print parity, docs pass, screenshots                    | Printed sheet count has not grown; Markdown carries §0                | done   |

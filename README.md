@@ -18,8 +18,10 @@ maturity, admin capacity, hosting preference, current tools, urgency, criticalit
 AI posture — into a planning brief that answers:
 
 - What should we replace first, and what can stay for now?
+- Can the desktop operating system move, when, and what blocks it?
 - Which target stack fits _this_ organization, and why?
-- How many seats does each change affect?
+- How many seats does each change affect, and how long will the whole thing take?
+- What does moving cost, next to what staying costs?
 - Where are we underprepared, and where do we likely need external support?
 - Which AI use cases are realistic now, and which should wait?
 - What are the risks, blockers, training needs and likely savings areas?
@@ -48,13 +50,19 @@ This section is deliberately near the top.
   Recommendations come from explicit, versioned rules over structured input. The
   same answers always produce the same report.
 - **Not a cost calculator.** lokal states savings as qualitative bands with named
-  drivers and offsets. It also states what your current subscriptions cost — but
-  only as your own declared seat count times a price the vendor publishes, shown
-  with the plan, the source link and the date it was read, and only for the areas
-  where such a price exists. It invents no figures, and it never states a net
-  saving, an ROI or a payback period, because hosting, support and staff time are
-  real costs it does not price. See
-  [ADR-0003](docs/adr/0003-priced-exposure-from-published-list-prices.md).
+  drivers and offsets. It also puts two euro figures beside that band, and
+  invents neither. The first is what your current subscriptions cost: your own
+  declared seat count times a price the vendor publishes, shown with the plan,
+  the source link and the date it was read, for the areas where such a price
+  exists ([ADR-0003](docs/adr/0003-priced-exposure-from-published-list-prices.md)).
+  The second is what the migration costs: the effort days lokal computed, times a
+  day rate _you_ entered — and if you enter none, there is no second figure at
+  all, never a zero
+  ([ADR-0004](docs/adr/0004-declared-rates-for-the-cost-side.md)). The two are
+  **not subtractable**, and the report says so between them: lokal prices neither
+  the hosting of the new stack, nor its support contracts, nor the productivity
+  loss during the changeover. It never states a net saving, an ROI, a payback
+  period or a break-even point.
 - **Not a compliance tool.** Where legal duties apply (GoBD, retention, archival
   law), lokal flags them and tells you to verify with your own advisors.
 - **Not a procurement or migration execution system.** It plans; it does not
@@ -309,12 +317,12 @@ See [`docs/architecture.md`](docs/architecture.md) for the full picture, and
 ## MVP scope (v0.1.0)
 
 - Landing page
-- Six-step intake wizard (organization, operating model, current stack, migration
-  detail, AI posture, review)
+- Six-step intake wizard (organization, operating model **and workstations**,
+  current stack, migration detail, AI posture, review)
 - Deterministic planning engine with full rationale traceability
-- Rulepack covering nine categories plus an AI use-case catalog, including
-  Euro-Office and published vendor list prices
-- Polished report view with an at-a-glance summary and nine sections
+- Rulepack covering nine categories plus an AI use-case catalog and a client-OS
+  lane, including Euro-Office and published vendor list prices
+- Polished report view: a decision brief, an at-a-glance summary and nine sections
 - Markdown export
 - Print-optimized report route
 - German and English content complete, both proved by the browser suite
@@ -362,6 +370,14 @@ none:
   price could be cited — the report states how many. Negotiated terms, framework
   agreements and discounts are invisible to lokal, so check the figure against
   your own invoices.
+- **Cost figures are your own rate times an estimated range.** The migration cost
+  is the effort band times the day rate you entered. The band is a planning
+  estimate, so the cost is one too, and it covers internal and external effort
+  only — not hosting, not support contracts for the new stack, not lost
+  productivity during the changeover.
+- **The operating-system lane says whether and when, not which.** lokal assesses
+  whether the desktop can move, what blocks it, and where it belongs in the
+  sequence. It does not recommend a distribution.
 - **No compliance guarantees.** Legal and archival duties need your own advisors.
 - **Reports are not access-controlled in v0.1.0.** Report links are unguessable but
   not secret. Treat them as internal documents.

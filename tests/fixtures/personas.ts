@@ -24,7 +24,7 @@ export const PERSONAS: Persona[] = [
     purpose:
       "No IT staff, undecided hosting, cautious about AI. Tests that lokal produces a usable plan for an organization with almost no capacity.",
     input: parseAssessmentInput({
-      schemaVersion: 1,
+      schemaVersion: 2,
       locale: "de",
       org: {
         orgType: "association",
@@ -43,6 +43,17 @@ export const PERSONAS: Persona[] = [
         linuxCapability: "none",
         supportExpectation: "vendor_support_needed",
       },
+      // A mixed estate nobody administers centrally: the case where the OS
+      // question is real but the estate cannot be described well enough to
+      // answer it, and one Windows-only Vereinsverwaltung sits on it.
+      workplace: {
+        clientOs: "mixed",
+        deviceCount: 16,
+        windowsOnlyApps: "few",
+        deviceManagement: "none",
+        peripheralDependency: "low",
+      },
+      rates: {},
       stack: [
         {
           category: "file_sharing",
@@ -81,7 +92,7 @@ export const PERSONAS: Persona[] = [
     purpose:
       "Public sector, German required, low admin capacity. Tests public-sector weighting and the training-load penalty on a workforce that cannot absorb much change.",
     input: parseAssessmentInput({
-      schemaVersion: 1,
+      schemaVersion: 2,
       locale: "de",
       org: {
         orgType: "school",
@@ -100,6 +111,17 @@ export const PERSONAS: Persona[] = [
         linuxCapability: "basic",
         supportExpectation: "vendor_support_needed",
       },
+      // Windows on shared classroom machines, no Fachverfahren of its own, and
+      // far more devices than staff seats — the persona that proves effort has
+      // to scale with machines rather than people.
+      workplace: {
+        clientOs: "windows",
+        deviceCount: 140,
+        windowsOnlyApps: "none",
+        deviceManagement: "ad_gpo",
+        peripheralDependency: "medium",
+      },
+      rates: { internalDayRateCents: 42_000 },
       stack: [
         {
           category: "file_sharing",
@@ -147,7 +169,7 @@ export const PERSONAS: Persona[] = [
     purpose:
       "The reference case from the plan's success test. Medium maturity, self-hosting preferred, active AI interest, six categories in scope.",
     input: parseAssessmentInput({
-      schemaVersion: 1,
+      schemaVersion: 2,
       locale: "de",
       org: {
         orgType: "municipality",
@@ -166,6 +188,16 @@ export const PERSONAS: Persona[] = [
         linuxCapability: "basic",
         supportExpectation: "vendor_support_needed",
       },
+      // The blocking case, and the common one: Fachverfahren the Kommune does
+      // not control, group policy, and card readers at every Bürgerbüro desk.
+      workplace: {
+        clientOs: "windows",
+        deviceCount: 195,
+        windowsOnlyApps: "many",
+        deviceManagement: "ad_gpo",
+        peripheralDependency: "high",
+      },
+      rates: { internalDayRateCents: 48_000, externalDayRateCents: 95_000 },
       stack: [
         {
           category: "office_docs",
@@ -244,7 +276,7 @@ export const PERSONAS: Persona[] = [
     purpose:
       "High criticality throughout, vendor support required, high data sensitivity. Tests the critical-work spreading constraint and support-model filtering at scale.",
     input: parseAssessmentInput({
-      schemaVersion: 1,
+      schemaVersion: 2,
       locale: "de",
       org: {
         orgType: "utility",
@@ -269,6 +301,17 @@ export const PERSONAS: Persona[] = [
         linuxCapability: "strong",
         supportExpectation: "vendor_support_needed",
       },
+      // Windows desks in front of process control that will never move, with
+      // the Linux server skills to do the rest — a mixed estate is the honest
+      // outcome here, not a failure.
+      workplace: {
+        clientOs: "windows",
+        deviceCount: 640,
+        windowsOnlyApps: "several",
+        deviceManagement: "ad_gpo",
+        peripheralDependency: "high",
+      },
+      rates: { internalDayRateCents: 52_000, externalDayRateCents: 110_000 },
       stack: [
         {
           category: "file_sharing",
@@ -326,7 +369,7 @@ export const PERSONAS: Persona[] = [
     purpose:
       "Strong Linux capability, GPU-capable, aggressive timeline, community-tolerant. Tests the upper end of readiness and the AI lane at its most permissive.",
     input: parseAssessmentInput({
-      schemaVersion: 1,
+      schemaVersion: 2,
       locale: "de",
       org: {
         orgType: "sme",
@@ -345,6 +388,16 @@ export const PERSONAS: Persona[] = [
         linuxCapability: "strong",
         supportExpectation: "community_tolerant",
       },
+      // Already off Windows on the desktop. The verdict has to say what that
+      // removes from the plan rather than staying silent about a solved problem.
+      workplace: {
+        clientOs: "linux",
+        deviceCount: 900,
+        windowsOnlyApps: "none",
+        deviceManagement: "mdm",
+        peripheralDependency: "low",
+      },
+      rates: { internalDayRateCents: 61_000, externalDayRateCents: 120_000 },
       stack: [
         {
           category: "office_docs",

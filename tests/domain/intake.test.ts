@@ -3,6 +3,7 @@ import {
   INTAKE_SCHEMA_VERSION,
   assessmentInputSchema,
   parseAssessmentInput,
+  upgradeAssessmentInput,
 } from "@/domain/intake";
 import { SIZE_BUCKETS, levelToUnit, sizeBucketForSeats } from "@/domain/enums";
 import type { AssessmentInput } from "@/domain/intake";
@@ -31,6 +32,13 @@ function validInput() {
       linuxCapability: "none",
       supportExpectation: "vendor_support_needed",
     },
+    workplace: {
+      clientOs: "mixed",
+      windowsOnlyApps: "few",
+      deviceManagement: "none",
+      peripheralDependency: "low",
+    },
+    rates: {},
     stack: [
       {
         category: "file_sharing",
@@ -165,6 +173,91 @@ describe("assessment intake", () => {
     // The engine flags implausible spreads; the schema does not forbid them.
     expect(parsed.org.totalSeats).toBe(180);
     expect(parsed.stack[0]?.seats).toBe(12);
+  });
+
+  describe("payloads stored before the workplace block existed", () => {
+    /**
+     * A version 1 payload, exactly as it sits in the database today: no
+     * `workplace`, no `rates`. Built from the current fixture by removal so it
+     * cannot drift away from the real shape.
+     */
+    function v1Input() {
+      const {
+        workplace: _workplace,
+        rates: _rates,
+        ...rest
+      } = validInput() as Record<string, unknown> & {
+        workplace: unknown;
+        rates: unknown;
+      };
+      return { ...rest, schemaVersion: 1 };
+    }
+
+    it("upgrades rather than rejecting, so a shared report link keeps resolving", () => {
+      const upgraded = upgradeAssessmentInput(v1Input());
+
+      expect(upgraded.schemaVersion).toBe(INTAKE_SCHEMA_VERSION);
+      expect(upgraded.org.orgType).toBe("association");
+      expect(upgraded.stack).toHaveLength(1);
+    });
+
+    it("records the missing answers as unknown rather than assuming Windows", () => {
+      const upgraded = upgradeAssessmentInput(v1Input());
+
+      // The whole point of the upgrade. An estate nobody described must reach
+      // the report as "nicht erhoben", never as an asserted Windows estate.
+      expect(upgraded.workplace.clientOs).toBe("unknown");
+      expect(upgraded.workplace.windowsOnlyApps).toBe("unknown");
+      expect(upgraded.workplace.deviceManagement).toBe("unknown");
+      expect(upgraded.workplace.deviceCount).toBeUndefined();
+    });
+
+    it("leaves the rates absent rather than zero, so no cost figure is stated", () => {
+      const upgraded = upgradeAssessmentInput(v1Input());
+
+      // ADR-0004 guardrail 1: a zero here would render as a cost of nothing.
+      expect(upgraded.rates.internalDayRateCents).toBeUndefined();
+      expect(upgraded.rates.externalDayRateCents).toBeUndefined();
+    });
+
+    it("passes a current payload through untouched", () => {
+      const current = validInput();
+      expect(upgradeAssessmentInput(current)).toEqual(parseAssessmentInput(current));
+    });
+
+    it("still rejects a version it has never known", () => {
+      expect(() =>
+        upgradeAssessmentInput({ ...v1Input(), schemaVersion: 99 }),
+      ).toThrow();
+    });
+  });
+
+  describe("declared day rates", () => {
+    function withRates(rates: Record<string, unknown>) {
+      return assessmentInputSchema.safeParse({ ...validInput(), rates });
+    }
+
+    it("accepts an absent rate, which is the ordinary case", () => {
+      expect(withRates({}).success).toBe(true);
+    });
+
+    it("rejects a rate of zero rather than storing a cost of nothing", () => {
+      // An explicit zero is never what someone means, and it would render as a
+      // migration that costs nothing (ADR-0004).
+      expect(withRates({ internalDayRateCents: 0 }).success).toBe(false);
+    });
+
+    it("rejects a fractional cent", () => {
+      expect(withRates({ externalDayRateCents: 480.5 }).success).toBe(false);
+    });
+
+    it("accepts a plausible declared rate", () => {
+      const parsed = assessmentInputSchema.parse({
+        ...validInput(),
+        rates: { internalDayRateCents: 48_000, externalDayRateCents: 95_000 },
+      });
+      expect(parsed.rates.internalDayRateCents).toBe(48_000);
+    });
   });
 
   it("keeps the inferred type assignable", () => {

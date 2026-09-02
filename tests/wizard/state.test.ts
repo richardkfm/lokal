@@ -35,6 +35,15 @@ function municipalityDraft(): Draft {
       linuxCapability: "basic",
       supportExpectation: "vendor_support_needed",
     },
+    workplace: {
+      clientOs: "windows",
+      windowsOnlyApps: "few",
+      deviceManagement: "ad_gpo",
+      peripheralDependency: "medium",
+    },
+    // Left empty on purpose: the most common state, and the one that has to
+    // still assemble into a valid payload (ADR-0004).
+    rates: {},
     selectedCategories: ["office_docs"],
     stack: {
       office_docs: {
@@ -55,6 +64,44 @@ function municipalityDraft(): Draft {
     },
   };
 }
+
+describe("step 2 validation", () => {
+  it("reports the workplace answers as bare field names, like every other step", () => {
+    // The three blocks are merged flat rather than nested, so an issue path
+    // stays a field name and the step's `error={issues.<field>}` wiring keeps
+    // working. Nesting them would have silently orphaned every error message.
+    const draft = { ...municipalityDraft(), workplace: {} };
+    const issues = validateStep("operating", draft);
+
+    expect(Object.keys(issues)).toEqual(
+      expect.arrayContaining([
+        "clientOs",
+        "windowsOnlyApps",
+        "deviceManagement",
+        "peripheralDependency",
+      ]),
+    );
+  });
+
+  it("does not require a day rate", () => {
+    // The ordinary case. A respondent who skips the rates must still be able to
+    // leave the step (ADR-0004).
+    expect(validateStep("operating", municipalityDraft())).toEqual({});
+  });
+
+  it("rejects a day rate of zero", () => {
+    const draft = { ...municipalityDraft(), rates: { internalDayRateCents: 0 } };
+    expect(validateStep("operating", draft).internalDayRateCents).toBeDefined();
+  });
+
+  it("does not answer the operating-system question on the respondent's behalf", () => {
+    // Phase 7 stopped the wizard seeding answers; the workplace block must not
+    // reintroduce the habit. A pre-selected "Windows" would be a fabricated
+    // premise for the entire client-OS lane.
+    expect(emptyDraft().workplace).toEqual({});
+    expect(emptyDraft().rates).toEqual({});
+  });
+});
 
 describe("draft assembly", () => {
   it("treats an untouched current-tool field as nothing in use", () => {
