@@ -1,5 +1,6 @@
 import { levelToUnit, type CategoryId, type PhaseId } from "@/domain/enums";
 import { rationale, type RationaleItem } from "@/domain/rationale";
+import { decomposeEffort, type EffortItem } from "./effort";
 import type { NormalizedAssessment } from "./normalize";
 import type { ReadinessProfile } from "./readiness";
 import type { Phase, Sequencing } from "./sequencing";
@@ -32,6 +33,11 @@ export type MigrationEffort = {
   category: CategoryId;
   band: EffortBand;
   days: { min: number; max: number };
+  /**
+   * What the range is made of. Explains the number; never changes it — the
+   * items sum exactly to `days`, and a test asserts that for every fixture.
+   */
+  items: EffortItem[];
   /** True when a pilot is a better first step than a broad rollout. */
   pilotRecommended: boolean;
   /** True when this is likely to need outside help. */
@@ -67,14 +73,63 @@ const AVAILABLE_DAYS: Record<"low" | "medium" | "high", { min: number; max: numb
     high: { min: 60, max: 150 },
   };
 
-function bandFor(difficulty: number, seats: number): EffortBand {
+/**
+ * Picks a band, and says why it picked that one.
+ *
+ * The reasons are the point. This function used to return a band and emit
+ * nothing, so the report printed "3–8 Tage" with no way for the reader to see
+ * that the figure came from a difficulty of 2.4 and a seat count under 250.
+ * A planning estimate nobody can interrogate is an assertion.
+ */
+function bandFor(
+  difficulty: number,
+  seats: number,
+): { band: EffortBand; reasons: RationaleItem[] } {
   // Difficulty sets the floor; seat count moves it up, because the same
   // technical migration costs more when more people have to be carried through it.
   let index = difficulty < 2 ? 0 : difficulty < 3 ? 1 : difficulty < 4 ? 2 : 3;
-  if (seats > 250) index += 1;
-  if (seats > 2000) index += 1;
 
-  return EFFORT_BANDS[Math.min(index, EFFORT_BANDS.length - 1)]!;
+  const reasons: RationaleItem[] = [
+    rationale({
+      code: "effort.band_from_difficulty",
+      params: { difficulty, band: EFFORT_BANDS[index]! },
+      evidence: [{ field: "difficulty", value: difficulty }],
+    }),
+  ];
+
+  if (seats > 250) {
+    index += 1;
+    reasons.push(
+      rationale({
+        code: "effort.band_raised_by_seat_count",
+        params: { seats, threshold: 250 },
+        evidence: [{ field: "stack.seats", value: seats }],
+      }),
+    );
+  }
+  if (seats > 2000) {
+    index += 1;
+    reasons.push(
+      rationale({
+        code: "effort.band_raised_by_seat_count",
+        params: { seats, threshold: 2000 },
+        evidence: [{ field: "stack.seats", value: seats }],
+      }),
+    );
+  }
+
+  const capped = Math.min(index, EFFORT_BANDS.length - 1);
+  if (capped < index) {
+    reasons.push(
+      rationale({
+        code: "effort.band_capped_at_largest",
+        severity: "note",
+        params: { band: EFFORT_BANDS[capped]! },
+      }),
+    );
+  }
+
+  return { band: EFFORT_BANDS[capped]!, reasons };
 }
 
 export function assessCapacity(
@@ -87,8 +142,11 @@ export function assessCapacity(
 
   const perPhase: PhaseCapacity[] = sequencing.phases.map((phase: Phase) => {
     const efforts = phase.migrations.map((migration): MigrationEffort => {
-      const reasons: RationaleItem[] = [];
-      const band = bandFor(migration.difficulty.score, migration.seats);
+      const { band, reasons: bandReasons } = bandFor(
+        migration.difficulty.score,
+        migration.seats,
+      );
+      const reasons: RationaleItem[] = [...bandReasons];
       const days = BAND_DAYS[band];
       const tool = migration.recommendation.primary!.tool;
       const entry = migration.recommendation.entry;
@@ -142,6 +200,16 @@ export function assessCapacity(
         category: migration.category,
         band,
         days,
+        items: decomposeEffort(days, {
+          entry,
+          difficulty: migration.difficulty,
+          edge: migration.difficulty.edge,
+          seats: migration.seats,
+          totalSeats: assessment.input.org.totalSeats,
+          pilotRecommended,
+          coexistence: tool.coexistence,
+          trainingLoad: tool.trainingLoad,
+        }),
         pilotRecommended,
         externalSupportLikely,
         reasons,

@@ -676,6 +676,29 @@
         "label": "Hoch",
         "hint": "Spezialgeräte gehören zum täglichen Ablauf an vielen Plätzen."
       }
+    },
+    "workPackage": {
+      "preparation": {
+        "label": "Vorbereitung"
+      },
+      "data_migration": {
+        "label": "Datenübernahme"
+      },
+      "pilot": {
+        "label": "Pilotbetrieb"
+      },
+      "rollout": {
+        "label": "Ausrollen"
+      },
+      "training": {
+        "label": "Schulung"
+      },
+      "parallel_run": {
+        "label": "Parallelbetrieb"
+      },
+      "aftercare": {
+        "label": "Nachbetreuung"
+      }
     }
   },
   "rationale": {
@@ -770,6 +793,20 @@
       "linux_capability": "Linux- und Betriebskenntnisse",
       "organization_size": "Größe der Organisation",
       "support_expectation": "Erwartung an Unterstützung"
+    },
+    "effort": {
+      "aftercare_after_go_live": "Nachbetreuung in den Wochen nach der Umstellung, wenn die Rückfragen kommen. Ein Plan, der am Umstellungstag endet, ist der, der überzogen wird.",
+      "band_capped_at_largest": "Auf die höchste Stufe begrenzt. Vorhaben dieser Größe werden nicht mehr als ein Vorhaben geplant, sondern in Teilprojekte zerlegt.",
+      "band_from_difficulty": "Grundlage ist die Schwierigkeit dieses Wechsels ({difficulty} von 5).",
+      "band_raised_by_seat_count": "Um eine Stufe angehoben, weil mehr als {threshold} Arbeitsplätze betroffen sind ({seats}).",
+      "cutover_because_no_parallel_operation": "Kein Parallelbetrieb möglich: die Umstellung erfolgt zu einem Stichtag. Das spart Zeit und erhöht das Risiko — eine Rücksicherung ist hier keine Formalie.",
+      "data_migration_with_tooling": "Datenübernahme. Für diesen Weg gibt es Werkzeuge, was den Aufwand deutlich senkt.",
+      "data_migration_without_tooling": "Datenübernahme. Für diesen Weg gibt es kein fertiges Werkzeug — der Aufwand entsteht durch Prüfen, Umformen und Nachkontrolle.",
+      "parallel_run_scales_with_criticality": "Parallelbetrieb, solange altes und neues System nebeneinander laufen. Bemessen an der Kritikalität „{criticality}“.",
+      "pilot_before_rollout": "Pilotbetrieb mit einer kleinen Gruppe, bevor {seats} Arbeitsplätze umgestellt werden.",
+      "preparation_scales_with_difficulty": "Vorbereitung: Konzept, Aufbau und Konfiguration. Wächst mit der Schwierigkeit ({difficulty} von 5).",
+      "rollout_scales_with_seats": "Ausrollen auf {seats} Arbeitsplätze.",
+      "training_scales_with_sensitivity_and_seats": "Schulung und Begleitung für {seats} Personen, bei angegebener Umstellungsempfindlichkeit „{sensitivity}“."
     },
     "fit": {
       "can_run_alongside_current": "Kann parallel zum heutigen System betrieben werden",

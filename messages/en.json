@@ -676,6 +676,29 @@
         "label": "High",
         "hint": "Specialist devices are part of daily work at many desks."
       }
+    },
+    "workPackage": {
+      "preparation": {
+        "label": "Preparation"
+      },
+      "data_migration": {
+        "label": "Data migration"
+      },
+      "pilot": {
+        "label": "Pilot"
+      },
+      "rollout": {
+        "label": "Rollout"
+      },
+      "training": {
+        "label": "Training"
+      },
+      "parallel_run": {
+        "label": "Parallel operation"
+      },
+      "aftercare": {
+        "label": "Aftercare"
+      }
     }
   },
   "rationale": {
@@ -770,6 +793,20 @@
       "linux_capability": "Linux and operations skills",
       "organization_size": "Size of the organization",
       "support_expectation": "Support expectation"
+    },
+    "effort": {
+      "aftercare_after_go_live": "Support in the weeks after the change, when the questions arrive. A plan that ends on the go-live date is the one that overruns.",
+      "band_capped_at_largest": "Capped at the largest step. Work of this size is not planned as one project but broken into parts.",
+      "band_from_difficulty": "Based on how hard this particular move is ({difficulty} out of 5).",
+      "band_raised_by_seat_count": "Raised one step because more than {threshold} workstations are affected ({seats}).",
+      "cutover_because_no_parallel_operation": "No parallel operation is possible: the change happens on a single date. That saves time and raises the risk — a tested restore is not a formality here.",
+      "data_migration_with_tooling": "Carrying the data across. Tooling exists for this path, which lowers the effort considerably.",
+      "data_migration_without_tooling": "Carrying the data across. No ready tooling exists for this path — the effort is in checking, reshaping and verifying.",
+      "parallel_run_scales_with_criticality": "Running both systems side by side. Sized by the stated criticality of “{criticality}”.",
+      "pilot_before_rollout": "A pilot with a small group before {seats} workstations are changed over.",
+      "preparation_scales_with_difficulty": "Preparation: design, setup and configuration. Grows with difficulty ({difficulty} out of 5).",
+      "rollout_scales_with_seats": "Rolling out to {seats} workstations.",
+      "training_scales_with_sensitivity_and_seats": "Training and support for {seats} people, at the stated change sensitivity of “{sensitivity}”."
     },
     "fit": {
       "can_run_alongside_current": "Can run alongside the current system",

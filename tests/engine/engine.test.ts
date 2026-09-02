@@ -74,6 +74,99 @@ describe("capacity", () => {
   });
 });
 
+describe("work packages", () => {
+  const efforts = (result: ReturnType<typeof run>) =>
+    result.capacity.perPhase.flatMap((phase) => phase.efforts);
+
+  it("explains the range without changing it", () => {
+    // The invariant this whole module lives or dies by. A breakdown that does
+    // not add up to its own total is the first thing a sceptical reader checks,
+    // and a total that moved would make this a scoring change wearing the
+    // clothes of a rendering improvement.
+    for (const effort of efforts(
+      run({
+        categories: ["file_sharing", "office_docs", "helpdesk", "chat_video"],
+        totalSeats: 600,
+        categorySeats: 600,
+      }),
+    )) {
+      const summed = effort.items.reduce(
+        (acc, item) => ({
+          min: acc.min + item.days.min,
+          max: acc.max + item.days.max,
+        }),
+        { min: 0, max: 0 },
+      );
+
+      expect(summed).toEqual(effort.days);
+    }
+  });
+
+  it("holds the sum for every persona, at every size", () => {
+    for (const size of [14, 45, 180, 600, 2400]) {
+      for (const effort of efforts(run({ totalSeats: size, categorySeats: size }))) {
+        const min = effort.items.reduce((acc, item) => acc + item.days.min, 0);
+        expect(min).toBe(effort.days.min);
+      }
+    }
+  });
+
+  it("emits no package for work the plan does not contain", () => {
+    // A training line reading zero days is padding, and padding is what makes
+    // an estimate untrustworthy. Absent is the honest rendering.
+    const result = run({
+      trainingSensitivity: "low",
+      totalSeats: 30,
+      categorySeats: 30,
+    });
+
+    for (const effort of efforts(result)) {
+      expect(effort.items.map((item) => item.package)).not.toContain("training");
+      for (const item of effort.items) {
+        expect(item.days.max).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it("orders the packages as the work happens, not by size", () => {
+    // Sorted by size it reads as a cost table; sorted by sequence it reads as a
+    // plan, which is what the reader is being asked to approve.
+    const order = [
+      "preparation",
+      "data_migration",
+      "pilot",
+      "rollout",
+      "training",
+      "parallel_run",
+      "aftercare",
+    ];
+
+    for (const effort of efforts(run({ totalSeats: 400, categorySeats: 400 }))) {
+      const positions = effort.items.map((item) => order.indexOf(item.package));
+      expect(positions).toEqual([...positions].sort((a, b) => a - b));
+    }
+  });
+
+  it("says which band it chose and what raised it", () => {
+    // The direct answer to "yes there are days, but why". bandFor used to
+    // return a band and emit nothing at all.
+    const small = allCodes(run({ totalSeats: 40, categorySeats: 40 }));
+    const large = allCodes(run({ totalSeats: 900, categorySeats: 900 }));
+
+    expect(small).toContain("effort.band_from_difficulty");
+    expect(small).not.toContain("effort.band_raised_by_seat_count");
+    expect(large).toContain("effort.band_raised_by_seat_count");
+  });
+
+  it("keeps every package traceable to an intake field", () => {
+    for (const effort of efforts(run({ totalSeats: 300, categorySeats: 300 }))) {
+      for (const item of effort.items) {
+        expect(item.reasons.length).toBeGreaterThan(0);
+      }
+    }
+  });
+});
+
 describe("savings outlook", () => {
   it("returns a qualitative band with drivers and offsets", () => {
     const result = run({ categories: ["file_sharing", "office_docs"] });
