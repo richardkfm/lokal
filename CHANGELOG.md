@@ -8,6 +8,36 @@ Dates are ISO 8601.
 
 ## [Unreleased]
 
+### Added
+
+- **Phase 8 — the plan as a Beschlussvorlage.** The reasoning is in
+  [`plans/phase-08-decision-brief.md`](plans/phase-08-decision-brief.md);
+  the money decision is [ADR-0004](docs/adr/0004-declared-rates-for-the-cost-side.md).
+  This entry records the documentation groundwork; the implementation lands in
+  the chunks listed under phase 8 in [`plans/roadmap.md`](plans/roadmap.md).
+
+  A review of a live plan by an IT lead asked what they would hand to their
+  management with it, and found three things missing. **The operating system was
+  not modelled at all** — the nine categories are applications, and
+  `operating.linuxCapability` asks about the team's _server_ skills, never about
+  what runs on desks. **The effort days had no reasoning and no calendar** —
+  `bandFor()` picked a band and emitted no rationale, the per-migration
+  difficulty drivers were computed, carried in `PlanningReport` and then dropped
+  by both renderers, and nothing anywhere turned administrator-days into elapsed
+  months. **There was no cost side**, so the report said what staying costs and
+  never what moving costs.
+
+  ADR-0004 answers the third by extending ADR-0003's first guardrail rather than
+  reversing its fifth: an internal day rate is a fact the organization knows and
+  lokal does not, so lokal may multiply by one the respondent declares — and
+  states no figure at all when none is declared. Net savings, ROI, payback and
+  break-even stay deferred permanently, and where the exposure and the cost
+  appear together the document says between them that they are not subtractable.
+
+  CLAUDE.md rule 4 is restated to cover both euro sources, and the client-OS
+  verdict joins the outputs that prove the thesis: it is `keep for now` applied
+  to the desktop, and it says _whether and when_, never _which distribution_.
+
 ### Fixed
 
 - **`LOKAL_EXPERT_*` and `LOKAL_LEGAL_*` did nothing under Docker.** These are
