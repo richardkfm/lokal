@@ -113,13 +113,13 @@ accessibility bar is set.
 ### Prerequisites
 
 - Docker Engine.
-- The `docker compose` plugin (Docker Compose v2 — bundled with current
-  Docker Desktop and Docker Engine installs). The legacy standalone
+- The `docker compose` plugin (Docker Compose v2.24 or later — bundled with
+  current Docker Desktop and Docker Engine installs). The legacy standalone
   `docker-compose` v1 binary does not support the startup ordering
   (`depends_on: ... condition: service_completed_successfully`) that
-  `docker-compose.yml` uses to run migrations before the app starts; if
-  `docker compose version` fails, update Docker rather than falling back to
-  `docker-compose`.
+  `docker-compose.yml` uses to run migrations before the app starts, nor the
+  optional `env_file` (see "Configuration" below); if `docker compose version`
+  fails, update Docker rather than falling back to `docker-compose`.
 
 No API keys or third-party services are required — the container never
 phones home.
@@ -150,18 +150,28 @@ follow logs with `docker compose logs -f app`.
 
 ### Configuration
 
-Environment variables are set in `docker-compose.yml` (see `.env.example`
-for the same variables in local, non-Docker development):
+`DATABASE_URL` and `NEXT_PUBLIC_BASE_URL` are fixed in `docker-compose.yml`
+because they're container-specific (a path on the `data` volume, a URL the
+app needs at request time):
 
 | Variable               | Default (in `docker-compose.yml`) | Notes                                                                                                                                                                |
 | ---------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `DATABASE_URL`         | `file:/data/lokal.db`             | Path inside the container, on the `data` volume. Change together in both the `migrate` and `app` services if you change it.                                          |
 | `NEXT_PUBLIC_BASE_URL` | `http://localhost:3000`           | Used for absolute links in shared reports. Set this to your real domain (e.g. `https://lokal.example.org`) before handing out report links from a deployed instance. |
-| `LOKAL_EXPERT_*`       | unset                             | Optional contact block — see "Offering help" below. Unset means no block is shown.                                                                                   |
 
-To override a value, edit `docker-compose.yml` directly, or add a
+To override either, edit `docker-compose.yml` directly, or add a
 `docker-compose.override.yml` alongside it (Compose merges it automatically)
 so your changes don't conflict with future `git pull`s of this repo.
+
+Everything else — `LOKAL_EXPERT_*` ("Offering help" below) and
+`LOKAL_LEGAL_*` (imprint/privacy/accessibility links) — is optional and
+operator-specific, so it's read from a project-root `.env` instead, the same
+file and the same variables as local, non-Docker development (copy
+`.env.example` to `.env` and fill in what applies). `.env` is gitignored, so
+these never end up in a commit or a `git pull` conflict. It's read once at
+container start, so after editing it run `docker compose up -d` (no rebuild
+needed) to pick up the change. Unset stays unset — a default install without
+a `.env` behaves exactly as before.
 
 ### Offering help
 
