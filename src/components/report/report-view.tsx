@@ -6,6 +6,7 @@ import {
   FigureCard,
   KpiCard,
   Meter,
+  PhaseTimeline,
   Section,
   SeatImpactBar,
   toneForScore,
@@ -156,6 +157,25 @@ export async function ReportView({
 
   const exposure = report.savings.subscriptionExposure;
   const brief = report.decisionBrief;
+
+  // One derivation for both placements — compact in §0, full above the phase
+  // cards in §5 — so the two drawings cannot disagree about the same plan.
+  const timelinePhases = report.roadmap.phases.map((phase) => ({
+    id: phase.id,
+    title: r(`phase.${phase.id}.title` as never),
+    startMonth: phase.duration.startMonth,
+    endMonth: phase.duration.endMonth,
+    empty: phase.migrations.length === 0 && phase.prerequisites.length === 0,
+  }));
+  const timelineLabel = r("roadmap.timelineLabel", {
+    min: report.schedule.horizonMonths.min,
+    max: report.schedule.horizonMonths.max,
+    phases: timelinePhases
+      .filter((phase) => !phase.empty)
+      .map((phase) => `${phase.title}: ${phase.startMonth}–${phase.endMonth}`)
+      .join("; "),
+  });
+  const monthLabel = (month: number) => r("roadmap.monthTick", { month });
   const money = (cents: number) => formatAmount(cents, "EUR", locale);
 
   /**
@@ -277,6 +297,14 @@ export async function ReportView({
           />
         </div>
 
+        <div className="mt-5">
+          <PhaseTimeline
+            phases={timelinePhases}
+            label={timelineLabel}
+            monthLabel={monthLabel}
+          />
+        </div>
+
         {/* Between the figures and everything else, because a reader who sees
             two amounts side by side will subtract them, and this is the one
             caveat that has to survive someone reading only this page. */}
@@ -347,9 +375,13 @@ export async function ReportView({
             detail={r("glance.seatsDetail", { total: report.organization.totalSeats })}
           />
           <KpiCard
-            label={r("glance.phases")}
-            value={String(glance.activePhases)}
-            detail={r("glance.phasesDetail")}
+            label={r("glance.horizon")}
+            value={r("brief.horizonValue", {
+              min: report.schedule.horizonMonths.min,
+              max: report.schedule.horizonMonths.max,
+            })}
+            detail={r("glance.horizonDetail", { phases: glance.activePhases })}
+            tone={report.schedule.exceedsCapacity ? "caution" : "neutral"}
           />
         </div>
       </section>
@@ -699,6 +731,22 @@ export async function ReportView({
           lead={r("roadmap.lead")}
           breakBefore
         >
+          {/* The plan on one line, before the plan in detail.
+           *
+           * The document's only wide graphic, because the timeframe is the
+           * question this section exists to answer and nothing else should
+           * compete with it for the eye. */}
+          <div className="border-line mb-6 rounded-lg border p-4">
+            <PhaseTimeline
+              phases={timelinePhases}
+              label={timelineLabel}
+              monthLabel={monthLabel}
+            />
+            <p className="text-faint mt-3 text-xs leading-relaxed">
+              {r("roadmap.timelineNote")}
+            </p>
+          </div>
+
           {/* A spine down the left of the phases, so the roadmap reads as one
               sequence rather than a stack of cards. The rail draws its own line,
               so it survives printing and reduced motion unchanged; only the dot
@@ -743,6 +791,11 @@ export async function ReportView({
                       {r(`phase.${phase.id}.title` as never)}
                     </h3>
                     <span className="text-muted tabular ml-auto text-xs">
+                      {r("roadmap.phaseSpan", {
+                        start: phase.duration.startMonth,
+                        end: phase.duration.endMonth,
+                      })}
+                      {" · "}
                       {dayRange(phase.effortDays)}
                     </span>
                   </div>

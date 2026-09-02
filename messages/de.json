@@ -1058,9 +1058,9 @@
       "aiDetail": "Empfohlene Haltung",
       "seats": "Arbeitsplätze, summiert",
       "seatsDetail": "Summe über die betrachteten Bereiche; ein Arbeitsplatz in mehreren Bereichen zählt mehrfach. Organisation: {total}.",
-      "phases": "Phasen",
-      "phasesDetail": "mit Vorhaben belegt",
-      "meterScale": "{score} von 100"
+      "meterScale": "{score} von 100",
+      "horizon": "Zeitrahmen",
+      "horizonDetail": "über {phases, plural, one {eine belegte Phase} other {# belegte Phasen}}"
     },
     "method": {
       "title": "Methodik und Grenzen",
@@ -1148,7 +1148,11 @@
       "watchOutFor": "Zu beachten:",
       "keepForNow": "Vorerst unverändert lassen",
       "keepForNowLead": "Diese Bereiche sollten jetzt nicht angefasst werden. Das ist eine bewusste Empfehlung, keine Lücke im Plan.",
-      "whyThisHard": "Warum dieser Wechsel so aufwendig ist:"
+      "whyThisHard": "Warum dieser Wechsel so aufwendig ist:",
+      "timelineLabel": "Zeitstrahl der Phasen über etwa {min} bis {max} Monate. {phases}",
+      "timelineNote": "Die Balken zeigen den erwarteten Verlauf; der Zeitrahmen darüber nennt die Spanne. Beide beruhen auf der von Ihnen angegebenen Administrationszeit und verschieben sich mit ihr.",
+      "monthTick": "Monat {month}",
+      "phaseSpan": "Monat {start}–{end}"
     },
     "rulesChanged": "Hinweis: Neu berechnet mit einem neueren Regelwerk, weil die ursprüngliche Fassung ({version}) nicht mehr verfügbar ist. Einzelne Empfehlungen können abweichen.",
     "savings": {

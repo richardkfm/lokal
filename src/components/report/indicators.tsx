@@ -223,6 +223,97 @@ export function SeatImpactBar({
   );
 }
 
+/**
+ * The phases as bars on one timeline.
+ *
+ * The only wide graphic in the document, and deliberately the only one: the
+ * timeframe is the question that prompted this whole section, so it gets the
+ * visual weight and nothing else competes for it.
+ *
+ * CSS grid, no charting library. A canvas chart does not print, which is the
+ * same constraint that produced the CSS-only meters — and this is a figure meant
+ * to be looked at on paper in a meeting.
+ *
+ * Bars are distinguished by fill pattern and by their own text row beneath, not
+ * by hue: the printed copy is greyscale often enough that colour alone would
+ * lose the distinction, and phase 7 settled that severity is carried by shape.
+ * The whole thing is one `role="img"` with a label naming every phase and its
+ * span, because a screen reader should get the summary rather than a march
+ * through forty grid cells.
+ */
+export function PhaseTimeline({
+  phases,
+  label,
+  monthLabel,
+}: {
+  phases: readonly {
+    id: number;
+    title: string;
+    startMonth: number;
+    endMonth: number;
+    empty: boolean;
+  }[];
+  label: string;
+  monthLabel: (month: number) => string;
+}) {
+  const occupied = phases.filter((phase) => !phase.empty);
+  if (occupied.length === 0) return null;
+
+  const total = Math.max(1, ...occupied.map((phase) => phase.endMonth));
+  // A handful of ticks, never one per month: a two-year plan with twenty-four
+  // labels is a ruler, not a schedule.
+  const step = total <= 12 ? 3 : total <= 36 ? 6 : 12;
+  const ticks = Array.from(
+    { length: Math.floor(total / step) + 1 },
+    (_, index) => index * step,
+  );
+
+  return (
+    <div className="break-inside-avoid" role="img" aria-label={label}>
+      <div className="border-line text-faint flex justify-between border-b pb-1 text-xs">
+        {ticks.map((tick) => (
+          <span key={tick} className="tabular">
+            {monthLabel(tick)}
+          </span>
+        ))}
+      </div>
+
+      <div className="mt-2 space-y-1.5" aria-hidden="true">
+        {phases.map((phase, index) => {
+          const left = (phase.startMonth / total) * 100;
+          const width = Math.max(
+            2,
+            ((phase.endMonth - phase.startMonth) / total) * 100,
+          );
+
+          return (
+            <div key={phase.id} className="flex items-center gap-3">
+              <span className="text-muted tabular w-16 shrink-0 text-xs">
+                {`Phase ${phase.id}`}
+              </span>
+              <div className="bg-sunken relative h-4 flex-1 rounded-sm">
+                {phase.empty ? null : (
+                  <div
+                    className={[
+                      "absolute top-0 h-4 rounded-sm border",
+                      // Alternating fill rather than alternating hue, so the
+                      // bars stay distinguishable in greyscale.
+                      index % 2 === 0
+                        ? "bg-brand border-brand"
+                        : "border-brand bg-[var(--color-brand-soft)]",
+                    ].join(" ")}
+                    style={{ left: `${left}%`, width: `${width}%` }}
+                  />
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function Section({
   id,
   number,

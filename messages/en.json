@@ -1058,9 +1058,9 @@
       "aiDetail": "Recommended stance",
       "seats": "Seats, summed",
       "seatsDetail": "Summed across the assessed areas; a seat in several areas counts more than once. Organization: {total}.",
-      "phases": "Phases",
-      "phasesDetail": "carrying work",
-      "meterScale": "{score} out of 100"
+      "meterScale": "{score} out of 100",
+      "horizon": "Timeframe",
+      "horizonDetail": "across {phases, plural, one {one populated phase} other {# populated phases}}"
     },
     "method": {
       "title": "Method and limits",
@@ -1148,7 +1148,11 @@
       "watchOutFor": "Watch out for:",
       "keepForNow": "Keep as they are for now",
       "keepForNowLead": "These areas should not be touched right now. That is a deliberate recommendation, not a gap in the plan.",
-      "whyThisHard": "Why this move costs what it does:"
+      "whyThisHard": "Why this move costs what it does:",
+      "timelineLabel": "Timeline of the phases across roughly {min} to {max} months. {phases}",
+      "timelineNote": "The bars show the expected course; the timeframe above states the range. Both rest on the administration time you stated and move with it.",
+      "monthTick": "Month {month}",
+      "phaseSpan": "Month {start}–{end}"
     },
     "rulesChanged": "Note: recalculated with a newer rulepack because the original version ({version}) is no longer available. Some recommendations may differ.",
     "savings": {

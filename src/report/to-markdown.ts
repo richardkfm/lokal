@@ -89,7 +89,10 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     `| ${r("glance.savings")} | ${r(`outlook.${glance.savingsOutlook}`)} |`,
     `| ${r("glance.ai")} | ${r(`aiPosture.${glance.aiPosture}`)} |`,
     `| ${r("glance.seats")} | ${glance.affectedSeats} / ${report.organization.totalSeats} |`,
-    `| ${r("glance.phases")} | ${glance.activePhases} |`,
+    // The horizon replaces the phase count here too. Renderers that disagree
+    // about the at-a-glance figures are how a printed copy and a pasted wiki
+    // page start telling different stories about the same plan.
+    `| ${r("glance.horizon")} | ${r("brief.horizonValue", { min: report.schedule.horizonMonths.min, max: report.schedule.horizonMonths.max })} (${r("glance.horizonDetail", { phases: glance.activePhases })}) |`,
   );
   blank();
 
