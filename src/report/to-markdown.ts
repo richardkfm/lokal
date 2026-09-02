@@ -46,6 +46,13 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     t(`report.${key}`, values);
   const v = (key: string) => t(`vocabulary.${key}`);
   const category = (id: string) => v(`category.${id}.label`);
+  /** A day range, or a single number when its ends are equal. See report-view. */
+  const dayRange = (days: { min: number; max: number }) =>
+    r("roadmap.effort", {
+      min: days.min,
+      max: days.max,
+      same: days.min === days.max ? "yes" : "no",
+    });
   const locale = report.locale;
   const labels = prerequisiteLabels(report.roadmap.phases, locale);
   const ctx: ListContext = { ...context, labels };
@@ -253,7 +260,7 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
     push(`### ${r(`phase.${phase.id}.title`)}`, "");
     push(r(`phase.${phase.id}.goal`), "");
     push(
-      `${r("roadmap.effort", { min: phase.effortDays.min, max: phase.effortDays.max })} · ${r("glance.seats")}: ${phase.affectedSeats}`,
+      `${dayRange(phase.effortDays)} · ${r("glance.seats")}: ${phase.affectedSeats}`,
       "",
     );
 
@@ -268,7 +275,7 @@ export function toMarkdown(report: PlanningReport, context: MarkdownContext): st
       push(
         `#### ${category(migration.category)} → ${migration.toolName}`,
         "",
-        `${r(`difficulty.${migration.difficulty.label}`)} · ${r("roadmap.effort", { min: migration.effort.days.min, max: migration.effort.days.max })} · ${migration.seats} ${r("glance.seats")}${migration.pilotRecommended ? ` · ${r("roadmap.pilot")}` : ""}${migration.externalSupportLikely ? ` · ${r("roadmap.externalSupport")}` : ""}`,
+        `${r(`difficulty.${migration.difficulty.label}`)} · ${dayRange(migration.effort.days)} · ${migration.seats} ${r("glance.seats")}${migration.pilotRecommended ? ` · ${r("roadmap.pilot")}` : ""}${migration.externalSupportLikely ? ` · ${r("roadmap.externalSupport")}` : ""}`,
         "",
         ...list(migration.reasons, ctx),
       );

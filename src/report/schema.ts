@@ -233,7 +233,14 @@ export const decisionBriefSchema = z.object({
   /** What is being decided: posture, what moves, what stays. */
   migrationsPlanned: z.number().int().min(0),
   categoriesKept: z.number().int().min(0),
-  affectedSeats: z.number().int().min(0),
+  /**
+   * Seats summed across the areas the plan touches. **Not a headcount**: one
+   * person working in several areas counts several times, which is why the
+   * at-a-glance tile carries a sentence saying so and why this must never be
+   * rendered as "X von Y Arbeitsplätzen". The name says `Summed` so the next
+   * renderer has to notice.
+   */
+  affectedSeatsSummed: z.number().int().min(0),
   /** The three highest-severity findings already stated elsewhere. */
   topRisks: rationaleList,
   /**

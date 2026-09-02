@@ -155,7 +155,23 @@ export async function ReportView({
   const sharedFitKeys = new Set(sharedFit.map(fitKey));
 
   const exposure = report.savings.subscriptionExposure;
+  const brief = report.decisionBrief;
   const money = (cents: number) => formatAmount(cents, "EUR", locale);
+
+  /**
+   * A day range, or a single number when its ends are equal.
+   *
+   * "1–1 Tage" is not a range, and it is exactly the kind of sloppiness that
+   * makes an estimate look machine-made to the reader who is deciding whether to
+   * trust it. The `same` flag is a select rather than two message keys, so the
+   * two forms cannot drift apart in one locale.
+   */
+  const dayRange = (days: { min: number; max: number }) =>
+    r("roadmap.effort", {
+      min: days.min,
+      max: days.max,
+      same: days.min === days.max ? "yes" : "no",
+    });
 
   return (
     <article className={print ? "report-print" : ""}>
@@ -184,6 +200,120 @@ export async function ReportView({
           </p>
         ) : null}
       </header>
+
+      {/* 0 Entscheidungsvorlage — the page a decision-maker reads.
+       *
+       * The report was nine sections at identical weight opening with
+       * Zusammenfassung and Vorteile, and an IT lead had nowhere to point a
+       * Bürgermeister or a Geschäftsführung. This is that page, and it must fit
+       * on one sheet: it replaces reading rather than adding to it. If the
+       * printed report gets longer because of this section, it failed.
+       *
+       * Everything here is already in the document. §0 derives nothing. */}
+      <section id="brief" className="mt-8 scroll-mt-24 print:break-after-page">
+        <h2 className="text-ink border-line border-b pb-2 text-2xl font-semibold tracking-tight">
+          {r("brief.title")}
+        </h2>
+        <p className="text-muted mt-3 max-w-[68ch] text-base leading-relaxed">
+          {r("brief.lead", {
+            planned: brief.migrationsPlanned,
+            keep: brief.categoriesKept,
+            total: report.organization.totalSeats,
+          })}
+        </p>
+
+        {/* The three figures a decision rests on: how long, what it costs to
+            move, what is being spent today. */}
+        <div className="mt-5 grid gap-4 sm:grid-cols-3">
+          <FigureCard
+            label={r("brief.horizonLabel")}
+            value={r("brief.horizonValue", {
+              min: report.schedule.horizonMonths.min,
+              max: report.schedule.horizonMonths.max,
+            })}
+            basis={r("brief.horizonBasis", { phases: glance.activePhases })}
+          />
+
+          {/* Neither money card may use the "good" tone.
+           *
+           * Phase 7 removed a green euro figure labelled "entfällt" because
+           * green plus an amount reads as a saving whatever the label says, and
+           * the same trap is open here: a cost in red and an exposure in green
+           * would make the subtraction for the reader, which is exactly what
+           * ADR-0004 guardrail 3 forbids. */}
+          <FigureCard
+            label={r("brief.costLabel")}
+            value={
+              report.cost.totalCents
+                ? r("brief.costValue", {
+                    min: money(report.cost.totalCents.min),
+                    max: money(report.cost.totalCents.max),
+                  })
+                : r("brief.costAbsent")
+            }
+            basis={
+              report.cost.internal
+                ? r("brief.costBasis", {
+                    minDays: report.cost.internal.days.min,
+                    maxDays: report.cost.internal.days.max,
+                    rate: money(report.cost.internal.rateCents),
+                  })
+                : r("brief.costAbsentBasis")
+            }
+          />
+
+          <FigureCard
+            label={r("brief.exposureLabel")}
+            value={exposure ? money(exposure.annualCents) : r("brief.exposureAbsent")}
+            basis={
+              exposure
+                ? r("savings.exposureCoverage", {
+                    priced: exposure.categoriesPriced,
+                    assessed: exposure.categoriesAssessed,
+                    seats: exposure.seatsPriced,
+                  })
+                : r("brief.exposureAbsentBasis")
+            }
+          />
+        </div>
+
+        {/* Between the figures and everything else, because a reader who sees
+            two amounts side by side will subtract them, and this is the one
+            caveat that has to survive someone reading only this page. */}
+        <p className="border-line text-muted mt-4 border-l-2 py-1 pl-3 text-sm leading-relaxed">
+          {r("brief.notSubtractable")}
+        </p>
+
+        <div className="mt-6 grid gap-6 sm:grid-cols-2">
+          <div>
+            <h3 className="text-ink mb-2 text-base font-medium">
+              {r("brief.risksTitle")}
+            </h3>
+            {brief.topRisks.length > 0 ? (
+              <RationaleList items={brief.topRisks} t={t} labels={labels} dense />
+            ) : (
+              <p className="text-muted text-sm leading-relaxed">
+                {r("brief.risksNone")}
+              </p>
+            )}
+          </div>
+          <div>
+            <h3 className="text-ink mb-2 text-base font-medium">
+              {r("brief.asksTitle")}
+            </h3>
+            <RationaleList items={brief.asks} t={t} labels={labels} dense />
+          </div>
+        </div>
+
+        {/* The desktop, on the first page, because for this audience it is the
+            question that decides whether the rest is worth reading. */}
+        <div className="border-line mt-6 rounded-lg border p-4">
+          <h3 className="text-ink text-base font-medium">{r("brief.clientOsTitle")}</h3>
+          <p className="text-muted mt-1 text-sm leading-relaxed">
+            {r(`clientOsVerdict.${report.clientOs.verdict}` as never)}
+          </p>
+        </div>
+      </section>
 
       {/* At a glance */}
       <section id="glance" className="mt-8 scroll-mt-24">
@@ -378,6 +508,59 @@ export async function ReportView({
             </div>
           ) : null}
 
+          {/* What the move costs, beside what staying costs (ADR-0004).
+           *
+           * The section stated an annual subscription figure and, pages later,
+           * "9–20 Verwaltungstage" in prose — a number the reader could not
+           * compare with the first one. Both columns now carry their basis, and
+           * the sentence saying they are not subtractable sits between them
+           * rather than beneath them, because a reader who sees two amounts side
+           * by side will subtract them. */}
+          {report.cost.totalCents ? (
+            <div className="border-line mt-6 border-t pt-5">
+              <h3 className="text-ink mb-3 text-sm font-medium">{r("cost.title")}</h3>
+              <div className="grid max-w-2xl gap-4 sm:grid-cols-2">
+                {report.cost.internal ? (
+                  <FigureCard
+                    label={r("cost.internalLabel")}
+                    value={`${money(report.cost.internal.cents.min)} – ${money(report.cost.internal.cents.max)}`}
+                    basis={r("cost.lineBasis", {
+                      minDays: report.cost.internal.days.min,
+                      maxDays: report.cost.internal.days.max,
+                      rate: money(report.cost.internal.rateCents),
+                    })}
+                  />
+                ) : null}
+                {report.cost.external ? (
+                  <FigureCard
+                    label={r("cost.externalLabel")}
+                    value={`${money(report.cost.external.cents.min)} – ${money(report.cost.external.cents.max)}`}
+                    basis={r("cost.lineBasis", {
+                      minDays: report.cost.external.days.min,
+                      maxDays: report.cost.external.days.max,
+                      rate: money(report.cost.external.rateCents),
+                    })}
+                  />
+                ) : null}
+              </div>
+              <p className="text-muted mt-3 text-sm leading-relaxed">
+                {r("cost.coverage", {
+                  migrations: report.cost.coverage.migrationsTotal,
+                  external: report.cost.coverage.externalSupportMigrations,
+                })}
+              </p>
+              <div className="mt-3">
+                <RationaleList items={report.cost.notes} t={t} labels={labels} dense />
+              </div>
+            </div>
+          ) : (
+            <div className="border-line mt-6 border-t pt-5">
+              <h3 className="text-ink mb-2 text-sm font-medium">{r("cost.title")}</h3>
+              {/* Absent, not zero. A plausible placeholder looks discharged. */}
+              <RationaleList items={report.cost.notes} t={t} labels={labels} dense />
+            </div>
+          )}
+
           <div className="border-line mt-5 border-t pt-3">
             <RationaleList
               items={report.savings.modelLimitations}
@@ -560,10 +743,7 @@ export async function ReportView({
                       {r(`phase.${phase.id}.title` as never)}
                     </h3>
                     <span className="text-muted tabular ml-auto text-xs">
-                      {r("roadmap.effort", {
-                        min: phase.effortDays.min,
-                        max: phase.effortDays.max,
-                      })}
+                      {dayRange(phase.effortDays)}
                     </span>
                   </div>
                   <p className="text-muted mt-1 text-sm">
@@ -615,10 +795,7 @@ export async function ReportView({
                           </div>
 
                           <p className="text-muted tabular mt-2 text-xs">
-                            {r("roadmap.effort", {
-                              min: migration.effort.days.min,
-                              max: migration.effort.days.max,
-                            })}
+                            {dayRange(migration.effort.days)}
                             {migration.pilotRecommended
                               ? ` · ${r("roadmap.pilot")}`
                               : ""}
@@ -626,6 +803,56 @@ export async function ReportView({
                               ? ` · ${r("roadmap.externalSupport")}`
                               : ""}
                           </p>
+
+                          {/* What the range is made of.
+                           *
+                           * The days used to arrive with nothing behind them.
+                           * These items sum exactly to the range above them, so
+                           * a reader who thinks the training estimate is wrong
+                           * can see which line to argue with. */}
+                          {migration.effort.items.length > 0 ? (
+                            <ul className="mt-2 space-y-1">
+                              {migration.effort.items.map((item) => (
+                                <li
+                                  key={item.package}
+                                  className="flex items-baseline gap-2 text-xs"
+                                >
+                                  <span className="text-ink">
+                                    {v(`workPackage.${item.package}.label` as never)}
+                                  </span>
+                                  <span
+                                    className="border-line mx-1 min-w-4 flex-1 border-b border-dotted"
+                                    aria-hidden="true"
+                                  />
+                                  <span className="text-muted tabular whitespace-nowrap">
+                                    {dayRange(item.days)}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
+
+                          {/* Why this move is as hard as it is.
+                           *
+                           * These drivers were computed by the engine, carried
+                           * in the document, and dropped by every renderer.
+                           * They are the answer to "warum 18–35 Tage", stated
+                           * in the reader's own answers. */}
+                          {migration.difficulty.drivers.length > 0 ? (
+                            <div className="mt-2">
+                              <p className="text-faint text-xs">
+                                {r("roadmap.whyThisHard")}
+                              </p>
+                              <div className="mt-1">
+                                <RationaleList
+                                  items={migration.difficulty.drivers}
+                                  t={t}
+                                  labels={labels}
+                                  dense
+                                />
+                              </div>
+                            </div>
+                          ) : null}
 
                           <div className="mt-2">
                             <RationaleList
@@ -690,6 +917,79 @@ export async function ReportView({
               </ul>
             </div>
           ) : null}
+
+          {/* The client operating system.
+           *
+           * Inside the roadmap rather than in a section of its own, because it
+           * is a roadmap item: it has a phase, or a reason it has none. It sits
+           * beside "vorerst unverändert lassen" because it is the same shape of
+           * answer — usually "noch nicht, und hier ist warum". */}
+          <div className="border-line mt-6 rounded-lg border p-4">
+            <h3 className="text-ink text-base font-semibold">{r("clientOs.title")}</h3>
+            <p className="text-muted mt-1 text-sm leading-relaxed">
+              {report.clientOs.phase !== null
+                ? r("clientOs.scheduledIn", {
+                    phase: r(`phase.${report.clientOs.phase}.title` as never),
+                  })
+                : r("clientOs.notScheduled")}
+            </p>
+
+            {report.clientOs.effortDays && report.clientOs.devices ? (
+              <p className="text-muted tabular mt-2 text-xs">
+                {dayRange(report.clientOs.effortDays)}
+                {" · "}
+                {r(
+                  report.clientOs.devices.source === "declared"
+                    ? "clientOs.devicesDeclared"
+                    : "clientOs.devicesFromSeats",
+                  { count: report.clientOs.devices.count },
+                )}
+              </p>
+            ) : null}
+
+            <div className="mt-3">
+              <RationaleList
+                items={[...report.clientOs.blockers, ...report.clientOs.cautions]}
+                t={t}
+                labels={labels}
+                dense
+              />
+            </div>
+
+            {/* The gates. Shown open or manual rather than ticked off on the
+                reader's behalf — a checklist that completes itself is not one. */}
+            {report.clientOs.gates.length > 0 ? (
+              <>
+                <h4 className="text-faint mt-4 mb-2 text-xs tracking-wide uppercase">
+                  {r("clientOs.gatesTitle")}
+                </h4>
+                <ul className="space-y-2">
+                  {report.clientOs.gates.map((gate) => (
+                    <li key={gate.id} className="text-sm">
+                      <span className="text-ink font-medium">
+                        {localized(gate.label, locale)}
+                      </span>{" "}
+                      <span className="text-faint text-xs">
+                        {r(`clientOs.gate_${gate.status}` as never)}
+                      </span>
+                      <span className="text-muted block text-xs leading-relaxed">
+                        {localized(gate.description, locale)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
+
+            <div className="mt-3">
+              <RationaleList
+                items={report.clientOs.reasons}
+                t={t}
+                labels={labels}
+                dense
+              />
+            </div>
+          </div>
         </Section>
 
         {/* 6 Capacity and readiness */}
@@ -729,6 +1029,22 @@ export async function ReportView({
               })}
             </p>
             <p className="text-faint mt-1 text-xs">{r("capacity.estimateNote")}</p>
+            {/* Days answer a budgeting question; months answer the one that gets
+                asked first. Both belong here, and the caveat travels with them. */}
+            <p className="text-ink tabular mt-3 text-sm">
+              {r("capacity.horizonLine", {
+                min: report.schedule.horizonMonths.min,
+                max: report.schedule.horizonMonths.max,
+              })}
+            </p>
+            <div className="mt-2">
+              <RationaleList
+                items={report.schedule.notes}
+                t={t}
+                labels={labels}
+                dense
+              />
+            </div>
           </div>
 
           {report.readiness.gaps.length > 0 ? (

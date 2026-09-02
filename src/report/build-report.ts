@@ -264,7 +264,7 @@ function decisionBrief(result: EngineResult): PlanningReport["decisionBrief"] {
     // shows. `derived.totalAffectedSeats` counts every assessed category
     // including the ones kept for now, and a §0 that quoted a larger number than
     // §5 would be the report disagreeing with itself on its own first page.
-    affectedSeats: result.sequencing.phases.reduce(
+    affectedSeatsSummed: result.sequencing.phases.reduce(
       (sum, phase) => sum + phase.affectedSeats,
       0,
     ),

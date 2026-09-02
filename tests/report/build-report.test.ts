@@ -164,7 +164,7 @@ describe("the decision brief", () => {
       doc.roadmap.phases.reduce((sum, phase) => sum + phase.migrations.length, 0),
     );
     expect(doc.decisionBrief.categoriesKept).toBe(doc.roadmap.keepForNow.length);
-    expect(doc.decisionBrief.affectedSeats).toBe(doc.atAGlance.affectedSeats);
+    expect(doc.decisionBrief.affectedSeatsSummed).toBe(doc.atAGlance.affectedSeats);
   });
 
   it("picks its risks rather than inventing them", () => {
