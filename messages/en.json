@@ -727,6 +727,26 @@
       "thin_german_service_market": "There are few service providers for {tool} in Germany.",
       "training_load_meets_sensitivity": "{tool} requires noticeable retraining in a workforce sensitive to change."
     },
+    "client_os": {
+      "blocked_by_windows_only_applications": "Several applications run only on Windows. For the workstations that need them, changing the operating system is currently ruled out — not for lack of capacity, but because the decision rests with those applications' vendors.",
+      "blocked_pending_peripheral_check": "Specialist devices are part of daily work at many desks. Before planning any further, each kind of device has to be tried on the new system, on the device itself.",
+      "caution_group_policy_ties_the_directory": "The workstations are configured through Windows domain group policy, and no central user directory is established yet. Changing the operating system therefore drags the directory question with it — a project of its own that lokal does not plan.",
+      "caution_no_application_inventory": "There is no inventory of the Windows programs in use. Until that inventory exists, any statement about changing the operating system is a guess.",
+      "caution_no_application_migrations_planned": "This plan schedules no application migration. Since the applications are the prerequisite, an operating-system change has nothing here to follow.",
+      "caution_no_endpoint_deployment": "Software is installed on each device individually today. Without endpoint deployment, the cost of the change grows linearly with every workstation.",
+      "device_count_fell_back_to_seats": "With no device count given, the calculation used {seats} workstations. Shared machines and second devices move that figure in both directions.",
+      "doctrine_os_moves_last": "That is why the change sits at the end of the roadmap and not at its start.",
+      "gate_manual": "For you to check and confirm — lokal cannot decide this from the answers given.",
+      "gate_met": "Met.",
+      "gate_open": "Still open.",
+      "lane_absent_from_rulepack": "This assessment was produced with rulepack {version}, which does not yet know the operating-system question.",
+      "mixed_estate_is_a_valid_outcome": "A mixed estate is a legitimate outcome: workstations that need Windows programs stay, the rest move.",
+      "no_distribution_named": "Which Linux distribution to use is deliberately not something lokal says: it depends on procurement, support and existing skills, and it is not a question five answers can settle.",
+      "verdict_after_apps": "Changing the operating system is realistic — but only once the applications run cross-platform. That order is what matters: swapping the operating system first means migrating applications and workstations at once, and unwinding both together whenever something goes wrong.",
+      "verdict_already_open": "The workstations already run Linux. The largest single item of a replacement falls away, and the application migration is no longer constrained by the operating system.",
+      "verdict_blocked": "Changing the operating system does not belong in this plan at present. The reasons are below; they have to be resolved before the question can sensibly be asked again.",
+      "verdict_not_assessed": "No answers were given about the workstations, so this plan makes no statement about the operating system. The questions are in step 2 of the questionnaire."
+    },
     "difficulty": {
       "base_complexity": "Base complexity of the target",
       "business_critical": "Business-critical system",

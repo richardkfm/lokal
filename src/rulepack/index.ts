@@ -1,6 +1,7 @@
 import { validateRulepack } from "./integrity";
 import { rulepackV2026_08 } from "./v2026-08";
 import { rulepackV2026_09 } from "./v2026-09";
+import { rulepackV2026_10 } from "./v2026-10";
 import type { Rulepack } from "./schema";
 
 export * from "./schema";
@@ -21,10 +22,11 @@ export * from "./integrity";
 const REGISTRY: Record<string, Rulepack> = {
   [rulepackV2026_08.version]: validateRulepack(rulepackV2026_08),
   [rulepackV2026_09.version]: validateRulepack(rulepackV2026_09),
+  [rulepackV2026_10.version]: validateRulepack(rulepackV2026_10),
 };
 
 /** The pack used for new assessments. */
-export const CURRENT_RULEPACK_VERSION = rulepackV2026_09.version;
+export const CURRENT_RULEPACK_VERSION = rulepackV2026_10.version;
 
 export function currentRulepack(): Rulepack {
   return getRulepack(CURRENT_RULEPACK_VERSION);

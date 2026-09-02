@@ -727,6 +727,26 @@
       "thin_german_service_market": "Für {tool} gibt es in Deutschland wenige Dienstleister.",
       "training_load_meets_sensitivity": "{tool} erfordert spürbare Einarbeitung bei einer Belegschaft, die auf Umstellungen empfindlich reagiert."
     },
+    "client_os": {
+      "blocked_by_windows_only_applications": "Mehrere Anwendungen laufen ausschließlich unter Windows. Für die Arbeitsplätze, die sie brauchen, ist ein Wechsel des Betriebssystems derzeit ausgeschlossen — nicht wegen fehlender Kapazität, sondern weil die Entscheidung bei den Herstellern dieser Programme liegt.",
+      "blocked_pending_peripheral_check": "An vielen Arbeitsplätzen hängen Spezialgeräte am täglichen Ablauf. Vor jeder weiteren Planung ist je Gerätetyp am Gerät zu prüfen, ob es unter dem neuen System läuft.",
+      "caution_group_policy_ties_the_directory": "Die Arbeitsplätze werden über Gruppenrichtlinien der Windows-Domäne konfiguriert, und eine zentrale Benutzerverwaltung ist noch nicht etabliert. Ein Wechsel des Betriebssystems zieht damit die Verzeichnisfrage mit sich — ein eigenes Vorhaben, das lokal nicht plant.",
+      "caution_no_application_inventory": "Es gibt keine Übersicht der eingesetzten Windows-Programme. Bis diese Bestandsaufnahme vorliegt, ist jede Aussage über einen Wechsel des Betriebssystems eine Vermutung.",
+      "caution_no_application_migrations_planned": "Dieser Plan sieht keine Anwendungsmigration vor. Da die Anwendungen die Voraussetzung sind, hat ein Wechsel des Betriebssystems hier nichts, worauf er folgen könnte.",
+      "caution_no_endpoint_deployment": "Software wird heute an jedem Gerät einzeln installiert. Ohne Softwareverteilung wächst der Aufwand des Wechsels linear mit jedem Arbeitsplatz.",
+      "device_count_fell_back_to_seats": "Ohne angegebene Gerätezahl wurde mit {seats} Arbeitsplätzen gerechnet. Geteilte Rechner und Zweitgeräte verschieben diesen Wert in beide Richtungen.",
+      "doctrine_os_moves_last": "Deshalb steht der Wechsel am Ende des Fahrplans und nicht am Anfang.",
+      "gate_manual": "Von Ihnen zu prüfen und zu bestätigen — lokal kann das aus den Angaben nicht entscheiden.",
+      "gate_met": "Erfüllt.",
+      "gate_open": "Noch offen.",
+      "lane_absent_from_rulepack": "Diese Bewertung wurde mit Regelwerk {version} erstellt, das die Frage nach dem Betriebssystem noch nicht kennt.",
+      "mixed_estate_is_a_valid_outcome": "Ein gemischter Bestand ist ein zulässiges Ergebnis: Arbeitsplätze mit Windows-Programmen bleiben, die übrigen wechseln.",
+      "no_distribution_named": "Welche Linux-Distribution infrage kommt, sagt lokal bewusst nicht: das hängt an Beschaffung, Support und vorhandenen Kenntnissen und ist keine Frage, die sich aus fünf Angaben beantworten lässt.",
+      "verdict_after_apps": "Ein Wechsel des Betriebssystems ist realistisch — aber erst, nachdem die Anwendungen plattformübergreifend laufen. Diese Reihenfolge ist entscheidend: wer zuerst das Betriebssystem tauscht, migriert Anwendungen und Arbeitsplätze gleichzeitig und muss bei jedem Problem beides zugleich zurücknehmen.",
+      "verdict_already_open": "Die Arbeitsplätze laufen bereits unter Linux. Der größte Einzelposten einer Ablösung entfällt damit, und die Anwendungsmigration ist nicht länger durch das Betriebssystem eingeschränkt.",
+      "verdict_blocked": "Ein Wechsel des Betriebssystems gehört derzeit nicht in diesen Plan. Die Gründe stehen darunter; sie sind zu beheben, bevor die Frage erneut sinnvoll gestellt werden kann.",
+      "verdict_not_assessed": "Zu den Arbeitsplätzen liegen keine Angaben vor, daher trifft dieser Plan keine Aussage zum Betriebssystem. Die Fragen stehen in Schritt 2 des Fragebogens."
+    },
     "difficulty": {
       "base_complexity": "Grundaufwand der Zielanwendung",
       "business_critical": "Betriebskritisches System",

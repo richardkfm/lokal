@@ -48,6 +48,8 @@ export function findIntegrityProblems(pack: Rulepack): IntegrityProblem[] {
     ["aiUseCases", pack.aiUseCases.map((u) => u.id)],
     ["aiDeployments", pack.aiDeployments.map((d) => d.id)],
     ["blockerRules", pack.blockerRules.map((r) => r.id)],
+    ["clientOsLane.gates", pack.clientOsLane?.gates.map((g) => g.id) ?? []],
+    ["clientOsLane.rules", pack.clientOsLane?.rules.map((r) => r.id) ?? []],
   ] as const) {
     for (const id of duplicates(ids)) {
       add(label, `Duplicate id "${id}".`);
@@ -142,6 +144,49 @@ export function findIntegrityProblems(pack: Rulepack): IntegrityProblem[] {
         `targetTools[${index}].publicSectorFit`,
         `"${tool.id}" claims top public-sector fit with community-only support, which public bodies rarely accept.`,
       );
+    }
+  }
+
+  // --- Client-OS lane -------------------------------------------------------
+
+  const lane = pack.clientOsLane;
+  if (lane) {
+    // A gate that names groundwork must name groundwork the pack actually
+    // carries, or phase 0 gets a checklist item nothing ever schedules.
+    for (const [index, gate] of lane.gates.entries()) {
+      if (gate.kind === "automatic" && !prerequisiteIds.has(gate.id)) {
+        // Not every automatic gate is a prerequisite — some are decided purely
+        // from the assessment — so this is only checked where a prerequisite of
+        // the same id is clearly intended.
+        const looksLikeGroundwork =
+          gate.id.endsWith("-inventory") || gate.id === "endpoint-management";
+        if (looksLikeGroundwork) {
+          add(
+            `clientOsLane.gates[${index}].id`,
+            `Gate "${gate.id}" reads as groundwork but no prerequisite of that id exists.`,
+          );
+        }
+      }
+    }
+
+    if (lane.daysPerDevice.min > lane.daysPerDevice.max) {
+      add("clientOsLane.daysPerDevice", "Minimum is above maximum.");
+    }
+    if (lane.fixedDays.min > lane.fixedDays.max) {
+      add("clientOsLane.fixedDays", "Minimum is above maximum.");
+    }
+
+    // The lane's whole claim to being a plan rather than a list is that it never
+    // recommends a product. Nothing in the shape can hold one, and this asserts
+    // the intent survives a future edit that adds a field.
+    const laneKeys = Object.keys(lane);
+    for (const forbidden of ["targetTools", "distributions", "recommended"]) {
+      if (laneKeys.includes(forbidden)) {
+        add(
+          "clientOsLane",
+          `The client-OS lane carries no product recommendation; "${forbidden}" does not belong here.`,
+        );
+      }
     }
   }
 

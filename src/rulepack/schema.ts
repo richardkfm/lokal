@@ -11,6 +11,7 @@ import {
   ORG_TYPES,
   SUPPORT_MODELS,
 } from "@/domain/enums";
+import type { CategoryId } from "@/domain/enums";
 import type { AssessmentInput, StackEntry } from "@/domain/intake";
 
 /**
@@ -311,6 +312,93 @@ export const blockerRuleSchema = z.object({
 });
 export type BlockerRule = z.infer<typeof blockerRuleSchema>;
 
+/**
+ * Context a client-OS rule may inspect.
+ *
+ * Narrower than `BlockerContext` on purpose: the operating system is not a
+ * category, so there is no `entry` and no `target`. The verdict is about the
+ * organization and its estate, never about a product — lokal deliberately names
+ * no distribution, and a rule with a `target` in scope would invite one.
+ */
+export type ClientOsContext = {
+  input: AssessmentInput;
+  /** Category ids the roadmap actually schedules, in phase order. */
+  scheduledCategories: readonly CategoryId[];
+};
+
+export const clientOsRuleSchema = z.object({
+  id: identifier,
+  message: z.string().min(1),
+  /**
+   * `blocker` means the desktop cannot move for the affected machines at all
+   * yet; `caution` means it can, with something named to watch.
+   */
+  severity: z.enum(["caution", "blocker"]),
+  when: z.custom<(context: ClientOsContext) => boolean>(
+    (value) => typeof value === "function",
+    "A client-OS rule needs a predicate function.",
+  ),
+});
+export type ClientOsRule = z.infer<typeof clientOsRuleSchema>;
+
+/**
+ * One thing that has to be true before the desktop can move.
+ *
+ * These are the substance of the lane. Where a category recommendation answers
+ * "which tool", this answers "what has to be finished first" — and because the
+ * answer is a checklist rather than a product, the lane needs no distribution
+ * research to be useful.
+ */
+export const clientOsGateSchema = z.object({
+  id: identifier,
+  label: localizedTextSchema,
+  description: localizedTextSchema,
+  /**
+   * How the gate is decided. `automatic` gates are answered from the
+   * assessment; `manual` ones are work the organization has to do and confirm
+   * itself, and the report presents them as such rather than ticking them off
+   * on the reader's behalf.
+   */
+  kind: z.enum(["automatic", "manual"]),
+  ...provenance,
+});
+export type ClientOsGate = z.infer<typeof clientOsGateSchema>;
+
+/**
+ * The client operating system as a planning lane.
+ *
+ * Rules, not products. The lane says whether the desktop can move, when, and
+ * what blocks it; it never names a distribution, and there is nowhere in this
+ * shape to put one. That is deliberate and recorded as a deferral in
+ * plans/roadmap.md: a distribution recommendation from five intake answers
+ * would be exactly the alternatives-finder output lokal exists not to produce.
+ *
+ * `movesAfterApplications` carries the doctrine. Applications become
+ * cross-platform while the organization is still on Windows, and the desktop
+ * swap is the last step rather than the first — the lesson of every public-sector
+ * desktop migration that ran the other way round.
+ */
+export const clientOsLaneSchema = z.object({
+  movesAfterApplications: z.literal(true),
+  gates: z.array(clientOsGateSchema).min(1),
+  rules: z.array(clientOsRuleSchema),
+  /**
+   * Administrator-days per device for the swap itself, as a range. Multiplied
+   * by the declared device count, or by seats with a stated assumption when no
+   * device count was given.
+   *
+   * Deliberately per device rather than a band: unlike an application
+   * migration, this one scales with machines almost linearly, and the honest
+   * shape of the estimate is "so many minutes per desk plus a fixed
+   * preparation", not "medium".
+   */
+  daysPerDevice: z.object({ min: z.number().positive(), max: z.number().positive() }),
+  /** Fixed preparation, independent of how many devices there are. */
+  fixedDays: z.object({ min: z.number().positive(), max: z.number().positive() }),
+  ...provenance,
+});
+export type ClientOsLane = z.infer<typeof clientOsLaneSchema>;
+
 export const rulepackSchema = z.object({
   /** Date-based and immutable once released, e.g. "v2026-08". */
   version: z.string().regex(/^v\d{4}-\d{2}$/, 'Use a date version, e.g. "v2026-08".'),
@@ -322,5 +410,12 @@ export const rulepackSchema = z.object({
   aiUseCases: z.array(aiUseCaseSchema),
   aiDeployments: z.array(aiDeploymentSchema),
   blockerRules: z.array(blockerRuleSchema),
+  /**
+   * Optional, so v2026-08 and v2026-09 still parse unchanged and keep producing
+   * byte-identical output for the assessments taken against them. A pack
+   * without the lane makes the report say the rule version does not know the
+   * question, which is a truthful answer and better than silence.
+   */
+  clientOsLane: clientOsLaneSchema.optional(),
 });
 export type Rulepack = z.infer<typeof rulepackSchema>;
