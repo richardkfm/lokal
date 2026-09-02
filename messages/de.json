@@ -230,8 +230,8 @@
     "operating": {
       "hostingLegend": "Bevorzugter Betrieb",
       "hostingHint": "Wo sollen die Systeme künftig laufen?",
-      "linuxLegend": "Linux- und Betriebskenntnisse",
-      "linuxHint": "Entscheidet darüber, ob Selbstbetrieb realistisch ist.",
+      "linuxLegend": "Linux- und Serverkenntnisse im Team",
+      "linuxHint": "Betrifft den Serverbetrieb, nicht die Arbeitsplätze. Entscheidet darüber, ob Selbstbetrieb realistisch ist.",
       "capacityLegend": "Kapazitäten",
       "capacityHint": "Ehrliche Einschätzung hilft mehr als eine optimistische.",
       "adminCapacityLabel": "Verfügbare Administrationszeit",
@@ -241,7 +241,31 @@
       "identityMaturityLabel": "Benutzerverwaltung",
       "identityMaturityHint": "Gibt es ein zentrales Verzeichnis für Konten und Gruppen?",
       "supportLegend": "Erwartung an Unterstützung",
-      "supportHint": "Reicht eine aktive Community, oder braucht es einen Vertragspartner?"
+      "supportHint": "Reicht eine aktive Community, oder braucht es einen Vertragspartner?",
+      "workplaceTitle": "Die Arbeitsplätze",
+      "workplaceLead": "Fünf Angaben zu den Rechnern, an denen tatsächlich gearbeitet wird. Daraus ergibt sich, ob und wann ein Wechsel des Betriebssystems in diesen Plan gehört — welche Distribution, sagt lokal bewusst nicht.",
+      "clientOsLegend": "Betriebssystem der Arbeitsplätze",
+      "clientOsHint": "Was läuft heute auf den Rechnern der Beschäftigten?",
+      "windowsOnlyLegend": "Anwendungen, die nur unter Windows laufen",
+      "windowsOnlyHint": "Fachverfahren, Lohn- und Buchhaltungsprogramme, CAD, Labor- und Maschinensteuerung. Die wichtigste Einzelfrage: ein unverzichtbares Windows-Programm entscheidet über die betroffenen Arbeitsplätze, unabhängig davon, wie gut alles andere passt.",
+      "deviceManagementLegend": "Softwareverteilung auf den Geräten",
+      "deviceManagementHint": "Wie kommen Programme und Einstellungen heute auf die Rechner?",
+      "peripheralLegend": "Angeschlossene Geräte",
+      "peripheralHint": "Der zweithäufigste Grund, aus dem ein Wechsel liegen bleibt — und der, der am spätesten auffällt.",
+      "peripheralLabel": "Abhängigkeit von Spezialgeräten",
+      "peripheralFieldHint": "Unterschriftenpads, Kartenlesegeräte, Etikettendrucker, Labor- und Maschinenschnittstellen.",
+      "deviceCountLegend": "Zahl der Geräte",
+      "deviceCountHint": "Der Aufwand wächst mit den Geräten, nicht mit den Personen.",
+      "deviceCountLabel": "Arbeitsplatzrechner (optional)",
+      "deviceCountFieldHint": "Ohne Angabe rechnet lokal mit der Zahl der Arbeitsplätze und weist im Bericht darauf hin. Eine geschätzte Gerätezahl ist schlechter als keine.",
+      "ratesTitle": "Was ein Arbeitstag kostet",
+      "ratesLead": "Beide Angaben sind freiwillig. Ohne sie nennt der Bericht keine Migrationskosten — lokal schätzt keinen Tagessatz und setzt auch keinen Durchschnittswert ein.",
+      "ratesLegend": "Tagessätze",
+      "ratesHint": "Aus diesen Sätzen und den ermittelten Aufwandstagen entsteht die Kostenspalte im Bericht. Die Angaben verlassen Ihren Rechner erst mit dem Absenden.",
+      "internalRateLabel": "Interner Tagessatz",
+      "internalRateHint": "Vollkosten eines Administrationstages im Haus, in Euro.",
+      "externalRateLabel": "Externer Tagessatz",
+      "externalRateHint": "Was ein Dienstleistungstag kostet, in Euro. Nur nötig, wenn externe Unterstützung infrage kommt."
     },
     "stack": {
       "legend": "Bereiche in Betrachtung",
@@ -302,7 +326,9 @@
       "warningsNote": "Diese Hinweise verhindern das Absenden nicht. Sie erscheinen auch im Bericht.",
       "warnSeatsExceedOrg": "Ein Bereich weist mehr Arbeitsplätze aus als die Organisation insgesamt.",
       "warnNoDepartments": "Es wurden keine Bereiche benannt, obwohl die Organisation größer ist.",
-      "warnNoAiUseCases": "Es wurde Interesse an KI angegeben, aber kein Anwendungsfall gewählt."
+      "warnNoAiUseCases": "Es wurde Interesse an KI angegeben, aber kein Anwendungsfall gewählt.",
+      "notStated": "Nicht angegeben",
+      "noRateDeclared": "Nicht angegeben — der Bericht nennt dann keine Kosten"
     },
     "progressLabel": "Fortschritt",
     "startOverConfirm": "Alle Angaben verwerfen und neu beginnen?"
@@ -570,6 +596,85 @@
       "dms_archive": {
         "label": "Dokumentenmanagement",
         "hint": "Rechtssichere Ablage mit Aufbewahrungsfristen — nicht dasselbe wie eine Dateiablage. Z. B. d.velop, Papierarchiv."
+      }
+    },
+    "clientOs": {
+      "windows": {
+        "label": "Windows",
+        "hint": "Windows 10 oder 11 auf den Arbeitsplätzen."
+      },
+      "macos": {
+        "label": "macOS",
+        "hint": "Überwiegend Apple-Rechner."
+      },
+      "mixed": {
+        "label": "Gemischt",
+        "hint": "Mehrere Betriebssysteme nebeneinander, ohne einheitliches Bild."
+      },
+      "linux": {
+        "label": "Bereits Linux",
+        "hint": "Die Arbeitsplätze laufen schon unter Linux."
+      },
+      "unknown": {
+        "label": "Nicht bekannt",
+        "hint": "Der Bestand lässt sich derzeit nicht verlässlich beschreiben. Auch das ist eine Aussage."
+      }
+    },
+    "windowsOnlyApps": {
+      "none": {
+        "label": "Keine",
+        "hint": "Alles Nötige läuft im Browser oder plattformübergreifend."
+      },
+      "few": {
+        "label": "Einzelne",
+        "hint": "Ein bis zwei Programme, die nur einzelne Arbeitsplätze betreffen."
+      },
+      "several": {
+        "label": "Mehrere",
+        "hint": "Mehrere Programme, verteilt über verschiedene Bereiche."
+      },
+      "many": {
+        "label": "Viele",
+        "hint": "Die tägliche Arbeit hängt an Windows-Programmen."
+      },
+      "unknown": {
+        "label": "Nicht bekannt",
+        "hint": "Es gibt keine Übersicht der eingesetzten Programme."
+      }
+    },
+    "deviceManagement": {
+      "none": {
+        "label": "Keine",
+        "hint": "Software wird an jedem Gerät einzeln installiert."
+      },
+      "ad_gpo": {
+        "label": "Active Directory / Gruppenrichtlinien",
+        "hint": "Verteilung und Einstellungen über die Windows-Domäne."
+      },
+      "mdm": {
+        "label": "Geräteverwaltung (MDM)",
+        "hint": "Zentrale Verwaltung über Intune, Jamf oder Vergleichbares."
+      },
+      "other": {
+        "label": "Anderes Verfahren",
+        "hint": "Etwa Softwareverteilung über Skripte oder ein eigenes Werkzeug."
+      },
+      "unknown": {
+        "label": "Nicht bekannt"
+      }
+    },
+    "peripheralDependency": {
+      "low": {
+        "label": "Gering",
+        "hint": "Bildschirm, Tastatur, Netzwerkdrucker."
+      },
+      "medium": {
+        "label": "Mittel",
+        "hint": "Einzelne Spezialgeräte an bestimmten Arbeitsplätzen."
+      },
+      "high": {
+        "label": "Hoch",
+        "hint": "Spezialgeräte gehören zum täglichen Ablauf an vielen Plätzen."
       }
     }
   },

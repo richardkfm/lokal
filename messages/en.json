@@ -230,8 +230,8 @@
     "operating": {
       "hostingLegend": "Preferred hosting",
       "hostingHint": "Where should the systems run in future?",
-      "linuxLegend": "Linux and operations skills",
-      "linuxHint": "Decides whether self-hosting is realistic.",
+      "linuxLegend": "Linux and server skills in the team",
+      "linuxHint": "About running servers, not about the workstations. Decides whether self-hosting is realistic.",
       "capacityLegend": "Capacity",
       "capacityHint": "An honest estimate helps more than an optimistic one.",
       "adminCapacityLabel": "Available administration time",
@@ -241,7 +241,31 @@
       "identityMaturityLabel": "User management",
       "identityMaturityHint": "Is there a central directory for accounts and groups?",
       "supportLegend": "Support expectation",
-      "supportHint": "Is an active community enough, or do you need a contracted partner?"
+      "supportHint": "Is an active community enough, or do you need a contracted partner?",
+      "workplaceTitle": "The workstations",
+      "workplaceLead": "Five answers about the machines people actually work on. They decide whether and when an operating-system change belongs in this plan — which distribution is deliberately not something lokal says.",
+      "clientOsLegend": "Operating system on the workstations",
+      "clientOsHint": "What runs on staff machines today?",
+      "windowsOnlyLegend": "Applications that only run on Windows",
+      "windowsOnlyHint": "Specialist administrative software, payroll and accounting packages, CAD, lab and machine control. The single most important question here: one irreplaceable Windows-only application decides the matter for the workstations that need it, however well everything else fits.",
+      "deviceManagementLegend": "Getting software onto the devices",
+      "deviceManagementHint": "How do programs and settings reach the machines today?",
+      "peripheralLegend": "Attached devices",
+      "peripheralHint": "The second most common reason a desktop change stalls — and the one noticed latest.",
+      "peripheralLabel": "Dependency on specialist devices",
+      "peripheralFieldHint": "Signature pads, card readers, label printers, lab and machine interfaces.",
+      "deviceCountLegend": "Number of devices",
+      "deviceCountHint": "Effort grows with machines, not with people.",
+      "deviceCountLabel": "Workstations (optional)",
+      "deviceCountFieldHint": "Without a figure lokal uses the number of seats and says so in the report. A guessed device count is worse than none.",
+      "ratesTitle": "What a working day costs",
+      "ratesLead": "Both are optional. Without them the report states no migration cost — lokal estimates no day rate and substitutes no average.",
+      "ratesLegend": "Day rates",
+      "ratesHint": "These rates and the effort days lokal computes are what produce the cost column in the report. Nothing leaves your machine until you submit.",
+      "internalRateLabel": "Internal day rate",
+      "internalRateHint": "Fully loaded cost of one in-house administration day, in euros.",
+      "externalRateLabel": "External day rate",
+      "externalRateHint": "What a day of outside help costs, in euros. Only needed if external support is a possibility."
     },
     "stack": {
       "legend": "Areas in scope",
@@ -302,7 +326,9 @@
       "warningsNote": "These notes do not prevent submission. They also appear in the report.",
       "warnSeatsExceedOrg": "One area reports more seats than the organization has in total.",
       "warnNoDepartments": "No areas were named, although the organization is larger.",
-      "warnNoAiUseCases": "Interest in AI was indicated, but no use case was chosen."
+      "warnNoAiUseCases": "Interest in AI was indicated, but no use case was chosen.",
+      "notStated": "Not stated",
+      "noRateDeclared": "Not stated — the report will then state no cost"
     },
     "progressLabel": "Progress",
     "startOverConfirm": "Discard every answer and start again?"
@@ -570,6 +596,85 @@
       "dms_archive": {
         "label": "Document management",
         "hint": "Records management with retention periods — not the same as a file platform. E.g. d.velop, a paper archive."
+      }
+    },
+    "clientOs": {
+      "windows": {
+        "label": "Windows",
+        "hint": "Windows 10 or 11 on the workstations."
+      },
+      "macos": {
+        "label": "macOS",
+        "hint": "Predominantly Apple machines."
+      },
+      "mixed": {
+        "label": "Mixed",
+        "hint": "Several operating systems side by side, with no consistent picture."
+      },
+      "linux": {
+        "label": "Already Linux",
+        "hint": "The workstations already run Linux."
+      },
+      "unknown": {
+        "label": "Not known",
+        "hint": "The estate cannot currently be described reliably. That is a finding too."
+      }
+    },
+    "windowsOnlyApps": {
+      "none": {
+        "label": "None",
+        "hint": "Everything needed runs in a browser or cross-platform."
+      },
+      "few": {
+        "label": "A few",
+        "hint": "One or two programs, affecting individual workstations."
+      },
+      "several": {
+        "label": "Several",
+        "hint": "Several programs, spread across different areas."
+      },
+      "many": {
+        "label": "Many",
+        "hint": "Daily work depends on Windows programs."
+      },
+      "unknown": {
+        "label": "Not known",
+        "hint": "There is no inventory of the software in use."
+      }
+    },
+    "deviceManagement": {
+      "none": {
+        "label": "None",
+        "hint": "Software is installed on each device individually."
+      },
+      "ad_gpo": {
+        "label": "Active Directory / group policy",
+        "hint": "Deployment and settings through the Windows domain."
+      },
+      "mdm": {
+        "label": "Device management (MDM)",
+        "hint": "Central management through Intune, Jamf or similar."
+      },
+      "other": {
+        "label": "Another method",
+        "hint": "Scripted deployment or an in-house tool, for example."
+      },
+      "unknown": {
+        "label": "Not known"
+      }
+    },
+    "peripheralDependency": {
+      "low": {
+        "label": "Low",
+        "hint": "Monitor, keyboard, network printer."
+      },
+      "medium": {
+        "label": "Medium",
+        "hint": "A few specialist devices at particular workstations."
+      },
+      "high": {
+        "label": "High",
+        "hint": "Specialist devices are part of daily work at many desks."
       }
     }
   },
