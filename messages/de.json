@@ -770,6 +770,13 @@
       "verdict_blocked": "Ein Wechsel des Betriebssystems gehört derzeit nicht in diesen Plan. Die Gründe stehen darunter; sie sind zu beheben, bevor die Frage erneut sinnvoll gestellt werden kann.",
       "verdict_not_assessed": "Zu den Arbeitsplätzen liegen keine Angaben vor, daher trifft dieser Plan keine Aussage zum Betriebssystem. Die Fragen stehen in Schritt 2 des Fragebogens."
     },
+    "cost": {
+      "estimate_not_a_quote": "Der Aufwand ist eine Spanne, also ist es der Betrag auch. Es handelt sich um eine Planungsgröße, nicht um ein Angebot.",
+      "external_support_likely_but_no_rate": "Für {count} Vorhaben ist externe Unterstützung wahrscheinlich, ein externer Tagessatz wurde jedoch nicht angegeben. Dieser Teil fehlt in der Kostenspalte.",
+      "includes_client_os_swap": "Enthalten sind {min} bis {max} Tage für den Wechsel des Betriebssystems auf den Arbeitsplätzen.",
+      "no_internal_rate_declared": "Für den internen Aufwand wurde kein Tagessatz angegeben, daher nennt dieser Bericht dazu keinen Betrag. lokal setzt hier bewusst keinen Durchschnittswert ein.",
+      "not_subtractable_from_exposure": "Diese Zahl ist nicht von den heutigen Abokosten abzuziehen. lokal bepreist weder den Betrieb der neuen Systeme noch deren Supportverträge noch Produktivitätsverluste während der Umstellung — die Gegenrechnung müssen Sie mit Ihren eigenen Zahlen aufmachen."
+    },
     "difficulty": {
       "base_complexity": "Grundaufwand der Zielanwendung",
       "business_critical": "Betriebskritisches System",

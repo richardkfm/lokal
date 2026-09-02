@@ -454,6 +454,107 @@ describe("savings outlook", () => {
   });
 });
 
+describe("migration cost", () => {
+  const priced = {
+    internalDayRateCents: 48_000,
+    externalDayRateCents: 95_000,
+  } satisfies Partial<AssessmentOverrides>;
+
+  it("states no figure at all when no rate was declared", () => {
+    // Not zero, not a regional average, not an estimate from organization size.
+    // A plausible placeholder looks discharged (ADR-0004 guardrail 1).
+    const result = run({ categories: ["file_sharing", "office_docs"] });
+
+    expect(result.cost.internal).toBeNull();
+    expect(result.cost.external).toBeNull();
+    expect(result.cost.totalCents).toBeNull();
+    expect(allCodes(result)).toContain("cost.no_internal_rate_declared");
+  });
+
+  it("multiplies the days it already computed by the rate the user typed", () => {
+    const result = run({ ...priced, categories: ["file_sharing"] });
+
+    expect(result.cost.internal).not.toBeNull();
+    expect(result.cost.internal!.rateCents).toBe(48_000);
+    expect(result.cost.internal!.cents.min).toBe(
+      Math.round(result.cost.internal!.days.min * 48_000),
+    );
+  });
+
+  it("never states a net, an ROI or a payback", () => {
+    // ADR-0003 guardrail 5, restated in ADR-0004 and permanently deferred.
+    const result = run({ ...priced, categories: ["file_sharing", "office_docs"] });
+    const keys = Object.keys(result.cost);
+
+    for (const forbidden of ["net", "roi", "payback", "breakEven", "savingsCents"]) {
+      expect(keys).not.toContain(forbidden);
+    }
+  });
+
+  it("carries the sentence that stops the two columns being subtracted", () => {
+    // The one caveat that has to survive a reader who sees only the figure.
+    const result = run({ ...priced, categories: ["file_sharing"] });
+
+    expect(allCodes(result)).toContain("cost.not_subtractable_from_exposure");
+    expect(allCodes(result)).toContain("cost.estimate_not_a_quote");
+  });
+
+  it("takes its external days from the migrations capacity already flagged", () => {
+    // A second heuristic here would let the cost section disagree with the
+    // capacity section about the same plan.
+    const result = run({
+      ...priced,
+      categories: ["file_sharing", "chat_video", "intranet_wiki"],
+      adminCapacity: "low",
+      linuxCapability: "none",
+      supportExpectation: "community_tolerant",
+    });
+
+    expect(result.cost.coverage.externalSupportMigrations).toBe(
+      result.capacity.externalSupportFor.length,
+    );
+  });
+
+  it("says which part of the plan the figure covers", () => {
+    const result = run({
+      internalDayRateCents: 48_000,
+      categories: ["file_sharing", "chat_video", "intranet_wiki"],
+      adminCapacity: "low",
+      linuxCapability: "none",
+      supportExpectation: "community_tolerant",
+    });
+
+    // External help is likely and no external rate was given: the report has to
+    // say that part is missing rather than presenting a partial sum as a total.
+    if (result.capacity.externalSupportFor.length > 0) {
+      expect(allCodes(result)).toContain("cost.external_support_likely_but_no_rate");
+    }
+    expect(result.cost.coverage.migrationsTotal).toBeGreaterThan(0);
+  });
+
+  it("counts the operating-system swap where the plan schedules one", () => {
+    const result = run({
+      ...priced,
+      windowsOnlyApps: "none",
+      peripheralDependency: "low",
+      deviceManagement: "mdm",
+      deviceCount: 300,
+    });
+
+    expect(result.cost.coverage.includesClientOs).toBe(true);
+    expect(allCodes(result)).toContain("cost.includes_client_os_swap");
+  });
+
+  it("keeps money out of the engine as integers with a currency code", () => {
+    // The eslint rule forbids the glyph in pure layers; this asserts the shape.
+    const result = run({ ...priced, categories: ["file_sharing"] });
+
+    expect(result.cost.currency).toBe("EUR");
+    expect(Number.isInteger(result.cost.totalCents!.min)).toBe(true);
+    expect(JSON.stringify(result.cost)).not.toContain("\u20ac");
+  });
+});
+
 describe("local-AI lane", () => {
   it("defers a use case the hardware cannot support, with a reason", () => {
     const result = run({

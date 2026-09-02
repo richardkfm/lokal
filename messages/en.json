@@ -770,6 +770,13 @@
       "verdict_blocked": "Changing the operating system does not belong in this plan at present. The reasons are below; they have to be resolved before the question can sensibly be asked again.",
       "verdict_not_assessed": "No answers were given about the workstations, so this plan makes no statement about the operating system. The questions are in step 2 of the questionnaire."
     },
+    "cost": {
+      "estimate_not_a_quote": "The effort is a range, so the amount is one too. This is a planning figure, not an offer.",
+      "external_support_likely_but_no_rate": "External support is likely for {count} migrations, but no external day rate was given. That part is missing from the cost column.",
+      "includes_client_os_swap": "This includes {min} to {max} days for changing the operating system on the workstations.",
+      "no_internal_rate_declared": "No day rate was given for internal effort, so this report states no amount for it. lokal deliberately substitutes no average.",
+      "not_subtractable_from_exposure": "This figure is not to be subtracted from today's subscription cost. lokal prices neither the operation of the new systems, nor their support contracts, nor productivity lost during the changeover — that calculation has to be made with your own numbers."
+    },
     "difficulty": {
       "base_complexity": "Base complexity of the target",
       "business_critical": "Business-critical system",

@@ -1,6 +1,7 @@
 import { assessAiLane } from "./ai-lane";
 import { selectStack } from "./candidates";
 import { assessCapacity } from "./capacity";
+import { assessCost } from "./cost";
 import { assessDifficulty } from "./difficulty";
 import { normalize } from "./normalize";
 import { assessReadiness } from "./readiness";
@@ -14,6 +15,7 @@ import type { Rulepack } from "@/rulepack/schema";
 import type { AiLane } from "./ai-lane";
 import type { CategoryRecommendation } from "./candidates";
 import type { CapacityAssessment } from "./capacity";
+import type { MigrationCost } from "./cost";
 import type { MigrationDifficulty } from "./difficulty";
 import type { NormalizedAssessment } from "./normalize";
 import type { ReadinessProfile } from "./readiness";
@@ -25,6 +27,7 @@ import type { ClientOsLaneAssessment } from "./workplace";
 export * from "./ai-lane";
 export * from "./candidates";
 export * from "./capacity";
+export * from "./cost";
 export * from "./difficulty";
 export * from "./normalize";
 export * from "./readiness";
@@ -53,6 +56,7 @@ export type EngineResult = {
   capacity: CapacityAssessment;
   schedule: Schedule;
   clientOs: ClientOsLaneAssessment;
+  cost: MigrationCost;
   savings: SavingsOutlook;
   aiLane: AiLane;
 };
@@ -87,6 +91,7 @@ export function runEngine(input: AssessmentInput, pack: Rulepack): EngineResult 
   const capacity = assessCapacity(sequencing, assessment, readiness);
   const schedule = buildSchedule(sequencing, capacity, assessment);
   const clientOs = assessClientOs(assessment, sequencing, pack);
+  const cost = assessCost(assessment, capacity, clientOs);
   const savings = assessSavings(assessment, sequencing, capacity, pack);
   const aiLane = assessAiLane(assessment, readiness, sequencing, pack);
 
@@ -101,6 +106,7 @@ export function runEngine(input: AssessmentInput, pack: Rulepack): EngineResult 
     capacity,
     schedule,
     clientOs,
+    cost,
     savings,
     aiLane,
   };
