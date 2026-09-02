@@ -38,7 +38,64 @@ Dates are ISO 8601.
   verdict joins the outputs that prove the thesis: it is `keep for now` applied
   to the desktop, and it says _whether and when_, never _which distribution_.
 
+- **The client operating system, as a planning lane.** Rulepack `v2026-10` adds
+  six gates saying what has to be true before the desktop can move and six rules
+  saying what blocks or qualifies it, plus a new intake block describing the
+  workstations: client OS, Windows-only applications, device management,
+  peripheral dependency and an optional device count. Only two things block, and
+  both block on something capacity cannot fix — Windows-only applications, where
+  the decision rests with someone else's vendor, and unverified peripherals,
+  where it rests with physical hardware. The lane encodes the doctrine that the
+  operating system moves **last**, after the applications are cross-platform, as
+  a placement rule rather than as prose. Where it is blocked the report also says
+  a mixed estate is a legitimate outcome, because an organization told
+  "blockiert" without that concludes the whole idea is dead when what is true is
+  that some desks stay on Windows.
+
+- **The days say why, and how long.** `bandFor` returns its reasons; `effort.ts`
+  breaks each range into Vorbereitung, Datenübernahme, Pilotbetrieb, Ausrollen,
+  Schulung, Parallelbetrieb and Nachbetreuung, each emitted only where a signal
+  justifies it and each carrying the intake field that sized it. The packages sum
+  exactly to the band they explain — a total that moved would make this a scoring
+  change wearing the clothes of a rendering improvement. `schedule.ts` converts
+  effort into elapsed months and then refuses to let capacity alone decide,
+  because a whole workforce cannot be retrained in a week however many
+  administrator-days exist.
+
+- **A decision brief.** A new §0 carrying the horizon in months, both money
+  columns with their bases, the three biggest risks and what leadership has to
+  supply. It derives nothing: every figure in it is stated elsewhere, because a
+  §0 that could reach a different conclusion from §5 would be the report arguing
+  with itself.
+
+- **A map, and a timeline.** Every section has carried an anchor since v0.1.0 and
+  nothing linked to one; there is now a sticky rail on screen and a printed
+  Inhalt block. The phases render as bars on one line, the document's only wide
+  graphic, and the horizon replaces the phase count in the at-a-glance grid —
+  a swap, not growth.
+
 ### Fixed
+
+- **The per-migration difficulty drivers never reached a page.** They were
+  computed by the engine, carried in `PlanningReport`, and dropped by the screen,
+  the print route and the Markdown export alike. The document already contained
+  the answer to "warum 18–35 Tage" and had never shown it.
+
+- **Two enum values escaped into rendered prose.** `criticality=medium` and
+  `criticality=low` reached readers mid-sentence from the new work-package
+  breakdown. `src/report/params.ts` is the whole defence against machine
+  identifiers in a document going to a council meeting, so it gains the two
+  parameters rather than being patched one leak at a time.
+
+- **An effort range whose ends are equal printed "1–1 Tage".** A range that is
+  not a range is the kind of sloppiness that makes an estimate look machine-made
+  to exactly the reader deciding whether to trust it.
+
+- **Counts had no plural forms**, so a first draft of §0 said "1 Bereiche"; and
+  it stated the summed affected seats as "735 von 180 Arbeitsplätzen", which is
+  arithmetically impossible on its face and which phase 7 had already fixed once
+  in the at-a-glance tile. The field is renamed `affectedSeatsSummed` so the next
+  renderer has to notice what it holds.
 
 - **`LOKAL_EXPERT_*` and `LOKAL_LEGAL_*` did nothing under Docker.** These are
   documented as `.env` variables, but `docker-compose.yml` never read `.env` —

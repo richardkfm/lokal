@@ -155,6 +155,20 @@ test("a full intake produces a report", async ({ page }) => {
   await option(page, "identityMaturity", "medium").click();
   await option(page, "supportExpectation", "vendor_support_needed").click();
 
+  // The workplace block. Separate from the server questions above it, and
+  // required: the client-OS lane refuses to assert an estate nobody described,
+  // so an unanswered block would produce "nicht erhoben" rather than a verdict.
+  await option(page, "clientOs", "windows").click();
+  await option(page, "windowsOnlyApps", "few").click();
+  await option(page, "deviceManagement", "ad_gpo").click();
+  await option(page, "peripheralDependency", "medium").click();
+  await page.getByLabel("Arbeitsplatzrechner (optional)").fill("195");
+
+  // The rates are optional and stay empty here on purpose: this is the state
+  // most reports are in, and the one the report has to handle by stating no
+  // cost rather than a zero (ADR-0004). A later assertion checks it did.
+  await expect(page.getByLabel("Interner Tagessatz")).toHaveValue("");
+
   // Fifteen minutes of answers must survive a stray reload. The draft is
   // persisted; the position in it is not, so a reload lands back on step one
   // with every answer still in place.
@@ -173,6 +187,7 @@ test("a full intake produces a report", async ({ page }) => {
     page.locator('input[name="hostingPreference"][value="self_hosted"]'),
   ).toBeChecked();
   await expect(page.locator('input[name="adminCapacity"][value="low"]')).toBeChecked();
+  await expect(page.locator('input[name="clientOs"][value="windows"]')).toBeChecked();
 
   await page.getByRole("button", { name: "Weiter" }).click();
 
@@ -309,7 +324,41 @@ test("the report answers the questions the landing page promised", async ({ page
   // What ADR-0003 forbids in exchange: gross exposure only, never a modelled
   // return. A report that starts promising payback has stopped being honest
   // about what it knows.
-  expect(text).not.toMatch(/\bROI\b|Amortisation|Kapitalrendite/i);
+  expect(text).not.toMatch(/\bROI\b|Amortisation|Kapitalrendite|Break-?even/i);
+
+  // The decision brief: the page an IT lead hands upward. It has to carry a
+  // timeframe in months, and it has to carry the sentence that stops a reader
+  // subtracting the two amounts beside each other (ADR-0004 guardrail 3).
+  const brief = page.locator("#brief");
+  await expect(
+    brief.getByRole("heading", { name: "Entscheidungsvorlage" }),
+  ).toBeVisible();
+  await expect(brief).toContainText(/\d+–\d+ Monate/);
+  await expect(brief).toContainText("nicht voneinander abzuziehen");
+
+  // No day rate was entered in the journey above, so there must be no amount
+  // for the migration — absent, never a zero (ADR-0004 guardrail 1).
+  await expect(brief).toContainText("Nicht beziffert");
+  expect(await brief.innerText()).not.toMatch(/0,00\s?€|\b0\s?€/);
+
+  // The days finally say why. bandFor emitted no rationale at all before this,
+  // so "3–8 Tage" arrived with nothing behind it.
+  await expect(page.locator("#roadmap")).toContainText(
+    "Warum dieser Wechsel so aufwendig ist",
+  );
+
+  // The operating system, which the plan had nothing to say about at all.
+  // Whatever the verdict, it must be stated with a reason and must never name a
+  // distribution.
+  const roadmapText = await page.locator("#roadmap").innerText();
+  expect(roadmapText).toContain("Betriebssystem der Arbeitsplätze");
+  expect(roadmapText).not.toMatch(/Ubuntu|Debian|Fedora|openSUSE|Linux Mint/i);
+
+  // The map that never existed: every section anchor is now reachable.
+  const contents = page.getByRole("navigation", { name: "Inhalt" });
+  await expect(
+    contents.getByRole("link", { name: /Migrationsfahrplan/ }),
+  ).toBeVisible();
 });
 
 test("the Markdown export downloads as a file", async ({ page }) => {

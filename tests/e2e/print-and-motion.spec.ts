@@ -162,6 +162,29 @@ test("the printed brief carries the candidates it ruled out", async ({ page }) =
  * them without the plan name, source and date behind it is one they cannot check
  * and should not trust.
  */
+test("the printed brief is a Beschlussvorlage, not a sales sheet", async ({ page }) => {
+  await page.goto(`/de/report/${reportId}/print`);
+  await page.emulateMedia({ media: "print" });
+  const text = await page.locator("body").innerText();
+
+  // Section 0 and the printed table of contents both reach paper.
+  expect(text).toContain("Entscheidungsvorlage");
+  expect(text).toContain("Inhalt");
+
+  // The contact rail is a screen affordance. A Beschlussvorlage that names a
+  // service provider on its first page reads as advertising, which is the
+  // opposite of what an "internes Planungsdokument" is for — so on paper the
+  // contact stays where it was, after section 9.
+  await expect(page.getByRole("navigation", { name: "Inhalt" })).toHaveCount(1);
+  const briefIndex = text.indexOf("Entscheidungsvorlage");
+  const contactIndex = text.indexOf("Methodik und Grenzen");
+  expect(briefIndex).toBeGreaterThanOrEqual(0);
+  expect(briefIndex).toBeLessThan(contactIndex);
+
+  // The timeframe, which the day figures alone never answered.
+  expect(text).toMatch(/\d+–\d+ Monate/);
+});
+
 test("every printed euro figure carries its basis", async ({ page }) => {
   await page.goto(`/de/report/${reportId}/print`);
   await page.emulateMedia({ media: "print" });

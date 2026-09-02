@@ -18,8 +18,10 @@ maturity, admin capacity, hosting preference, current tools, urgency, criticalit
 AI posture — into a planning brief that answers:
 
 - What should we replace first, and what can stay for now?
+- Can the desktop operating system move, when, and what blocks it?
 - Which target stack fits _this_ organization, and why?
-- How many seats does each change affect?
+- How many seats does each change affect, and how long will the whole thing take?
+- What does moving cost, next to what staying costs?
 - Where are we underprepared, and where do we likely need external support?
 - Which AI use cases are realistic now, and which should wait?
 - What are the risks, blockers, training needs and likely savings areas?
@@ -315,12 +317,12 @@ See [`docs/architecture.md`](docs/architecture.md) for the full picture, and
 ## MVP scope (v0.1.0)
 
 - Landing page
-- Six-step intake wizard (organization, operating model, current stack, migration
-  detail, AI posture, review)
+- Six-step intake wizard (organization, operating model **and workstations**,
+  current stack, migration detail, AI posture, review)
 - Deterministic planning engine with full rationale traceability
-- Rulepack covering nine categories plus an AI use-case catalog, including
-  Euro-Office and published vendor list prices
-- Polished report view with an at-a-glance summary and nine sections
+- Rulepack covering nine categories plus an AI use-case catalog and a client-OS
+  lane, including Euro-Office and published vendor list prices
+- Polished report view: a decision brief, an at-a-glance summary and nine sections
 - Markdown export
 - Print-optimized report route
 - German and English content complete, both proved by the browser suite

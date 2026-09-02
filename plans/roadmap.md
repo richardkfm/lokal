@@ -248,15 +248,15 @@ See [`phase-08-decision-brief.md`](phase-08-decision-brief.md) and
 | #    | Chunk                                                                | Verify                                                                | Status |
 | ---- | -------------------------------------------------------------------- | --------------------------------------------------------------------- | ------ |
 | 8.1  | Phase plan, ADR-0004, roadmap deferrals, README and CLAUDE.md rule 4 | Docs read coherently; no broken internal links                        | done   |
-| 8.2  | Intake: workplace block, optional rates, v1→v2 upgrade path          | A v1 payload still loads and still renders                            |        |
-| 8.3  | Wizard: the new questions, nothing seeded, review step complete      | No missing keys in either locale; step 6 lists every answer           |        |
-| 8.4  | Rulepack `v2026-10`: the client-OS lane as rules                     | Integrity passes; `v2026-08` and `v2026-09` still registered          |        |
-| 8.5  | Engine: `bandFor` reasons and `effort.ts` work packages              | Packages sum exactly to the band; fixtures byte-identical             |        |
-| 8.6  | Engine: `schedule.ts` calendar duration                              | Horizon monotone in days, inverse in capacity; the floor binds        |        |
-| 8.7  | Engine: `workplace.ts` client-OS verdict                             | `windowsOnlyApps: many` always blocks, with a named reason            |        |
-| 8.8  | Engine: `cost.ts` declared-rate cost                                 | No rate means no figure, never a zero; no net anywhere in the output  |        |
-| 8.9  | Report: schema slices and the `decisionBrief` derivation             | Determinism test still green; risk ordering stable across two runs    |        |
-| 8.10 | Report: §0, difficulty drivers, work packages, two money columns     | Drivers reach the page; neither money column in the "good" tone       |        |
-| 8.11 | Report: the phase timeline, horizon replaces the phase-count tile    | Legible in greyscale at A4; at-a-glance still six tiles               |        |
-| 8.12 | Report: section navigation, printed Inhalt, contact rail             | Rail absent from the printed PDF; print tree still has no client code |        |
-| 8.13 | Markdown and print parity, docs pass, screenshots                    | Printed sheet count has not grown; Markdown carries §0                |        |
+| 8.2  | Intake: workplace block, optional rates, v1→v2 upgrade path          | A v1 payload still loads and still renders                            | done   |
+| 8.3  | Wizard: the new questions, nothing seeded, review step complete      | No missing keys in either locale; step 6 lists every answer           | done   |
+| 8.4  | Rulepack `v2026-10`: the client-OS lane as rules                     | Integrity passes; `v2026-08` and `v2026-09` still registered          | done   |
+| 8.5  | Engine: `bandFor` reasons and `effort.ts` work packages              | Packages sum exactly to the band; fixtures byte-identical             | done   |
+| 8.6  | Engine: `schedule.ts` calendar duration                              | Horizon monotone in days, inverse in capacity; the floor binds        | done   |
+| 8.7  | Engine: `workplace.ts` client-OS verdict                             | `windowsOnlyApps: many` always blocks, with a named reason            | done   |
+| 8.8  | Engine: `cost.ts` declared-rate cost                                 | No rate means no figure, never a zero; no net anywhere in the output  | done   |
+| 8.9  | Report: schema slices and the `decisionBrief` derivation             | Determinism test still green; risk ordering stable across two runs    | done   |
+| 8.10 | Report: §0, difficulty drivers, work packages, two money columns     | Drivers reach the page; neither money column in the "good" tone       | done   |
+| 8.11 | Report: the phase timeline, horizon replaces the phase-count tile    | Legible in greyscale at A4; at-a-glance still six tiles               | done   |
+| 8.12 | Report: section navigation, printed Inhalt, contact rail             | Rail absent from the printed PDF; print tree still has no client code | done   |
+| 8.13 | Markdown and print parity, docs pass, screenshots                    | Printed sheet count has not grown; Markdown carries §0                | done   |

@@ -6,23 +6,50 @@ as a planning brief rather than a tool dump.
 
 ## Information architecture
 
-| Block                    | Contents                                                                                               |
-| ------------------------ | ------------------------------------------------------------------------------------------------------ |
-| Cover                    | Organization type, seats, date, rulepack version, "internal planning document"                         |
-| At a glance              | Six cards: readiness, migration posture, savings outlook, AI readiness, seats affected, phase count    |
-| 1 Executive summary      | Context, current state, target state, migration posture, AI posture                                    |
-| 2 Key advantages         | Lock-in, sovereignty, hosting control, data location, open standards, flexibility                      |
-| 3 Savings outlook        | Band, drivers, offsets, priced subscription exposure with its basis, and the model's own limits        |
-| 4 Target stack           | Per category: current → recommended → backups, rationale, scalability, plus "considered and ruled out" |
-| 5 Migration roadmap      | Phases 0–4: goals, systems, seats, effort, blockers, pilots, gotchas                                   |
-| 6 Capacity and readiness | Readiness bands, effort against available time, gaps                                                   |
-| 7 Local-AI lane          | Per use case: now/pilot/later, deployment posture, risks, governance                                   |
-| 8 Scalability outlook    | Current size, growth, more departments, stricter governance, broader AI, more self-hosting             |
-| 9 Next steps             | Immediate actions, 30 days, pilots, caution flags                                                      |
-| Method and limits        | Inputs used, what the engine does not model, rulepack version                                          |
+| Block                    | Contents                                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Cover                    | Organization type, seats, date, rulepack version, "internal planning document"                          |
+| 0 Decision brief         | The page handed upward: horizon in months, both money columns, three risks, what leadership must supply |
+| Contents                 | Printed only: the section list. No page numbers — the print route has no pagination model               |
+| At a glance              | Six cards: readiness, migration posture, savings outlook, AI readiness, seats affected, **horizon**     |
+| 1 Executive summary      | Context, current state, target state, migration posture, AI posture                                     |
+| 2 Key advantages         | Lock-in, sovereignty, hosting control, data location, open standards, flexibility                       |
+| 3 Savings outlook        | Band, drivers, offsets, priced subscription exposure and migration cost with their bases, model limits  |
+| 4 Target stack           | Per category: current → recommended → backups, rationale, scalability, plus "considered and ruled out"  |
+| 5 Migration roadmap      | Timeline, phases 0–4 with calendar spans, work packages, difficulty drivers, keep-for-now, client OS    |
+| 6 Capacity and readiness | Readiness bands, effort against available time, the horizon, gaps                                       |
+| 7 Local-AI lane          | Per use case: now/pilot/later, deployment posture, risks, governance                                    |
+| 8 Scalability outlook    | Current size, growth, more departments, stricter governance, broader AI, more self-hosting              |
+| 9 Next steps             | Immediate actions, 30 days, pilots, caution flags                                                       |
+| Method and limits        | Inputs used, what the engine does not model, rulepack version                                           |
 
-"At a glance" is the page leadership actually reads. It stands alone on one
-screen and one printed page.
+**§0 is the page leadership actually reads**, and it breaks to its own sheet in
+print. It is strictly a _view_: every figure in it is stated elsewhere in the
+document and nothing is recomputed. A §0 that could reach a different conclusion
+from §5 would be the report arguing with itself, and the first reader to notice
+would stop trusting both halves.
+
+It must stay one page. §0 replaces reading rather than adding to it — if the
+printed report gets longer because of it, it has failed at the thing it exists
+for.
+
+"At a glance" follows, and still stands alone on one screen.
+
+### The three raised areas
+
+Everything in the report used to speak at the same volume, which is why nothing
+stood out. Three areas are lifted deliberately — the **timeline**, the **two
+money figures**, and the **contact** — and no general weighting mechanism exists
+to lift a fourth. A `Section` weight prop and a callout component were the tidier
+design and were rejected on exactly that ground: a mechanism invites raising a
+fourth area, then a fifth, and then nothing is raised.
+
+Two rules bound the lifting. No new colour: every raised element uses weight,
+size, position and space, and the palette was verified in phase 7. And neither
+money card may use the `good` tone — phase 7 removed a green euro figure labelled
+"entfällt" because green plus an amount reads as a saving whatever the label
+says, and a cost in red beside an exposure in green would make the subtraction
+for the reader that ADR-0004 forbids stating.
 
 ## Component structure
 
@@ -30,7 +57,20 @@ screen and one printed page.
 `PlanningReport` — never the whole document, never the raw assessment, never the
 engine. Shared primitives live in `src/components/report/indicators.tsx`:
 
-`Meter`, `Badge`, `ComplexityDots`, `KpiCard`, `SeatImpactBar`, `Section`.
+`Meter`, `Badge`, `ComplexityDots`, `KpiCard`, `FigureCard`, `SeatImpactBar`,
+`PhaseTimeline`, `Section`.
+
+`PhaseTimeline` is the document's only wide graphic, and deliberately the only
+one: the timeframe is the question this phase exists to answer, so nothing else
+competes with it for the eye. It renders twice — compact in §0, full above the
+phase cards in §5 — from one derivation, so the two drawings cannot disagree
+about the same plan. Its bars differ by fill and by a labelled row rather than by
+hue, and the whole thing is one `role="img"` naming every phase and its span, so
+a screen reader gets the summary rather than a march through the grid cells.
+
+Phase bars are drawn on one timeline and quoted from a range. The two do not
+reconcile and cannot — a bar needs a single line and an estimate has width — so
+renderers draw from `startMonth`/`endMonth` and quote from `months`.
 
 All of them are pure CSS. No charting library: canvas does not print reliably,
 and six bar meters do not justify the weight. Every indicator also carries a text
@@ -121,6 +161,26 @@ persona in both languages. That is the guard against both mistakes.
 constraint from [ADR-0002](adr/0002-print-first-pdf.md) and the only thing needed
 today to make server-side PDF a later addition rather than a second
 implementation. Do not add interactivity there.
+
+## Navigation
+
+Every section has carried a `scroll-mt-24` anchor since phase 4 and nothing
+linked to one, so twelve pages scrolled past with no map. `reportSections()` is
+the single list feeding both the screen rail and the printed contents — two lists
+is how a section gets added to one and forgotten in the other.
+
+The printed contents carries **no page numbers**: the print route has no
+pagination model and a wrong page number is worse than none, so section numbers
+are the reference and they are on every heading already.
+
+The expert contact appears in the screen rail and, in the printed document, still
+after §9. That asymmetry is deliberate: a Beschlussvorlage naming a service
+provider on page one reads as advertising, which is the opposite of what an
+"internes Planungsdokument" is for. On screen, where the IT lead is working and
+wants the number, the rail is where it belongs.
+
+`position: sticky` is CSS, so the rail stays a server component and ADR-0002 is
+untouched by it.
 
 ## Markdown export
 

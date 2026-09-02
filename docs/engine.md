@@ -102,7 +102,56 @@ Effort bands per migration, seat-scaled, summed per phase and compared against t
 organization's declared admin capacity. Produces capacity gaps, "pilot first"
 recommendations, external-support flags and per-phase training load.
 
+`bandFor` returns its reasons alongside the band — the difficulty floor and each
+seat threshold that raised it. It used to return a band and emit nothing, so the
+report printed "3–8 Tage" with no way to see where the figure came from.
+
+`effort.ts` then decomposes each range into named work packages: preparation,
+data migration, pilot, rollout, training, parallel run, aftercare. Each is
+emitted only where a signal justifies it — a plan with no training load shows no
+training line rather than a zero — and each carries the intake field that sized
+it.
+
+**The decomposition explains the band and never changes it.** Weights are
+normalised and the rounded packages reconciled by largest remainder so they sum
+exactly to the band's `min` and `max`. A total that moved would make this a
+scoring change wearing the clothes of a rendering improvement.
+
 All figures are ranges, labelled as planning estimates. They are not quotes.
+
+### 6b — Schedule
+
+Administrator-days are not a timeframe. Effort becomes elapsed months against the
+declared capacity, and then capacity is refused the last word: each phase carries
+a change-management floor driven by seats and training sensitivity, because a
+whole workforce cannot be retrained in a week however many administrator-days
+exist. Where the floor binds rather than capacity, the report says so — more
+administrator time will not shorten that phase.
+
+Both ends of the range compute against the _middle_ of the declared capacity.
+Pairing "the most days this could take" with "the least time they might have"
+multiplies two worst cases and produced a ten-year plan for a fourteen-person
+association.
+
+Where the plan needs more days than the organization has in a year,
+`exceedsCapacity` marks the horizon as a restatement of the capacity gap rather
+than a schedule.
+
+### 6c — Client operating system
+
+The only stage that plans something other than an application. Four verdicts —
+`not_assessed`, `already_open`, `blocked`, `after_apps` — each with reasons and
+evidence, none with a product. **No distribution is named anywhere**, and there is
+nowhere in `ClientOsLane` to put one; that deferral is what lets the lane ship as
+rules rather than as a research pass, and it is the honest boundary besides.
+
+The swap is placed after every scheduled application migration, never before,
+whatever a value-versus-cost score would say. Effort is fixed preparation plus a
+per-device cost, falling back to seats with the fallback disclosed.
+
+A rulepack without `clientOsLane` — `v2026-08` and `v2026-09` — produces
+`not_assessed` with a note naming the version, rather than having the current
+lane applied to an older assessment.
 
 ### 7 — Savings outlook
 
@@ -136,6 +185,23 @@ Amounts are integers in minor units with a currency code. The `€` glyph in
 engine, rulepack or report code is a lint error, because a hand-formatted amount
 is one that has escaped the plan name, source and date that make it checkable.
 
+### 7b — Migration cost
+
+The other side of the ledger, and the second place lokal states money. Effort days
+the engine already computed, times a day rate the respondent declared — see
+[ADR-0004](adr/0004-declared-rates-for-the-cost-side.md).
+
+- **No rate declared, no figure.** Not zero, not an average, not an estimate from
+  organization size. Absent, with a note saying so.
+- **External days come from the migrations `capacity` already flagged.** A second
+  heuristic here would let the cost section disagree with the capacity section
+  about the same plan.
+- **Never a net, an ROI, a payback or a break-even.** Every ingredient such a
+  figure needs is a cost lokal does not model. Two rationale codes travel with
+  every amount so no renderer can drop them: one saying the two columns are not
+  subtractable, one saying a range of days makes a range of euros and not an
+  offer.
+
 ### 8 — AI lane
 
 Per selected use case: now, pilot or later. Driven by hardware profile against the
@@ -146,7 +212,7 @@ One non-obvious dependency worth keeping: internal document Q&A is downgraded wh
 no document store or file-sharing target is planned before the final phase. There
 is nothing to ask questions of yet.
 
-### 9 — Compose
+### 8b — Compose
 
 Assembles `PlanningReport`, attaching engine version, rulepack version, generation
 timestamp and the full rationale index.
@@ -158,7 +224,11 @@ Asserted in tests, not just intended:
 - Difficulty is monotone in seats and in criticality.
 - Prerequisites never follow the categories that depend on them.
 - Every recommendation carries at least one rationale item.
-- Output contains no currency amounts.
+- Work packages sum exactly to the effort band they decompose.
+- The horizon is monotone in total days and inverse in declared capacity.
+- The client-OS lane never contains a distribution name.
+- No euro amount is produced without the basis that makes it checkable, and no
+  net, ROI or payback figure exists anywhere in the output.
 - Running the engine twice on one fixture produces identical output.
 
 ## Weights

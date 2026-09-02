@@ -181,7 +181,12 @@ test("the English report reaches the reader in English", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: en.report.savings.title }),
   ).toBeVisible();
-  await expect(page.getByText(en.report.savings.exposureTitle)).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: en.report.savings.exposureTitle }),
+  ).toBeVisible();
+
+  // The cost column, and the caveat that has to sit beside it.
+  await expect(page.getByRole("heading", { name: en.report.cost.title })).toBeVisible();
 
   // ADR-0003 guardrail 3 is a property of the document, not of German.
   const body = (await page.locator("body").innerText()).replace(/\s+/g, " ");
