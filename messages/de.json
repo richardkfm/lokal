@@ -731,6 +731,13 @@
       "self_host_without_linux_capability": "{tool} ist nur im Selbstbetrieb verfügbar und verlangt Betriebskenntnisse, die derzeit nicht vorhanden sind.",
       "young_release_pilot_first": "{tool} ist erst seit kurzem in einer stabilen Fassung verfügbar. Vor einer flächendeckenden Einführung ist ein begrenzter Pilotbetrieb angeraten."
     },
+    "brief": {
+      "ask_budget_for_the_migration": "Ein Budget für die {migrations} vorgesehenen Vorhaben, in der Größenordnung der nebenstehenden Spalte.",
+      "ask_budget_unquantified": "Ein Budget für die Umsetzung. Eine Größenordnung nennt dieser Bericht nicht, weil kein Tagessatz angegeben wurde — mit dieser einen Angabe im Fragebogen steht sie hier.",
+      "ask_capacity_or_smaller_scope": "Entweder zusätzliche Kapazität oder ein kleinerer Zuschnitt. Der Plan verlangt mindestens {days} Aufwandstage, verfügbar sind etwa {availableDays} im Jahr. Beides ist vertretbar — die Lücke offen zu lassen ist es nicht.",
+      "ask_decision_on_direction": "Eine Grundsatzentscheidung zur Richtung, damit die Vorarbeiten beginnen können. Der Plan ist auf rund {months} Monate angelegt; ohne Entscheidung verfällt vor allem die Vorbereitung, nicht die Umsetzung.",
+      "ask_external_support": "Eine Entscheidung darüber, ob für {count} Vorhaben externe Unterstützung beschafft wird. Diese Vorhaben übersteigen nach heutigem Stand die eigene Betriebskompetenz."
+    },
     "capacity": {
       "budget_for_external_support": "Für externe Unterstützung sollte ein Budget eingeplant werden.",
       "external_support_likely": "Für {category} ({tool}) ist externe Unterstützung wahrscheinlich erforderlich.",
@@ -1145,6 +1152,13 @@
       "body": "Unter diesem Link liegt kein Bericht. Möglicherweise wurde er entfernt oder der Link ist unvollständig.",
       "cta": "Neue Erhebung starten"
     },
-    "rulesChanged": "Hinweis: Neu berechnet mit einem neueren Regelwerk, weil die ursprüngliche Fassung ({version}) nicht mehr verfügbar ist. Einzelne Empfehlungen können abweichen."
+    "rulesChanged": "Hinweis: Neu berechnet mit einem neueren Regelwerk, weil die ursprüngliche Fassung ({version}) nicht mehr verfügbar ist. Einzelne Empfehlungen können abweichen.",
+    "effortBand": {
+      "xs": "sehr klein",
+      "s": "klein",
+      "m": "mittel",
+      "l": "groß",
+      "xl": "sehr groß"
+    }
   }
 }

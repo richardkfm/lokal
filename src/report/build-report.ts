@@ -164,6 +164,115 @@ function advantages(result: EngineResult): RationaleItem[] {
  * Whether the recommended stack still holds as the organization changes.
  * This is what makes the report strategic rather than merely tactical.
  */
+/**
+ * Section 0 — the page handed to whoever decides.
+ *
+ * Strictly a view. Everything here is already stated elsewhere in the document,
+ * and nothing is recomputed: if §0 could reach a different conclusion from §5,
+ * the report would be arguing with itself, and the first reader to notice would
+ * stop trusting both halves.
+ *
+ * The risks are picked, not invented — the three highest-severity findings the
+ * engine already produced, ordered deterministically so two runs of the same
+ * assessment put the same three in the same order.
+ */
+function decisionBrief(result: EngineResult): PlanningReport["decisionBrief"] {
+  const SEVERITY_RANK: Record<string, number> = {
+    blocker: 0,
+    caution: 1,
+    note: 2,
+    info: 3,
+  };
+
+  const candidates: RationaleItem[] = [
+    ...result.clientOs.blockers,
+    ...result.capacity.gaps,
+    ...result.readiness.gaps,
+    ...result.schedule.notes,
+    ...result.savings.offsets,
+  ];
+
+  const seen = new Set<string>();
+  const topRisks = candidates
+    .filter((item) => {
+      if (seen.has(item.code)) return false;
+      seen.add(item.code);
+      return item.severity === "blocker" || item.severity === "caution";
+    })
+    // Severity first, then the code, so ordering never depends on the order the
+    // stages happened to run in.
+    .sort(
+      (a, b) =>
+        (SEVERITY_RANK[a.severity] ?? 9) - (SEVERITY_RANK[b.severity] ?? 9) ||
+        a.code.localeCompare(b.code),
+    )
+    .slice(0, 3);
+
+  // What leadership has to supply. Each ask is tied to a finding rather than to
+  // a template: an ask nobody's answers justify is the kind of boilerplate that
+  // gets a document skimmed instead of read.
+  const asks: RationaleItem[] = [
+    rationale({
+      code: "brief.ask_decision_on_direction",
+      params: { months: result.schedule.horizonMonths.max },
+    }),
+  ];
+
+  if (result.schedule.exceedsCapacity) {
+    asks.push(
+      rationale({
+        code: "brief.ask_capacity_or_smaller_scope",
+        severity: "caution",
+        params: {
+          days: result.capacity.total.min,
+          availableDays: result.capacity.availablePerYear.max,
+        },
+      }),
+    );
+  }
+
+  if (result.cost.totalCents) {
+    asks.push(
+      rationale({
+        code: "brief.ask_budget_for_the_migration",
+        params: { migrations: result.cost.coverage.migrationsTotal },
+      }),
+    );
+  } else {
+    // Absent rather than a zero, and said out loud: a leadership that cannot see
+    // a number will ask for one, and the honest answer is that lokal was not
+    // given the rate it would need (ADR-0004).
+    asks.push(rationale({ code: "brief.ask_budget_unquantified", severity: "note" }));
+  }
+
+  if (result.capacity.externalSupportFor.length > 0) {
+    asks.push(
+      rationale({
+        code: "brief.ask_external_support",
+        params: { count: result.capacity.externalSupportFor.length },
+      }),
+    );
+  }
+
+  return {
+    migrationsPlanned: result.sequencing.phases.reduce(
+      (sum, phase) => sum + phase.migrations.length,
+      0,
+    ),
+    categoriesKept: result.sequencing.keepForNow.length,
+    // Seats the *plan* touches, which is what the at-a-glance tile already
+    // shows. `derived.totalAffectedSeats` counts every assessed category
+    // including the ones kept for now, and a §0 that quoted a larger number than
+    // §5 would be the report disagreeing with itself on its own first page.
+    affectedSeats: result.sequencing.phases.reduce(
+      (sum, phase) => sum + phase.affectedSeats,
+      0,
+    ),
+    topRisks,
+    asks,
+  };
+}
+
 function scalability(result: EngineResult): PlanningReport["scalability"] {
   const chosen = result.recommendations
     .map((r) => r.primary?.tool)
@@ -387,11 +496,19 @@ export function buildReport(
   const phases: PlanningReport["roadmap"]["phases"] = result.sequencing.phases.map(
     (phase) => {
       const capacity = result.capacity.perPhase.find((p) => p.phase === phase.id);
+      const duration = result.schedule.phases.find((p) => p.phase === phase.id);
 
       return {
         id: phase.id,
         affectedSeats: phase.affectedSeats,
         effortDays: capacity?.days ?? { min: 0, max: 0 },
+        duration: {
+          startMonth: duration?.startMonth ?? 0,
+          endMonth: duration?.endMonth ?? 0,
+          months: duration?.months ?? { min: 0, max: 0 },
+          floorBinds: duration?.floorBinds ?? false,
+          notes: duration?.notes ?? [],
+        },
         prerequisites: phase.prerequisites.map((prerequisite) => ({
           id: prerequisite.id,
           label: prerequisite.label,
@@ -417,6 +534,7 @@ export function buildReport(
             effort: {
               band: effort?.band ?? "m",
               days: effort?.days ?? { min: 0, max: 0 },
+              items: effort?.items ?? [],
             },
             gotchas: migration.difficulty.gotchas,
             coexistence: tool.coexistence,
@@ -461,6 +579,8 @@ export function buildReport(
       hostingPreference: result.assessment.input.operating.hostingPreference,
     },
 
+    decisionBrief: decisionBrief(result),
+
     atAGlance: {
       readiness: result.readiness.overall,
       migrationPosture: migrationPosture(result),
@@ -502,6 +622,30 @@ export function buildReport(
       pilotsRecommended: result.capacity.pilotsRecommended,
       externalSupportFor: result.capacity.externalSupportFor,
     },
+
+    schedule: {
+      horizonMonths: result.schedule.horizonMonths,
+      exceedsCapacity: result.schedule.exceedsCapacity,
+      notes: result.schedule.notes,
+    },
+
+    clientOs: {
+      verdict: result.clientOs.verdict,
+      phase: result.clientOs.phase,
+      gates: result.clientOs.gates.map(({ gate, status }) => ({
+        id: gate.id,
+        label: gate.label,
+        description: gate.description,
+        status,
+      })),
+      devices: result.clientOs.devices,
+      effortDays: result.clientOs.effortDays,
+      blockers: result.clientOs.blockers,
+      cautions: result.clientOs.cautions,
+      reasons: result.clientOs.reasons,
+    },
+
+    cost: result.cost,
 
     savings: {
       band: result.savings.band,

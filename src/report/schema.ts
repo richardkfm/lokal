@@ -2,11 +2,13 @@ import { z } from "zod";
 import {
   AI_TIMINGS,
   CATEGORY_IDS,
+  CLIENT_OS_VERDICTS,
   COVERAGE_DEPTHS,
   OUTLOOK_BANDS,
   PHASE_IDS,
   READINESS_LABELS,
   SIZE_BUCKETS,
+  WORK_PACKAGES,
 } from "@/domain/enums";
 import { rationaleItemSchema } from "@/domain/rationale";
 
@@ -90,16 +92,36 @@ export const targetStackEntrySchema = z.object({
   notes: rationaleList,
 });
 
+const phaseIdSchema = z.union([
+  z.literal(PHASE_IDS[0]),
+  z.literal(PHASE_IDS[1]),
+  z.literal(PHASE_IDS[2]),
+  z.literal(PHASE_IDS[3]),
+  z.literal(PHASE_IDS[4]),
+]);
+
+/**
+ * A phase in elapsed time.
+ *
+ * `startMonth`/`endMonth` are one timeline, for drawing the phase as a bar;
+ * `months` is that phase's range. The two do not reconcile and cannot — a bar
+ * needs a single line and an estimate has width. Renderers draw from the
+ * timeline and quote from the range, never the other way round.
+ */
+const phaseDurationSchema = z.object({
+  startMonth: z.number().int().min(0),
+  endMonth: z.number().int().min(0),
+  months: dayRangeSchema,
+  /** True where people, not administrator time, set how long this takes. */
+  floorBinds: z.boolean(),
+  notes: rationaleList,
+});
+
 export const phaseSchema = z.object({
-  id: z.union([
-    z.literal(PHASE_IDS[0]),
-    z.literal(PHASE_IDS[1]),
-    z.literal(PHASE_IDS[2]),
-    z.literal(PHASE_IDS[3]),
-    z.literal(PHASE_IDS[4]),
-  ]),
+  id: phaseIdSchema,
   affectedSeats: z.number().int().min(0),
   effortDays: dayRangeSchema,
+  duration: phaseDurationSchema,
   prerequisites: z.array(
     z.object({
       id: z.string(),
@@ -119,7 +141,21 @@ export const phaseSchema = z.object({
         label: z.string(),
         drivers: rationaleList,
       }),
-      effort: z.object({ band: z.string(), days: dayRangeSchema }),
+      effort: z.object({
+        band: z.string(),
+        days: dayRangeSchema,
+        /**
+         * What the range is made of. The items sum exactly to `days` — the
+         * breakdown explains the number and never changes it.
+         */
+        items: z.array(
+          z.object({
+            package: z.enum(WORK_PACKAGES),
+            days: dayRangeSchema,
+            reasons: rationaleList,
+          }),
+        ),
+      }),
       /** Warnings specific to this move, not generic advice. */
       gotchas: z.array(z.string()),
       coexistence: z.string(),
@@ -156,6 +192,19 @@ export const priceBasisSchema = z.object({
   fallsAway: z.boolean(),
 });
 
+/**
+ * One side of the cost figure: days at a declared rate.
+ *
+ * `rateCents` travels with the amount because ADR-0004 guardrail 2 requires the
+ * basis to be visible — "18–35 Tage × 480 €/Tag (von Ihnen angegeben)", never a
+ * bare sum.
+ */
+export const costLineSchema = z.object({
+  days: dayRangeSchema,
+  rateCents: z.number().int().positive(),
+  cents: dayRangeSchema,
+});
+
 export const subscriptionExposureSchema = z.object({
   currency: z.literal("EUR"),
   annualCents: z.number().int().min(0),
@@ -166,6 +215,32 @@ export const subscriptionExposureSchema = z.object({
   categoriesAssessed: z.number().int().min(0),
   basis: z.array(priceBasisSchema),
   notes: rationaleList,
+});
+
+/**
+ * Section 0 — the page a decision-maker reads.
+ *
+ * A *view* over slices that already exist, deriving no new judgement of its own.
+ * That is the constraint that keeps it honest: if §0 could reach a different
+ * conclusion from §5, the document would be arguing with itself, and the first
+ * reader to notice would stop trusting both.
+ *
+ * It exists because the report was nine sections at identical weight opening
+ * with Zusammenfassung and Vorteile, and an IT lead had nowhere to point a
+ * Bürgermeister or a Geschäftsführung. This is that page.
+ */
+export const decisionBriefSchema = z.object({
+  /** What is being decided: posture, what moves, what stays. */
+  migrationsPlanned: z.number().int().min(0),
+  categoriesKept: z.number().int().min(0),
+  affectedSeats: z.number().int().min(0),
+  /** The three highest-severity findings already stated elsewhere. */
+  topRisks: rationaleList,
+  /**
+   * What the leadership has to supply for any of this to happen. Derived from
+   * the capacity gap and the cost figure — never an ask lokal invented.
+   */
+  asks: rationaleList,
 });
 
 export const planningReportSchema = z.object({
@@ -188,6 +263,9 @@ export const planningReportSchema = z.object({
     germanLanguageRequired: z.boolean(),
     hostingPreference: z.string(),
   }),
+
+  /** Section 0: the page handed to whoever decides. Derived, never re-derived. */
+  decisionBrief: decisionBriefSchema,
 
   /** The six figures that carry the at-a-glance summary. */
   atAGlance: z.object({
@@ -230,6 +308,69 @@ export const planningReportSchema = z.object({
     gaps: rationaleList,
     pilotsRecommended: z.array(z.enum(CATEGORY_IDS)),
     externalSupportFor: z.array(z.enum(CATEGORY_IDS)),
+  }),
+
+  /** The plan in elapsed time, which the day figures alone never answered. */
+  schedule: z.object({
+    horizonMonths: dayRangeSchema,
+    /**
+     * True when the plan needs more effort than the organization has in a year,
+     * so the horizon restates the capacity gap rather than proposing dates. The
+     * document leads with the gap in that case, not with the month figure.
+     */
+    exceedsCapacity: z.boolean(),
+    notes: rationaleList,
+  }),
+
+  /**
+   * The client operating system: whether the desktop can move, when, and what
+   * blocks it. Never which distribution — that is deferred, and there is nowhere
+   * in this shape to put one.
+   */
+  clientOs: z.object({
+    verdict: z.enum(CLIENT_OS_VERDICTS),
+    phase: phaseIdSchema.nullable(),
+    gates: z.array(
+      z.object({
+        id: z.string(),
+        label: localizedTextSchema,
+        description: localizedTextSchema,
+        status: z.enum(["met", "open", "manual"]),
+      }),
+    ),
+    devices: z
+      .object({
+        count: z.number().int().min(0),
+        /** `seats` means no device count was given and the report says so. */
+        source: z.enum(["declared", "seats"]),
+      })
+      .nullable(),
+    effortDays: dayRangeSchema.nullable(),
+    blockers: rationaleList,
+    cautions: rationaleList,
+    reasons: rationaleList,
+  }),
+
+  /**
+   * What the migration costs, from rates the organization declared (ADR-0004).
+   *
+   * Null lines are the ordinary case and mean no rate was given: the renderer
+   * shows nothing rather than a zero. This figure and `savings.subscriptionExposure`
+   * are never subtracted from one another, and `notes` carries the code that
+   * says so wherever both appear.
+   */
+  cost: z.object({
+    currency: z.literal("EUR"),
+    internal: costLineSchema.nullable(),
+    external: costLineSchema.nullable(),
+    totalCents: dayRangeSchema.nullable(),
+    coverage: z.object({
+      migrationsPriced: z.number().int().min(0),
+      migrationsTotal: z.number().int().min(0),
+      externalSupportMigrations: z.number().int().min(0),
+      includesClientOs: z.boolean(),
+    }),
+    notes: rationaleList,
   }),
 
   savings: z.object({
@@ -304,6 +445,9 @@ export const planningReportSchema = z.object({
   }),
 });
 
+export type CostLine = z.infer<typeof costLineSchema>;
+export type DecisionBrief = z.infer<typeof decisionBriefSchema>;
+export type PhaseDuration = z.infer<typeof phaseDurationSchema>;
 export type PriceBasis = z.infer<typeof priceBasisSchema>;
 export type SubscriptionExposure = z.infer<typeof subscriptionExposureSchema>;
 export type PlanningReport = z.infer<typeof planningReportSchema>;

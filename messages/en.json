@@ -731,6 +731,13 @@
       "self_host_without_linux_capability": "{tool} is only available self-hosted and demands operational skills not currently available.",
       "young_release_pilot_first": "{tool} has only recently reached a stable release. A limited pilot is advisable before rolling it out to everyone."
     },
+    "brief": {
+      "ask_budget_for_the_migration": "A budget for the {migrations} planned migrations, in the order of magnitude shown in the column beside this.",
+      "ask_budget_unquantified": "A budget for delivery. This report states no order of magnitude because no day rate was given — that one answer in the questionnaire puts it here.",
+      "ask_capacity_or_smaller_scope": "Either more capacity or a smaller scope. The plan needs at least {days} effort days against roughly {availableDays} available per year. Either answer is defensible — leaving the gap open is not.",
+      "ask_decision_on_direction": "A decision in principle on the direction, so the groundwork can start. The plan spans roughly {months} months; without a decision it is mainly the preparation that lapses, not the delivery.",
+      "ask_external_support": "A decision on whether external support is bought in for {count} migrations. On today's answers those exceed the operational capability in-house."
+    },
     "capacity": {
       "budget_for_external_support": "A budget for external support should be planned.",
       "external_support_likely": "External support is likely required for {category} ({tool}).",
@@ -1145,6 +1152,13 @@
       "body": "There is no report at this link. It may have been removed, or the link may be incomplete.",
       "cta": "Start a new assessment"
     },
-    "rulesChanged": "Note: recalculated with a newer rulepack because the original version ({version}) is no longer available. Some recommendations may differ."
+    "rulesChanged": "Note: recalculated with a newer rulepack because the original version ({version}) is no longer available. Some recommendations may differ.",
+    "effortBand": {
+      "xs": "very small",
+      "s": "small",
+      "m": "medium",
+      "l": "large",
+      "xl": "very large"
+    }
   }
 }

@@ -92,7 +92,7 @@ describe("planning report", () => {
   });
 });
 
-describe("the four outputs that prove this is a plan", () => {
+describe("the outputs that prove this is a plan", () => {
   it("says what to keep for now, with a condition to revisit", () => {
     // The 900-person SME rates its CRM low-pain, no-urgency: replacing
     // Salesforce is not this year's problem, and saying so is the useful answer.
@@ -124,6 +124,23 @@ describe("the four outputs that prove this is a plan", () => {
     expect(doc.capacity.availablePerYear.max).toBeGreaterThan(0);
   });
 
+  it("gives the desktop a verdict, and never a distribution", () => {
+    // "keep for now" applied to the operating system. The most common answer is
+    // "noch nicht, und hier ist warum", which is what makes it a plan rather
+    // than a list.
+    for (const persona of PERSONAS) {
+      const doc = report(persona.id);
+
+      expect(doc.clientOs.verdict).toBeTruthy();
+      expect(doc.clientOs.reasons.length).toBeGreaterThan(0);
+
+      const serialized = JSON.stringify(doc.clientOs).toLowerCase();
+      for (const name of ["ubuntu", "debian", "fedora", "suse", "mint"]) {
+        expect(serialized).not.toContain(name);
+      }
+    }
+  });
+
   it("explains why an AI use case is not yet", () => {
     // The school has office PCs and highly sensitive data.
     const doc = report("school-45");
@@ -133,6 +150,68 @@ describe("the four outputs that prove this is a plan", () => {
       expect(recommendation.reasons.length).toBeGreaterThan(0);
       expect(recommendation.reasons.some((r) => r.severity === "caution")).toBe(true);
     }
+  });
+});
+
+describe("the decision brief", () => {
+  it("adds no judgement the rest of the document does not already state", () => {
+    // §0 is strictly a view. If it could reach a different conclusion from §5
+    // the report would be arguing with itself, and the first reader to notice
+    // would stop trusting both halves.
+    const doc = report("municipality-180");
+
+    expect(doc.decisionBrief.migrationsPlanned).toBe(
+      doc.roadmap.phases.reduce((sum, phase) => sum + phase.migrations.length, 0),
+    );
+    expect(doc.decisionBrief.categoriesKept).toBe(doc.roadmap.keepForNow.length);
+    expect(doc.decisionBrief.affectedSeats).toBe(doc.atAGlance.affectedSeats);
+  });
+
+  it("picks its risks rather than inventing them", () => {
+    const doc = report("association-14");
+    const stated = new Set(
+      [
+        ...doc.clientOs.blockers,
+        ...doc.capacity.gaps,
+        ...doc.readiness.gaps,
+        ...doc.schedule.notes,
+        ...doc.savings.offsets,
+      ].map((item) => item.code),
+    );
+
+    expect(doc.decisionBrief.topRisks.length).toBeGreaterThan(0);
+    for (const risk of doc.decisionBrief.topRisks) {
+      expect(stated).toContain(risk.code);
+      expect(["blocker", "caution"]).toContain(risk.severity);
+    }
+  });
+
+  it("orders the risks the same way on every run", () => {
+    // Severity, then code — never the order the stages happened to run in.
+    const first = report("utility-600").decisionBrief.topRisks.map((r) => r.code);
+    const second = report("utility-600").decisionBrief.topRisks.map((r) => r.code);
+
+    expect(first).toEqual(second);
+  });
+
+  it("asks for a budget it cannot size, rather than staying quiet about it", () => {
+    // The association declared no day rate. A leadership that cannot see a
+    // number will ask for one, and the honest answer is that lokal was not given
+    // the rate it would need (ADR-0004).
+    const doc = report("association-14");
+    const codes = doc.decisionBrief.asks.map((ask) => ask.code);
+
+    expect(doc.cost.totalCents).toBeNull();
+    expect(codes).toContain("brief.ask_budget_unquantified");
+    expect(codes).not.toContain("brief.ask_budget_for_the_migration");
+  });
+
+  it("sizes the budget where a rate was declared", () => {
+    const doc = report("municipality-180");
+    const codes = doc.decisionBrief.asks.map((ask) => ask.code);
+
+    expect(doc.cost.totalCents).not.toBeNull();
+    expect(codes).toContain("brief.ask_budget_for_the_migration");
   });
 });
 
