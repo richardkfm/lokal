@@ -4,7 +4,9 @@ import {
   AI_INTERESTS,
   AI_USE_CASE_IDS,
   CATEGORY_IDS,
+  CLIENT_OS,
   COUNTRIES,
+  DEVICE_MANAGEMENT,
   GERMAN_REGIONS,
   HARDWARE_PROFILES,
   HOSTING_PREFERENCES,
@@ -13,6 +15,7 @@ import {
   ORG_TYPES,
   SUPPORT_EXPECTATIONS,
   URGENCIES,
+  WINDOWS_ONLY_APPS,
 } from "./enums";
 
 /**
@@ -23,8 +26,18 @@ import {
  * through here first.
  */
 
-/** Bumped whenever a stored payload would no longer parse. */
-export const INTAKE_SCHEMA_VERSION = 1;
+/**
+ * Bumped whenever a stored payload would no longer parse.
+ *
+ * Version 2 adds the workplace block and the optional day rates. Version 1
+ * payloads are still accepted and upgraded by `upgradeAssessmentInput` — a
+ * report link that was shared with a committee must keep resolving, so the
+ * schema widens rather than moving.
+ */
+export const INTAKE_SCHEMA_VERSION = 2;
+
+/** Every payload version this build can still read. */
+export const SUPPORTED_INTAKE_SCHEMA_VERSIONS = [1, 2] as const;
 
 /** Seat counts are per-category as well as organization-wide; both matter. */
 const seatCount = z
@@ -55,6 +68,58 @@ export const orgProfileSchema = z.object({
    */
   publicSector: z.boolean(),
   germanLanguageRequired: z.boolean(),
+});
+
+/**
+ * The workstations themselves.
+ *
+ * Separate from `operatingModelSchema`, which is about how the IT team runs
+ * servers. These five answers are the whole basis of the client-OS verdict, and
+ * the split matters: an organization with strong Linux server skills and a
+ * Windows estate managed through group policy is a completely ordinary case,
+ * and folding both into one "Linux capability" question would hide it.
+ */
+export const workplaceSchema = z.object({
+  clientOs: z.enum(CLIENT_OS),
+  /**
+   * Devices, not people. Effort scales with the number of machines that have to
+   * be touched, and shared workstations, shift work and second devices make the
+   * two diverge in both directions. Optional because many organizations do not
+   * have the number to hand, and a guessed device count is worse than none —
+   * the report then says it fell back to seats.
+   */
+  deviceCount: seatCount.optional(),
+  windowsOnlyApps: z.enum(WINDOWS_ONLY_APPS),
+  deviceManagement: z.enum(DEVICE_MANAGEMENT),
+  /**
+   * Signature pads, card readers, label printers, lab and machine interfaces.
+   * The second-most-common reason a desktop migration stalls after
+   * Fachverfahren, and the one most often discovered late.
+   */
+  peripheralDependency: level,
+});
+
+/**
+ * What a day of work costs this organization (ADR-0004).
+ *
+ * Both optional, and neither has a default. lokal does not estimate a day rate:
+ * unset means the report states no cost figure at all, rather than a plausible
+ * one. A rate of zero is rejected rather than stored, because an explicit zero
+ * is never what someone means and would silently produce a cost of nothing.
+ */
+export const ratesSchema = z.object({
+  internalDayRateCents: z
+    .number()
+    .int("Day rates are stored in whole cents.")
+    .positive("A day rate of zero is not a rate. Leave it empty instead.")
+    .max(1_000_000, "Day rates above 10,000 EUR are outside what lokal models.")
+    .optional(),
+  externalDayRateCents: z
+    .number()
+    .int("Day rates are stored in whole cents.")
+    .positive("A day rate of zero is not a rate. Leave it empty instead.")
+    .max(1_000_000, "Day rates above 10,000 EUR are outside what lokal models.")
+    .optional(),
 });
 
 export const operatingModelSchema = z.object({
@@ -105,6 +170,8 @@ export const assessmentInputSchema = z.object({
   locale: z.enum(["de", "en"]),
   org: orgProfileSchema,
   operating: operatingModelSchema,
+  workplace: workplaceSchema,
+  rates: ratesSchema,
   /**
    * Only the categories the organization actually assessed. A missing category
    * is reported as "not assessed", never as "nothing to do" — silence is not a
@@ -122,10 +189,51 @@ export const assessmentInputSchema = z.object({
 
 export type OrgProfile = z.infer<typeof orgProfileSchema>;
 export type OperatingModel = z.infer<typeof operatingModelSchema>;
+export type Workplace = z.infer<typeof workplaceSchema>;
+export type Rates = z.infer<typeof ratesSchema>;
 export type CurrentTool = z.infer<typeof currentToolSchema>;
 export type StackEntry = z.infer<typeof stackEntrySchema>;
 export type AiPosture = z.infer<typeof aiPostureSchema>;
 export type AssessmentInput = z.infer<typeof assessmentInputSchema>;
+
+/**
+ * Version 1 of the payload: everything except the workplace block and the rates.
+ *
+ * Kept as a schema rather than a comment because the upgrade has to be checked,
+ * not assumed. Stored assessments predate the workplace questions and their
+ * report links are shared documents — a link that stops resolving because the
+ * questionnaire grew is a bug in lokal, not in the link.
+ */
+const assessmentInputV1Schema = assessmentInputSchema
+  .omit({ schemaVersion: true, workplace: true, rates: true })
+  .extend({ schemaVersion: z.literal(1) });
+
+/**
+ * Brings a stored payload up to the current version.
+ *
+ * The workplace answers become `unknown` rather than a guess. That is what makes
+ * the client-OS lane report "nicht erhoben, hier ist die Frage" for an older
+ * assessment instead of asserting a Windows estate nobody described — and the
+ * absent rates make the cost column absent rather than zero (ADR-0004).
+ */
+export function upgradeAssessmentInput(value: unknown): AssessmentInput {
+  const current = assessmentInputSchema.safeParse(value);
+  if (current.success) return current.data;
+
+  const v1 = assessmentInputV1Schema.parse(value);
+
+  return {
+    ...v1,
+    schemaVersion: INTAKE_SCHEMA_VERSION,
+    workplace: {
+      clientOs: "unknown",
+      windowsOnlyApps: "unknown",
+      deviceManagement: "unknown",
+      peripheralDependency: "low",
+    },
+    rates: {},
+  };
+}
 
 /** Parses unknown input, throwing on failure. Use at trust boundaries. */
 export function parseAssessmentInput(value: unknown): AssessmentInput {

@@ -698,12 +698,16 @@
     },
     "method": {
       "not_modelled": {
+        "device_hardware_replacement": "Ersatz oder Nachrüstung von Arbeitsplatzrechnern",
         "existing_contracts": "Bestehende Verträge und Laufzeiten",
+        "hosting_and_support_cost_of_the_new_stack": "Betriebs-, Hosting- und Supportkosten der neuen Systeme",
         "integrations_with_specialist_software": "Anbindungen an Fachverfahren",
         "legal_retention_duties": "Gesetzliche Aufbewahrungs- und Archivpflichten",
         "negotiated_contract_terms": "Ausgehandelte Vertragskonditionen, Rabatte und Rahmenverträge",
         "network_topology": "Netzaufbau und Standortanbindung",
-        "staff_skills_in_detail": "Kenntnisse einzelner Beschäftigter"
+        "productivity_during_changeover": "Produktivitätsverluste während der Umstellung",
+        "staff_skills_in_detail": "Kenntnisse einzelner Beschäftigter",
+        "which_linux_distribution": "Die Wahl einer konkreten Linux-Distribution"
       }
     },
     "next": {

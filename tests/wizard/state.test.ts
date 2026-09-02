@@ -35,6 +35,15 @@ function municipalityDraft(): Draft {
       linuxCapability: "basic",
       supportExpectation: "vendor_support_needed",
     },
+    workplace: {
+      clientOs: "windows",
+      windowsOnlyApps: "few",
+      deviceManagement: "ad_gpo",
+      peripheralDependency: "medium",
+    },
+    // Left empty on purpose: the most common state, and the one that has to
+    // still assemble into a valid payload (ADR-0004).
+    rates: {},
     selectedCategories: ["office_docs"],
     stack: {
       office_docs: {

@@ -12,7 +12,7 @@ import { CATEGORY_IDS } from "@/domain/enums";
 const pack = currentRulepack();
 
 const baseInput = {
-  schemaVersion: 1 as const,
+  schemaVersion: 2 as const,
   locale: "de" as const,
   org: {
     orgType: "municipality" as const,
@@ -30,6 +30,13 @@ const baseInput = {
     linuxCapability: "basic" as const,
     supportExpectation: "vendor_support_needed" as const,
   },
+  workplace: {
+    clientOs: "windows" as const,
+    windowsOnlyApps: "few" as const,
+    deviceManagement: "ad_gpo" as const,
+    peripheralDependency: "medium" as const,
+  },
+  rates: {},
   stack: [
     {
       category: "forms_surveys" as const,

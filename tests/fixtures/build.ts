@@ -4,6 +4,8 @@ import type {
   AiDeployment,
   AiInterest,
   CategoryId,
+  ClientOs,
+  DeviceManagement,
   HardwareProfile,
   HostingPreference,
   Level,
@@ -11,6 +13,7 @@ import type {
   OrgType,
   SupportExpectation,
   Urgency,
+  WindowsOnlyApps,
 } from "@/domain/enums";
 
 /**
@@ -34,6 +37,19 @@ export type AssessmentOverrides = {
   identityMaturity?: Level;
   linuxCapability?: LinuxCapability;
   supportExpectation?: SupportExpectation;
+
+  clientOs?: ClientOs;
+  deviceCount?: number;
+  windowsOnlyApps?: WindowsOnlyApps;
+  deviceManagement?: DeviceManagement;
+  peripheralDependency?: Level;
+  /**
+   * Rates default to absent rather than to a number, because "no rate declared"
+   * is the case most reports are in and the one most worth defaulting to
+   * (ADR-0004). A test that wants a cost figure has to ask for one.
+   */
+  internalDayRateCents?: number;
+  externalDayRateCents?: number;
 
   categories?: CategoryId[];
   categorySeats?: number;
@@ -68,7 +84,7 @@ export function assessment(overrides: AssessmentOverrides = {}): AssessmentInput
   const totalSeats = overrides.totalSeats ?? 180;
 
   return parseAssessmentInput({
-    schemaVersion: 1,
+    schemaVersion: 2,
     locale: "de",
     org: {
       orgType: overrides.orgType ?? "municipality",
@@ -85,6 +101,17 @@ export function assessment(overrides: AssessmentOverrides = {}): AssessmentInput
       identityMaturity: overrides.identityMaturity ?? "medium",
       linuxCapability: overrides.linuxCapability ?? "basic",
       supportExpectation: overrides.supportExpectation ?? "vendor_support_needed",
+    },
+    workplace: {
+      clientOs: overrides.clientOs ?? "windows",
+      deviceCount: overrides.deviceCount,
+      windowsOnlyApps: overrides.windowsOnlyApps ?? "few",
+      deviceManagement: overrides.deviceManagement ?? "ad_gpo",
+      peripheralDependency: overrides.peripheralDependency ?? "medium",
+    },
+    rates: {
+      internalDayRateCents: overrides.internalDayRateCents,
+      externalDayRateCents: overrides.externalDayRateCents,
     },
     stack: categories.map((category) => ({
       category,

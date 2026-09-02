@@ -1,5 +1,9 @@
 import { nanoid } from "nanoid";
-import { assessmentInputSchema, type AssessmentInput } from "@/domain/intake";
+import {
+  assessmentInputSchema,
+  upgradeAssessmentInput,
+  type AssessmentInput,
+} from "@/domain/intake";
 import { runEngine } from "@/engine";
 import { buildReport } from "@/report/build-report";
 import { CURRENT_RULEPACK_VERSION, getRulepack, hasRulepack } from "@/rulepack";
@@ -52,7 +56,11 @@ export async function loadReport(id: string): Promise<LoadedReport | null> {
   const record = await db.assessment.findUnique({ where: { id } });
   if (!record) return null;
 
-  const input = assessmentInputSchema.parse(record.payload);
+  // Upgraded rather than parsed, because the payload may predate a question the
+  // questionnaire has since grown. A report link is a document someone shared
+  // with a committee: it has to keep resolving, and the missing answers have to
+  // reach the report as "nicht erhoben" rather than as an assumption.
+  const input = upgradeAssessmentInput(record.payload);
 
   const available = hasRulepack(record.rulepackVersion);
   const pack = getRulepack(

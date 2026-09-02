@@ -1,4 +1,5 @@
 import { afterAll, describe, expect, it } from "vitest";
+import { nanoid } from "nanoid";
 import { loadReport, saveAssessment } from "@/lib/assessments";
 import { db } from "@/lib/db";
 import { CURRENT_RULEPACK_VERSION } from "@/rulepack";
@@ -26,6 +27,33 @@ async function store(id = "municipality-180") {
   return newId;
 }
 
+/**
+ * Writes a payload in the shape stored before the workplace block existed —
+ * schema version 1, no `workplace`, no `rates` — straight into the table,
+ * bypassing `saveAssessment` because that function will not produce one any
+ * more. This is the acceptance case for report links already in circulation.
+ */
+async function storeLegacy() {
+  const { workplace: _workplace, rates: _rates, ...rest } = persona("school-45").input;
+  const payload = { ...rest, schemaVersion: 1 };
+  const id = nanoid(21);
+  created.push(id);
+
+  await db.assessment.create({
+    data: {
+      id,
+      locale: "de",
+      rulepackVersion: CURRENT_RULEPACK_VERSION,
+      schemaVersion: 1,
+      payload,
+      orgTypeHint: rest.org.orgType,
+      seatsHint: rest.org.totalSeats,
+    },
+  });
+
+  return id;
+}
+
 describe("assessment persistence", () => {
   it("stores an assessment and reconstitutes its report", async () => {
     const id = await store();
@@ -34,6 +62,18 @@ describe("assessment persistence", () => {
     expect(loaded).not.toBeNull();
     expect(loaded!.id).toBe(id);
     expect(loaded!.report.organization.totalSeats).toBe(180);
+    expect(loaded!.report.targetStack.length).toBeGreaterThan(0);
+  });
+
+  it("still renders a report stored before the workplace block existed", async () => {
+    // A shared report link is a document someone forwarded to a committee. It
+    // has to keep resolving when the questionnaire grows, which is why the
+    // schema widens and `upgradeAssessmentInput` fills the gap.
+    const id = await storeLegacy();
+    const loaded = await loadReport(id);
+
+    expect(loaded).not.toBeNull();
+    expect(loaded!.report.organization.totalSeats).toBe(45);
     expect(loaded!.report.targetStack.length).toBeGreaterThan(0);
   });
 

@@ -698,12 +698,16 @@
     },
     "method": {
       "not_modelled": {
+        "device_hardware_replacement": "Replacing or upgrading workstations",
         "existing_contracts": "Existing contracts and their terms",
+        "hosting_and_support_cost_of_the_new_stack": "Hosting, operations and support cost of the new systems",
         "integrations_with_specialist_software": "Integrations with specialist software",
         "legal_retention_duties": "Legal retention and archival duties",
         "negotiated_contract_terms": "Negotiated contract terms, discounts and framework agreements",
         "network_topology": "Network topology and site connectivity",
-        "staff_skills_in_detail": "The skills of individual staff"
+        "productivity_during_changeover": "Productivity lost during the changeover",
+        "staff_skills_in_detail": "The skills of individual staff",
+        "which_linux_distribution": "The choice of a specific Linux distribution"
       }
     },
     "next": {
