@@ -10,6 +10,16 @@ Dates are ISO 8601.
 
 ### Fixed
 
+- **`LOKAL_EXPERT_*` and `LOKAL_LEGAL_*` did nothing under Docker.** These are
+  documented as `.env` variables, but `docker-compose.yml` never read `.env` —
+  only `DATABASE_URL` and `NEXT_PUBLIC_BASE_URL` were wired into the `app`
+  service's `environment:` block. An operator running via `docker compose up`
+  who filled in `.env` as instructed got no contact block and no legal links,
+  silently. The `app` service now also loads an optional project-root `.env`
+  (`env_file`, `required: false`, so a default install without one is
+  unaffected); the two container-specific variables stay pinned in
+  `docker-compose.yml` and take precedence over anything `.env` sets for them.
+
 - **The intake can name a product.** The "currently in use" field was free text
   only, so every assessment recorded `{ kind: "other" }` and no report produced
   through the questionnaire ever reached a source tool in the rulepack. Vendor

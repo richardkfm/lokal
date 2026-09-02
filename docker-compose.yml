@@ -23,6 +23,15 @@ services:
         condition: service_completed_successfully
     ports:
       - "3000:3000"
+    # Optional: a project-root .env (see .env.example) for operator-only values
+    # like LOKAL_EXPERT_* and LOKAL_LEGAL_*. `required: false` means the file
+    # need not exist — a default `docker compose up` works without one. The
+    # explicit `environment:` block below still wins over anything the same
+    # key sets in .env, so a .env written for non-Docker `pnpm dev` can't
+    # redirect DATABASE_URL or NEXT_PUBLIC_BASE_URL into the container.
+    env_file:
+      - path: .env
+        required: false
     environment:
       DATABASE_URL: file:/data/lokal.db
       NEXT_PUBLIC_BASE_URL: http://localhost:3000
