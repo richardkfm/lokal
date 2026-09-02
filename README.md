@@ -161,17 +161,26 @@ app needs at request time):
 
 To override either, edit `docker-compose.yml` directly, or add a
 `docker-compose.override.yml` alongside it (Compose merges it automatically)
-so your changes don't conflict with future `git pull`s of this repo.
+so your changes don't conflict with future `git pull`s of this repo. Note
+that Compose merges list-valued keys like `ports:` by concatenation, not
+replacement — an override file adding a second `ports:` entry publishes
+_both_ ports rather than replacing the first, which usually isn't what you
+want. For the published port specifically, use `LOKAL_PORT` below instead.
 
-Everything else — `LOKAL_EXPERT_*` ("Offering help" below) and
-`LOKAL_LEGAL_*` (imprint/privacy/accessibility links) — is optional and
-operator-specific, so it's read from a project-root `.env` instead, the same
-file and the same variables as local, non-Docker development (copy
-`.env.example` to `.env` and fill in what applies). `.env` is gitignored, so
-these never end up in a commit or a `git pull` conflict. It's read once at
-container start, so after editing it run `docker compose up -d` (no rebuild
-needed) to pick up the change. Unset stays unset — a default install without
-a `.env` behaves exactly as before.
+Everything else — `LOKAL_EXPERT_*` ("Offering help" below), `LOKAL_LEGAL_*`
+(imprint/privacy/accessibility links) and `LOKAL_PORT` (the published host
+port) — is optional and operator-specific, so it's read from a project-root
+`.env` instead (copy `.env.example` to `.env` and fill in what applies).
+`LOKAL_EXPERT_*`/`LOKAL_LEGAL_*` use the same file and variables as local,
+non-Docker development, and are read by the app itself once per request, so
+changing them needs a container restart, not a rebuild: `docker compose up
+-d`. `LOKAL_PORT` is different — it's read by the `docker compose` CLI, not
+the app, to fill in `docker-compose.yml`'s `ports:` mapping before any
+container starts, so it also only needs `docker compose up -d`, not a
+rebuild, but changing it does recreate the `app` container. `.env` is
+gitignored, so none of this ever ends up in a commit or a `git pull`
+conflict. Unset stays unset throughout — a default install without a `.env`
+behaves exactly as before.
 
 ### Offering help
 

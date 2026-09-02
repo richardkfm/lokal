@@ -21,8 +21,12 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
+    # LOKAL_PORT is read from the project-root .env by the Compose CLI itself
+    # (variable substitution in this file), before the container exists — the
+    # host port a container publishes on isn't something env_file below can
+    # reach, since it never enters the container. Defaults to 3000 when unset.
     ports:
-      - "3000:3000"
+      - "${LOKAL_PORT:-3000}:3000"
     # Optional: a project-root .env (see .env.example) for operator-only values
     # like LOKAL_EXPERT_* and LOKAL_LEGAL_*. `required: false` means the file
     # need not exist — a default `docker compose up` works without one. The

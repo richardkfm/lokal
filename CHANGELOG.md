@@ -93,6 +93,17 @@ Dates are ISO 8601.
 
 ### Added
 
+- **`LOKAL_PORT` for the Docker-published port.** The only prior way to change
+  it was editing `docker-compose.yml`'s `ports:` directly, or a
+  `docker-compose.override.yml` — but Compose merges list-valued keys like
+  `ports:` by concatenation, not replacement, so an override file adding a
+  second `ports:` entry silently published both instead of replacing the
+  first, which could leave the `app` container unable to start (port already
+  allocated) or listening on an unexpected port. `docker-compose.yml` now
+  reads `${LOKAL_PORT:-3000}` for the published port, so `LOKAL_PORT` in a
+  project-root `.env` — read by the `docker compose` CLI itself, before any
+  container starts — is now the one documented way to change it.
+
 - Impressum, Datenschutzerklärung and Barrierefreiheitserklärung in the footer,
   as `LOKAL_LEGAL_*_URL` links. Their absence was the most conspicuous omission
   on a site whose pitch is sovereignty and compliance-consciousness, aimed at
