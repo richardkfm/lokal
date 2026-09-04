@@ -8,6 +8,8 @@ Dates are ISO 8601.
 
 ## [Unreleased]
 
+## [0.2.0] – 2026-09-04
+
 ### Added
 
 - **Phase 8 — the plan as a Beschlussvorlage.** The reasoning is in
