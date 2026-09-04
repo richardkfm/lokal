@@ -2,15 +2,16 @@
 
 ## Release milestones
 
-| Version    | Definition of done                                                                                                                                                                        |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **v0.1.0** | Clickable MVP: landing, six-step wizard, deterministic engine, nine-category rulepack, polished report view, Markdown export, print-ready HTML report, German complete with English wired |
-| v0.2.0     | Improved scoring logic, stronger report quality, German/English polish, openDesk as a suite-level recommendation                                                                          |
-| v0.3.0     | Saved sessions and profiles, richer organization modelling, server-side PDF generation                                                                                                    |
-| v0.4.0     | Sector templates, stronger capacity guidance, deeper local-AI advisory                                                                                                                    |
-| v1.0.0     | Stable production-ready planning tool for German SMEs and local public bodies                                                                                                             |
+| Version    | Definition of done                                                                                                                                                                                                                                    |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| v0.1.0     | Clickable MVP: landing, six-step wizard, deterministic engine, nine-category rulepack, polished report view, Markdown export, print-ready HTML report, German complete with English wired                                                             |
+| **v0.2.0** | Engagement, document pass and decision brief (phases 6–8): priced subscription exposure, legal footer, printed disclosure fixes, client-OS lane, effort calendar, declared-rate migration cost, §0 decision brief, phase timeline, section navigation |
+| v0.3.0     | Improved scoring logic, saved sessions and profiles, richer organization modelling, server-side PDF generation                                                                                                                                        |
+| v0.4.0     | Sector templates, stronger capacity guidance, deeper local-AI advisory                                                                                                                                                                                |
+| v1.0.0     | Stable production-ready planning tool for German SMEs and local public bodies                                                                                                                                                                         |
 
-Tags are annotated. The package version stays `0.0.0` until v0.1.0 is tagged.
+Tags are annotated. `package.json` reads `0.2.0`; no tag has been pushed for
+either `v0.1.0` or `v0.2.0` yet — see "Before the tag" below.
 
 ## v0.1.0 implementation phases
 
@@ -195,30 +196,32 @@ reaches the reader.
 
 ## Before the tag
 
-Everything in phases 0–6 is implemented, and the docs half of 5.7 is done: the
-changelog carries a `0.1.0` section, `package.json` reads `0.1.0`, and no
-document still describes the tag as forthcoming.
+Everything in phases 0–8 is implemented and merged to `main`, and the docs half
+of 5.7 and 8.13 is done: the changelog carries a `0.2.0` section, `package.json`
+reads `0.2.0`, and no document still describes either tag as forthcoming on a
+branch.
 
-The tag itself is deliberately not applied yet. Three things stand in front of it
-and none is code:
+No tag has been pushed yet, for `v0.1.0` or `v0.2.0`. `v0.1.0` was overtaken by
+phases 6–8 before it was ever tagged — engagement, the document pass and the
+decision brief all landed on `main` first, on explicit request, so the first
+tag this project cuts will be `v0.2.0`, covering everything since the initial
+build. Two things stand in front of it and neither is code:
 
-1. **The work is on a branch.** `v0.1.0` belongs on `main`, after the open pull
-   request lands.
-2. **Two definition-of-done items are human judgements**, 3 and 4 below. Nobody
+1. **Two definition-of-done items are human judgements**, 3 and 4 below. Nobody
    has yet sat down and completed a 180-seat municipal intake against a clock, or
    held the printed PDF and decided it can go to a management board unedited.
    Both are the kind of check this project exists to pass and neither can be
    automated into a green tick.
-3. **A pushed tag is permanent in practice.** It is worth spending the fifteen
-   minutes item 2 asks for before spending it.
+2. **A pushed tag is permanent in practice.** It is worth spending the fifteen
+   minutes item 1 asks for before spending it.
 
-Once those are settled: `git tag -a v0.1.0 -m "..."` on `main`, push, and 5.7's
+Once those are settled: `git tag -a v0.2.0 -m "..."` on `main`, push, and 5.7's
 own verification (`git describe`) is satisfied.
 
-## Definition of done for v0.1.0
+## Definition of done for v0.2.0
 
 1. `pnpm check` green, including engine invariants and golden fixtures. **Met** —
-   230 unit tests, plus 20 browser tests across both locales.
+   312 unit tests, plus 24 browser tests across both locales.
 2. Playwright smoke green: wizard → report → Markdown → print. **Met.**
 3. A human completes intake for a 180-seat municipality in under 15 minutes, and
    the resulting brief answers every question listed in the README's "What lokal

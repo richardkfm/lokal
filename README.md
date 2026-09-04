@@ -8,8 +8,9 @@ einen nachvollziehbaren Migrationsplan: Zielarchitektur, Reihenfolge, Aufwand,
 Kapazitätsbedarf, Einsparperspektive und eine realistische Einschätzung, welche
 KI-Anwendungsfälle heute tragfähig sind.
 
-> Status: v0.1.0 — erste vollständige Fassung. Deutsch und Englisch vollständig,
-> Regelwerk als Entwurf gekennzeichnet.
+> Status: v0.2.0 — Entscheidungsvorlage mit Client-OS-Lane, Aufwandskalender und
+> Kostenseite. Deutsch und Englisch vollständig, Regelwerk als Entwurf
+> gekennzeichnet.
 
 ## What lokal is
 
@@ -314,7 +315,7 @@ persisted; the report is recomputed on every render.
 See [`docs/architecture.md`](docs/architecture.md) for the full picture, and
 [`docs/adr/`](docs/adr/) for the decisions behind it.
 
-## MVP scope (v0.1.0)
+## Scope (v0.2.0)
 
 - Landing page
 - Six-step intake wizard (organization, operating model **and workstations**,
@@ -322,12 +323,17 @@ See [`docs/architecture.md`](docs/architecture.md) for the full picture, and
 - Deterministic planning engine with full rationale traceability
 - Rulepack covering nine categories plus an AI use-case catalog and a client-OS
   lane, including Euro-Office and published vendor list prices
-- Polished report view: a decision brief, an at-a-glance summary and nine sections
-- Markdown export
-- Print-optimized report route
+- Polished report view: a decision brief (§0), a phase timeline, section
+  navigation, an at-a-glance summary and nine sections
+- Declared-rate migration cost alongside the priced subscription exposure,
+  stated as two separate, non-subtractable figures
+- Markdown export and print-optimized report route, both kept at parity with
+  the screen view
 - German and English content complete, both proved by the browser suite
 
-All of the above is implemented and released as `v0.1.0`. What comes next is in
+All of the above is implemented and released as `v0.2.0`, which folds in the
+engagement (phase 6), document-pass (phase 7) and decision-brief (phase 8)
+work done since `v0.1.0`. What comes next is in
 [`plans/roadmap.md`](plans/roadmap.md); every rulepack entry still ships as
 `draft` until a human has checked it against a current release, and the report
 says so on its cover.
@@ -344,13 +350,13 @@ persona in [`tests/fixtures/personas.ts`](tests/fixtures/personas.ts).
 
 ## Roadmap
 
-| Version | Focus                                                                  |
-| ------- | ---------------------------------------------------------------------- |
-| v0.1.0  | Clickable MVP: wizard, engine, report, Markdown export, print route    |
-| v0.2.0  | Better scoring, stronger report quality, German/English polish         |
-| v0.3.0  | Saved sessions and profiles, richer org modelling, server-side PDF     |
-| v0.4.0  | Sector templates, stronger capacity guidance, deeper local-AI advisory |
-| v1.0.0  | Production-ready planning tool for German SMEs and local public bodies |
+| Version | Focus                                                                                                                            |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| v0.1.0  | Clickable MVP: wizard, engine, report, Markdown export, print route                                                              |
+| v0.2.0  | Engagement, document pass, decision brief: client-OS lane, effort calendar, declared-rate cost, §0, timeline, section navigation |
+| v0.3.0  | Better scoring, saved sessions and profiles, richer org modelling, server-side PDF                                               |
+| v0.4.0  | Sector templates, stronger capacity guidance, deeper local-AI advisory                                                           |
+| v1.0.0  | Production-ready planning tool for German SMEs and local public bodies                                                           |
 
 Details in [`plans/roadmap.md`](plans/roadmap.md).
 
@@ -379,7 +385,7 @@ none:
   whether the desktop can move, what blocks it, and where it belongs in the
   sequence. It does not recommend a distribution.
 - **No compliance guarantees.** Legal and archival duties need your own advisors.
-- **Reports are not access-controlled in v0.1.0.** Report links are unguessable but
+- **Reports are not access-controlled.** Report links are unguessable but
   not secret. Treat them as internal documents.
 
 ## License
